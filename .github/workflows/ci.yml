@@ -1,4 +1,4 @@
-name: Deploy Moonwave Travel to GitHub Pages
+name: Deploy to GitHub Pages
 
 # Controls when the workflow will run
 on:
@@ -23,25 +23,6 @@ jobs:
       # Checks-outs your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Setup Node.js for Next.js build
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          cd moonwave-travel
-          npm ci
-
-      # Build Next.js project
-      - name: Build Next.js project
-        run: |
-          cd moonwave-travel
-          npm run build
-
       # Setup GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -50,7 +31,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./moonwave-travel/out
+          path: ./
 
   # Deploy job
   deploy:
