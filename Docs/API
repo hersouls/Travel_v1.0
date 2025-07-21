@@ -1,0 +1,99 @@
+# API 정의서(REST) – 모바일 여행 플래너 웹서비스
+
+## 1. 공통
+- Base URL: `/api/v1/`
+- 인증: JWT Bearer Token (로그인/회원가입 제외)
+- 응답 포맷: JSON
+
+---
+
+## 2. 사용자(User) 관련
+
+### [POST] /users/signup
+- 설명: 회원가입
+- 요청: { email, password, nickname }
+- 응답: { userId, email, nickname, createdAt }
+
+### [POST] /users/login
+- 설명: 로그인(JWT 반환)
+- 요청: { email, password }
+- 응답: { token, userId, email }
+
+### [GET] /users/profile
+- 설명: 내 정보 조회 (인증 필요)
+- 응답: { userId, email, nickname, profileImg, createdAt }
+
+---
+
+## 3. 여행일정(Trip) 관련
+
+### [GET] /trips
+- 설명: 내 여행일정 전체 조회
+- 응답: [ { tripId, tripTitle, startDate, endDate, coverImage } ]
+
+### [POST] /trips
+- 설명: 여행일정카드 생성
+- 요청: { tripTitle, startDate, endDate, coverImage }
+- 응답: { tripId }
+
+### [GET] /trips/{tripId}
+- 설명: 여행일정 상세 조회
+- 응답: { tripId, userId, tripTitle, coverImage, startDate, endDate, createdAt, plans: [] }
+
+### [PUT] /trips/{tripId}
+- 설명: 여행일정카드 수정
+- 요청: { tripTitle?, startDate?, endDate?, coverImage? }
+- 응답: { success: true }
+
+### [DELETE] /trips/{tripId}
+- 설명: 여행일정카드 삭제
+- 응답: { success: true }
+
+---
+
+## 4. 여행계획(Plan) 관련
+
+### [GET] /trips/{tripId}/plans
+- 설명: 특정 여행일정의 Day별 계획 전체 조회
+- 응답: [ { planId, day, placeName, startTime, endTime, type } ]
+
+### [POST] /trips/{tripId}/plans
+- 설명: 여행계획카드 생성
+- 요청: { day, placeName, startTime, endTime, type, photos, youtubeLink, memo, googlePlaceId, ... }
+- 응답: { planId }
+
+### [GET] /plans/{planId}
+- 설명: 여행계획 상세 조회
+- 응답: { planId, tripId, day, ... }
+
+### [PUT] /plans/{planId}
+- 설명: 여행계획 수정
+- 요청: { placeName?, startTime?, endTime?, type?, photos?, youtubeLink?, memo? ... }
+- 응답: { success: true }
+
+### [DELETE] /plans/{planId}
+- 설명: 여행계획 삭제
+- 응답: { success: true }
+
+---
+
+## 5. 장소/지도(Google Place 연동)
+
+### [GET] /places/search?q={query}
+- 설명: 장소명 자동완성(Google Places API Proxy)
+- 응답: [ { placeId, placeName, address } ]
+
+### [GET] /places/{placeId}
+- 설명: Google Place 상세정보
+- 응답: { placeId, placeName, address, latitude, longitude, openingHours, website, priceLevel, rating }
+
+---
+
+## 6. 기타(확장)
+- [GET] /me/notifications: 내 알림 조회
+- [POST] /trips/{tripId}/share: 여행일정 공유 링크 생성
+- [POST] /feedback: 피드백 등록
+
+---
+
+(※ 실제 개발 시, 파라미터/응답 샘플, 상태코드, 에러 처리, 인증 예시 등 추가 작성)
