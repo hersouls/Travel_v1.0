@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Map, MoreVertical, Plus, Calendar, Clock, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { dataService } from '@/lib/dataService';
 import { Trip, Plan } from '@/types';
@@ -27,9 +27,9 @@ export default function TripDetailPage() {
     const loadTripData = async () => {
       try {
         const tripResult = await dataService.getTripById(tripId);
-        if (tripResult.success) {
+        if (tripResult.success && tripResult.data) {
           setTrip(tripResult.data);
-          const duration = calculateTripDuration(tripResult.data.startDate, tripResult.data.endDate);
+          const duration = calculateTripDuration(tripResult.data.start_date, tripResult.data.end_date);
           setTotalDays(duration);
           setSelectedDay(1);
         } else {
@@ -54,7 +54,7 @@ export default function TripDetailPage() {
       
       try {
         const plansResult = await dataService.getPlansByTripId(tripId);
-        if (plansResult.success) {
+        if (plansResult.success && plansResult.data) {
           setPlans(plansResult.data);
         }
       } catch (error) {
@@ -152,10 +152,10 @@ export default function TripDetailPage() {
         <Card className="mb-8 overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              {trip.coverImage && (
+              {trip.cover_image && (
                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                   <img
-                    src={trip.coverImage}
+                    src={trip.cover_image}
                     alt={trip.title}
                     className="w-full h-full object-cover"
                   />
@@ -168,7 +168,7 @@ export default function TripDetailPage() {
                 <div className="flex items-center space-x-4 text-gray-600">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    <span>{formatDate(trip.startDate)} ~ {formatDate(trip.endDate)}</span>
+                    <span>{formatDate(trip.start_date)} ~ {formatDate(trip.end_date)}</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
@@ -221,7 +221,7 @@ export default function TripDetailPage() {
         <div className="space-y-4">
           {dayPlans.length > 0 ? (
             dayPlans
-              .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+              .sort((a, b) => new Date(a.start_time || '').getTime() - new Date(b.start_time || '').getTime())
               .map((plan) => (
                 <PlanCard
                   key={plan.id}

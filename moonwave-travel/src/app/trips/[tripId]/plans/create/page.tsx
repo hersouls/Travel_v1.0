@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Camera, Clock, Search, Link, MessageSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Textarea } from '@/components/ui/Textarea';
 import { planTypeConfig } from '@/lib/mockData';
 import { dataService } from '@/lib/dataService';
 import { Plan } from '@/types';
-import { formatTime } from '@/utils/helpers';
+// import { formatTime } from '@/utils/helpers'; // 현재 사용하지 않음
 import { cn } from '@/utils/helpers';
 
 export default function CreatePlanPage() {
@@ -23,20 +23,20 @@ export default function CreatePlanPage() {
   const [plan, setPlan] = useState<Partial<Plan>>({
     day,
     photos: [],
-    youtubeLink: '',
-    startTime: '',
-    endTime: '',
+    youtube_url: '',
+    start_time: '',
+    end_time: '',
     type: 'other',
-    placeName: '',
+    place_name: '',
     memo: '',
     // Google Place Data
-    googlePlaceId: '',
+    google_place_id: '',
     address: '',
     latitude: 0,
     longitude: 0,
-    openingHours: '',
+    opening_hours: '',
     website: '',
-    priceLevel: 0,
+    price_level: 0,
     rating: 0,
   });
 
@@ -56,15 +56,15 @@ export default function CreatePlanPage() {
     if (placeName) {
       setPlan(prev => ({
         ...prev,
-        placeName,
-        googlePlaceId: googlePlaceId || '',
+        place_name: placeName,
+        google_place_id: googlePlaceId || '',
         address: address || '',
         latitude: latitude ? parseFloat(latitude) : 0,
         longitude: longitude ? parseFloat(longitude) : 0,
         rating: rating ? parseFloat(rating) : 0,
-        openingHours: openingHours || '',
+        opening_hours: openingHours || '',
         website: website || '',
-        priceLevel: priceLevel ? parseInt(priceLevel) : 0,
+        price_level: priceLevel ? parseInt(priceLevel) : 0,
       }));
     }
   }, []);
@@ -120,7 +120,7 @@ export default function CreatePlanPage() {
   };
 
   // 저장 가능 여부 확인
-  const canSave = plan.placeName?.trim() && plan.startTime && plan.endTime;
+  const canSave = plan.place_name?.trim() && plan.start_time && plan.end_time;
 
   // 계획 저장
   const handleSavePlan = async () => {
@@ -131,7 +131,10 @@ export default function CreatePlanPage() {
       const planData = {
         ...plan,
         photos: photoPreviews, // 실제로는 이미지 업로드 후 URL로 변경
-        tripId,
+        trip_id: tripId,
+        type: plan.type || 'other',
+        day: plan.day || day,
+        place_name: plan.place_name || '',
       };
 
       const result = await dataService.createPlan(planData);
@@ -245,17 +248,17 @@ export default function CreatePlanPage() {
                   <Input
                     type="url"
                     placeholder="https://..."
-                    value={plan.youtubeLink}
-                    onChange={(e) => setPlan(prev => ({ ...prev, youtubeLink: e.target.value }))}
+                    value={plan.youtube_url}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPlan(prev => ({ ...prev, youtube_url: e.target.value }))}
                     className="pl-10 rounded-natural-medium"
                   />
                 </div>
 
                 {/* 유튜브 썸네일 미리보기 */}
-                {plan.youtubeLink && getYouTubeThumbnail(plan.youtubeLink) && (
+                {plan.youtube_url && getYouTubeThumbnail(plan.youtube_url) && (
                   <div className="aspect-video rounded-natural-medium overflow-hidden">
                     <img
-                      src={getYouTubeThumbnail(plan.youtubeLink)!}
+                      src={getYouTubeThumbnail(plan.youtube_url)!}
                       alt="유튜브 썸네일"
                       className="w-full h-full object-cover"
                     />
@@ -276,8 +279,8 @@ export default function CreatePlanPage() {
                   <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 w-5 h-5" />
                   <Input
                     type="time"
-                    value={plan.startTime}
-                    onChange={(e) => setPlan(prev => ({ ...prev, startTime: e.target.value }))}
+                    value={plan.start_time}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPlan(prev => ({ ...prev, start_time: e.target.value }))}
                     className="pl-10 rounded-natural-medium"
                   />
                 </div>
@@ -285,9 +288,9 @@ export default function CreatePlanPage() {
                   <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 w-5 h-5" />
                   <Input
                     type="time"
-                    value={plan.endTime}
-                    onChange={(e) => setPlan(prev => ({ ...prev, endTime: e.target.value }))}
-                    min={plan.startTime}
+                    value={plan.end_time}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPlan(prev => ({ ...prev, end_time: e.target.value }))}
+                    min={plan.start_time}
                     className="pl-10 rounded-natural-medium"
                   />
                 </div>
@@ -305,7 +308,7 @@ export default function CreatePlanPage() {
                 {Object.entries(planTypeConfig).map(([key, config]) => (
                   <button
                     key={key}
-                    onClick={() => setPlan(prev => ({ ...prev, type: key as any }))}
+                    onClick={() => setPlan(prev => ({ ...prev, type: key as Plan['type'] }))}
                     className={cn(
                       'flex flex-col items-center p-3 rounded-natural-medium transition-all duration-200',
                       plan.type === key
@@ -331,8 +334,8 @@ export default function CreatePlanPage() {
                 <Input
                   type="text"
                   placeholder="장소명을 입력하거나 검색하세요"
-                  value={plan.placeName}
-                  onChange={(e) => setPlan(prev => ({ ...prev, placeName: e.target.value }))}
+                  value={plan.place_name}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPlan(prev => ({ ...prev, place_name: e.target.value }))}
                   className="pr-12 rounded-natural-medium"
                 />
                 <Button
@@ -348,7 +351,7 @@ export default function CreatePlanPage() {
           </Card>
 
           {/* Google 지도 연동 정보 */}
-          {(plan.googlePlaceId || plan.address || plan.rating > 0) && (
+          {(plan.google_place_id || plan.address || (plan.rating && plan.rating > 0)) && (
             <Card className="natural-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-secondary-900 mb-4 golden-text-title">
@@ -361,10 +364,10 @@ export default function CreatePlanPage() {
                       <p className="text-secondary-900 golden-text-body">{plan.address}</p>
                     </div>
                   )}
-                  {plan.openingHours && (
+                  {plan.opening_hours && (
                     <div>
                       <p className="text-sm font-medium text-secondary-700 golden-text-body">영업시간</p>
-                      <p className="text-secondary-900 golden-text-body">{plan.openingHours}</p>
+                      <p className="text-secondary-900 golden-text-body">{plan.opening_hours}</p>
                     </div>
                   )}
                   {plan.website && (
@@ -380,12 +383,12 @@ export default function CreatePlanPage() {
                       </a>
                     </div>
                   )}
-                  {plan.rating > 0 && (
+                  {plan.rating && plan.rating > 0 && (
                     <div>
                       <p className="text-sm font-medium text-secondary-700 golden-text-body">평점</p>
                       <p className="text-secondary-900 golden-text-body">
-                        {'★'.repeat(Math.floor(plan.rating))}
-                        {'☆'.repeat(5 - Math.floor(plan.rating))} ({plan.rating})
+                        {'★'.repeat(Math.floor(plan.rating || 0))}
+                        {'☆'.repeat(5 - Math.floor(plan.rating || 0))} ({plan.rating})
                       </p>
                     </div>
                   )}
@@ -405,7 +408,7 @@ export default function CreatePlanPage() {
                 <Textarea
                   placeholder="메모를 입력하세요..."
                   value={plan.memo}
-                  onChange={(e) => setPlan(prev => ({ ...prev, memo: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPlan(prev => ({ ...prev, memo: e.target.value }))}
                   className="pl-10 rounded-natural-medium min-h-[100px]"
                   rows={4}
                 />
