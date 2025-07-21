@@ -55,7 +55,7 @@ class ErrorBoundary extends Component<Props, State> {
               <div className="space-y-3">
                 <Button
                   onClick={this.handleReset}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-primary-500 hover:bg-primary-600"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   다시 시도
