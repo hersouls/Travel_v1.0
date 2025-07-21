@@ -1,12 +1,16 @@
 {
   "name": "moonwave-travel",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "모바일 여행 플래너 웹서비스 - 여행의 시작부터 끝까지 All-in-One 관리",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -28,7 +32,27 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
+    "prettier": "^3.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "keywords": [
+    "travel",
+    "planner",
+    "mobile",
+    "nextjs",
+    "typescript",
+    "tailwindcss",
+    "supabase"
+  ],
+  "author": "Moonwave Travel Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/moonwave-travel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/moonwave-travel/issues"
+  },
+  "homepage": "https://moonwave-travel.vercel.app"
 }
