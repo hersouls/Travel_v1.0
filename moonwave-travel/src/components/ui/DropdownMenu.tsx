@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { cn } from '@/utils/helpers';
-import { ChevronDown } from 'lucide-react';
+// import { ChevronDown } from 'lucide-react'; // 현재 사용하지 않음
 
 interface DropdownMenuProps {
   trigger: React.ReactNode;

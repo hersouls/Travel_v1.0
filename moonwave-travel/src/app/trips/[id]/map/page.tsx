@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, MapPin, Clock, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { ArrowLeft, MapPin, Star } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
 import { dataService } from '@/lib/dataService';
 import { Trip, Plan } from '@/types';
 import { planTypeConfig } from '@/lib/mockData';
@@ -26,7 +26,7 @@ export default function TripMapPage() {
     const loadTripData = async () => {
       try {
         const tripResult = await dataService.getTripById(tripId);
-        if (tripResult.success) {
+        if (tripResult.success && tripResult.data) {
           setTrip(tripResult.data);
         } else {
           alert('여행 정보를 불러올 수 없습니다.');
@@ -50,7 +50,7 @@ export default function TripMapPage() {
       
       try {
         const plansResult = await dataService.getPlansByTripId(tripId);
-        if (plansResult.success) {
+        if (plansResult.success && plansResult.data) {
           setPlans(plansResult.data);
         }
       } catch (error) {
@@ -63,21 +63,21 @@ export default function TripMapPage() {
     loadPlans();
   }, [tripId]);
 
-  // 지도 중심점 계산
-  const calculateMapCenter = () => {
-    if (plans.length === 0) return { lat: 35.6762, lng: 139.6503 }; // 도쿄 기본값
-    
-    const validPlans = plans.filter(plan => plan.latitude && plan.longitude);
-    if (validPlans.length === 0) return { lat: 35.6762, lng: 139.6503 };
-    
-    const totalLat = validPlans.reduce((sum, plan) => sum + plan.latitude, 0);
-    const totalLng = validPlans.reduce((sum, plan) => sum + plan.longitude, 0);
-    
-    return {
-      lat: totalLat / validPlans.length,
-      lng: totalLng / validPlans.length,
-    };
-  };
+  // 지도 중심점 계산 (현재 사용하지 않음)
+  // const calculateMapCenter = () => {
+  //   if (plans.length === 0) return { lat: 35.6762, lng: 139.6503 }; // 도쿄 기본값
+  //   
+  //   const validPlans = plans.filter(plan => plan.latitude && plan.longitude);
+  //   if (validPlans.length === 0) return { lat: 35.6762, lng: 139.6503 };
+  //   
+  //   const totalLat = validPlans.reduce((sum, plan) => sum + (plan.latitude || 0), 0);
+  //   const totalLng = validPlans.reduce((sum, plan) => sum + (plan.longitude || 0), 0);
+  //   
+  //   return {
+  //     lat: totalLat / validPlans.length,
+  //     lng: totalLng / validPlans.length,
+  //   };
+  // };
 
   // Day별 계획 그룹화
   const plansByDay = plans.reduce((acc, plan) => {
@@ -114,7 +114,7 @@ export default function TripMapPage() {
     );
   }
 
-  const mapCenter = calculateMapCenter();
+  // const mapCenter = calculateMapCenter(); // 지도 중심점 계산 (현재 사용하지 않음)
 
   return (
     <div className="min-h-screen bg-secondary-50">
@@ -223,7 +223,7 @@ export default function TripMapPage() {
                         </span>
                         <span className="text-secondary-400">•</span>
                         <span className="text-sm text-secondary-600 golden-text-body">
-                          {formatTime(selectedPlan.start_time)} - {formatTime(selectedPlan.end_time)}
+                          {selectedPlan.start_time && formatTime(selectedPlan.start_time)} - {selectedPlan.end_time && formatTime(selectedPlan.end_time)}
                         </span>
                       </div>
                       
@@ -237,7 +237,7 @@ export default function TripMapPage() {
                         </p>
                       )}
                       
-                      {selectedPlan.rating > 0 && (
+                      {selectedPlan.rating && selectedPlan.rating > 0 && (
                         <div className="flex items-center space-x-1 text-sm text-secondary-600 golden-text-body">
                           <Star className="w-3 h-3 text-yellow-500 fill-current" />
                           <span>{selectedPlan.rating}</span>
@@ -318,7 +318,7 @@ export default function TripMapPage() {
                               {plan.place_name}
                             </p>
                             <p className="text-xs text-secondary-600 golden-text-body">
-                              {formatTime(plan.start_time)} - {formatTime(plan.end_time)}
+                              {plan.start_time && formatTime(plan.start_time)} - {plan.end_time && formatTime(plan.end_time)}
                             </p>
                           </div>
                         </div>

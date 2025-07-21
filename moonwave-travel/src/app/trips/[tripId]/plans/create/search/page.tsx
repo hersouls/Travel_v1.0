@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Search, MapPin, Star, Clock, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card, CardContent } from '@/components/ui/Card';
 import { mockSearchPlaces, mockGooglePlaces } from '@/lib/mockData';
-import { cn } from '@/utils/helpers';
+// import { cn } from '@/utils/helpers'; // 현재 사용하지 않음
 
 interface Place {
   place_id: string;
@@ -32,7 +32,7 @@ export default function PlaceSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  // const [selectedPlace, setSelectedPlace] = useState<Place | null>(null); // 현재 사용하지 않음
 
   // 검색 실행
   const handleSearch = async (query: string) => {
@@ -69,7 +69,7 @@ export default function PlaceSearchPage() {
 
   // 장소 선택
   const handlePlaceSelect = (place: Place) => {
-    setSelectedPlace(place);
+    // setSelectedPlace(place); // 현재 사용하지 않음
     
     // 선택된 장소 정보를 이전 화면으로 전달
     const placeData = {
@@ -86,7 +86,15 @@ export default function PlaceSearchPage() {
 
     // URL 파라미터로 전달
     const params = new URLSearchParams({
-      ...placeData,
+      placeName: placeData.placeName,
+      googlePlaceId: placeData.googlePlaceId,
+      address: placeData.address,
+      latitude: placeData.latitude.toString(),
+      longitude: placeData.longitude.toString(),
+      rating: placeData.rating.toString(),
+      openingHours: placeData.openingHours,
+      website: placeData.website,
+      priceLevel: placeData.priceLevel.toString(),
       day,
     });
 
@@ -130,7 +138,7 @@ export default function PlaceSearchPage() {
               type="text"
               placeholder="장소명을 검색하세요..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
               className="pl-12 rounded-natural-medium"
               autoFocus
             />
