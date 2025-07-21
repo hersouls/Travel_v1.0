@@ -60,8 +60,13 @@ const TripCard = React.memo<TripCardProps>(({
               src={trip.cover_image}
               alt={trip.title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onClick={(e) => {
+                e.stopPropagation();
+                // 사진 확대 보기 기능 추가 예정
+                console.log('커버 이미지 확대 보기:', trip.cover_image);
+              }}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
@@ -80,7 +85,14 @@ const TripCard = React.memo<TripCardProps>(({
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
           {/* 즐겨찾기 버튼 */}
-          <button className="absolute top-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white">
+          <button 
+            className="absolute top-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
+            onClick={(e) => {
+              e.stopPropagation();
+              // 즐겨찾기 토글 기능 추가 예정
+              console.log('즐겨찾기 토글:', trip.id);
+            }}
+          >
             <Star className="w-4 h-4 text-gray-600" />
           </button>
         </div>

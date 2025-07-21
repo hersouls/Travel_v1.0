@@ -106,7 +106,14 @@ const PlanCard = React.memo<PlanCardProps>(({
               {/* 사진 미리보기 */}
               {plan.photos && plan.photos.length > 0 && (
                 <div className="flex-shrink-0 relative">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden">
+                  <div 
+                    className="w-16 h-16 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // 사진 확대 보기 기능 추가 예정
+                      console.log('사진 확대 보기:', plan.photos);
+                    }}
+                  >
                     <img
                       src={plan.photos[0]}
                       alt={plan.place_name}
@@ -130,10 +137,16 @@ const PlanCard = React.memo<PlanCardProps>(({
         {/* 유튜브 링크 표시 */}
         {plan.youtube_link && (
           <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <a
+              href={plan.youtube_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-sm text-gray-600 hover:text-red-500 transition-colors duration-200 cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Play className="w-3 h-3 text-red-500" />
-              <span className="line-clamp-1">유튜브 영상 포함</span>
-            </div>
+              <span className="line-clamp-1">유튜브 영상 보기</span>
+            </a>
           </div>
         )}
       </CardContent>
