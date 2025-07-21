@@ -2,29 +2,29 @@ import React from 'react';
 import { cn } from '@/utils/helpers';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
+  variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'success';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', loading = false, disabled, children, ...props }, ref) => {
-    const baseClasses = 'inline-flex items-center justify-center rounded-2xl font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 touch-target';
+  ({ className, variant = 'default', size = 'md', loading = false, disabled, children, ...props }, ref) => {
+    const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
     
     const variants = {
-      primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 shadow-soft hover:shadow-medium',
-      secondary: 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 focus:ring-secondary-500',
-      outline: 'border-2 border-primary-500 bg-transparent text-primary-500 hover:bg-primary-50 focus:ring-primary-500',
-      ghost: 'hover:bg-secondary-100 focus:ring-secondary-500',
-      danger: 'bg-error-500 text-white hover:bg-error-600 focus:ring-error-500 shadow-soft hover:shadow-medium',
-      success: 'bg-success-500 text-white hover:bg-success-600 focus:ring-success-500 shadow-soft hover:shadow-medium',
+      default: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500',
+      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-500',
+      outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-500',
+      ghost: 'hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-gray-500',
+      destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+      success: 'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500',
     };
     
     const sizes = {
-      sm: 'h-10 px-4 text-sm',
-      md: 'h-12 px-6 text-base',
-      lg: 'h-14 px-8 text-lg',
+      sm: 'h-9 px-3 text-sm',
+      md: 'h-10 px-4 py-2 text-sm',
+      lg: 'h-11 px-8 text-base',
     };
     
     return (
