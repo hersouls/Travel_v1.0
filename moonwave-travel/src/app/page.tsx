@@ -50,10 +50,6 @@ export default function HomePage() {
 
   const countries = Array.from(new Set(trips.map(trip => trip.country)));
 
-  const handleCreateTrip = () => {
-    router.push('/trips/create');
-  };
-
   const handleTripClick = (trip: Trip) => {
     router.push(`/trips/${trip.id}`);
   };
@@ -77,10 +73,26 @@ export default function HomePage() {
             </div>
             
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="hidden sm:flex"
+                onClick={() => {
+                  // 지도 보기 기능 추가 예정
+                  console.log('지도 보기');
+                }}
+              >
                 <Map className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="hidden sm:flex"
+                onClick={() => {
+                  // 캘린더 보기 기능 추가 예정
+                  console.log('캘린더 보기');
+                }}
+              >
                 <Calendar className="w-5 h-5" />
               </Button>
               
@@ -92,16 +104,25 @@ export default function HomePage() {
                 }
                 align="right"
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  // 프로필 페이지로 이동 예정
+                  console.log('프로필 페이지로 이동');
+                }}>
                   <User className="w-4 h-4 mr-2" />
                   프로필
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  // 설정 페이지로 이동 예정
+                  console.log('설정 페이지로 이동');
+                }}>
                   <Settings className="w-4 h-4 mr-2" />
                   설정
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  // 로그아웃 기능 추가 예정
+                  console.log('로그아웃');
+                }}>
                   로그아웃
                 </DropdownMenuItem>
               </DropdownMenu>
@@ -173,7 +194,7 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              <Button onClick={handleCreateTrip} className="bg-blue-600 hover:bg-blue-700">
+              <Button href="/trips/create" className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-5 h-5 mr-2" />
                 새 여행 만들기
               </Button>
@@ -227,7 +248,7 @@ export default function HomePage() {
             {/* 생성 카드 */}
             <TripCard
               trip={{} as Trip}
-              onClick={handleCreateTrip}
+              onClick={() => router.push('/trips/create')}
               isCreateCard={true}
             />
             
@@ -250,7 +271,7 @@ export default function HomePage() {
             {/* 생성 카드 */}
             <TripCard
               trip={{} as Trip}
-              onClick={handleCreateTrip}
+              onClick={() => router.push('/trips/create')}
               isCreateCard={true}
             />
             
@@ -274,7 +295,7 @@ export default function HomePage() {
               }
             </p>
             {!searchTerm && !selectedCountry && (
-              <Button onClick={handleCreateTrip} size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button href="/trips/create" size="lg" className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-5 h-5 mr-2" />
                 여행 시작하기
               </Button>
