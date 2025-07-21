@@ -23,14 +23,14 @@ const TripCard: React.FC<TripCardProps> = ({
     return (
       <Card 
         className={cn(
-          'cursor-pointer transition-all duration-200 hover:shadow-medium hover:scale-[1.02] border-2 border-dashed border-primary-300 hover:border-primary-500 bg-primary-50/50 golden-card',
+          'cursor-pointer transition-all duration-300 hover:shadow-natural-strong hover:scale-[1.02] border-2 border-dashed border-primary-300 hover:border-primary-500 bg-primary-50/50 golden-card natural-card',
           onClick && 'hover:bg-primary-50'
         )}
         onClick={onClick}
       >
-        <div className="aspect-[1.618] relative overflow-hidden rounded-t-2xl flex items-center justify-center">
+        <div className="aspect-[1.618] relative overflow-hidden rounded-natural-large flex items-center justify-center">
           <div className="text-center golden-spacing-medium">
-            <div className="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-natural-medium flex items-center justify-center animate-natural-spring">
               <Plus className="w-8 h-8 text-primary-500" />
             </div>
             <p className="golden-text-title font-semibold text-primary-700">새로운 여행</p>
@@ -47,13 +47,13 @@ const TripCard: React.FC<TripCardProps> = ({
   return (
     <Card 
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-medium hover:scale-[1.02] group golden-card',
+        'cursor-pointer transition-all duration-300 hover:shadow-natural-strong hover:scale-[1.02] group golden-card natural-card',
         onClick && 'hover:border-primary-300'
       )}
       onClick={onClick}
     >
       <div className="relative">
-        <div className="aspect-[1.618] relative overflow-hidden rounded-t-2xl">
+        <div className="aspect-[1.618] relative overflow-hidden rounded-natural-large">
           {trip.cover_image ? (
             <Image
               src={trip.cover_image}
@@ -67,7 +67,7 @@ const TripCard: React.FC<TripCardProps> = ({
               <span className="text-white text-3xl font-bold">🌍</span>
             </div>
           )}
-          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full font-medium">
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-natural-medium font-medium">
             {trip.country}
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -108,7 +108,7 @@ const TripCard: React.FC<TripCardProps> = ({
                 {Array.from({ length: Math.min(plansCount, 5) }).map((_, i) => (
                   <div
                     key={i}
-                    className="w-2 h-2 bg-primary-400 rounded-full"
+                    className="w-2 h-2 bg-primary-400 rounded-natural-small"
                   />
                 ))}
                 {plansCount > 5 && (

@@ -45,6 +45,55 @@ export const goldenSizes = {
   },
 };
 
+// 물리학 기반 디자인 도우미 함수들
+export const naturalDesign = {
+  // 자연스러운 곡선 반지름
+  borderRadius: {
+    small: 12,
+    medium: 18,
+    large: 24,
+    xlarge: 32,
+  },
+  
+  // 자연스러운 그림자
+  shadow: {
+    soft: '0 2px 8px rgba(0, 0, 0, 0.08)',
+    medium: '0 4px 16px rgba(0, 0, 0, 0.12)',
+    strong: '0 8px 32px rgba(0, 0, 0, 0.16)',
+    floating: '0 12px 40px rgba(0, 0, 0, 0.2)',
+  },
+  
+  // 물리 기반 애니메이션 이징
+  easing: {
+    natural: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    spring: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    smooth: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  },
+  
+  // 자연스러운 간격 변주 (±8~13%)
+  getVariedSpacing: (base: number, variation: number = 0.1) => {
+    const min = base * (1 - variation);
+    const max = base * (1 + variation);
+    return Math.random() * (max - min) + min;
+  },
+  
+  // 자연스러운 크기 변주
+  getVariedSize: (base: number, variation: number = 0.05) => {
+    const min = base * (1 - variation);
+    const max = base * (1 + variation);
+    return Math.random() * (max - min) + min;
+  },
+  
+  // 황금비율 기반 자연스러운 비율
+  getGoldenRatio: (width: number) => {
+    return {
+      width,
+      height: Math.round(width / GOLDEN_RATIO),
+    };
+  },
+};
+
 // 날짜 포맷팅
 export const formatDate = (date: string | Date, formatStr: string = 'yyyy-MM-dd') => {
   const dateObj = typeof date === 'string' ? parseISO(date) : date;

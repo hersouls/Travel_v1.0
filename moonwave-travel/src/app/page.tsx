@@ -60,26 +60,26 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-secondary-50">
       {/* 헤더 */}
-      <header className="bg-white shadow-soft border-b border-secondary-200 sticky top-0 z-50 backdrop-blur-sm">
+      <header className="bg-white shadow-natural-soft border-b border-secondary-200 sticky top-0 z-50 backdrop-blur-sm rounded-natural-medium">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-natural-medium flex items-center justify-center animate-natural-spring">
                 <span className="text-white text-lg font-bold">🌍</span>
               </div>
-              <h1 className="text-xl font-bold text-secondary-900">
+              <h1 className="text-xl font-bold text-secondary-900 golden-text-title">
                 Moonwave Travel
               </h1>
             </div>
             
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <Button variant="ghost" size="sm" className="hidden sm:flex natural-button">
                 <Map className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="sm" className="hidden sm:flex">
+              <Button variant="ghost" size="sm" className="hidden sm:flex natural-button">
                 <Calendar className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="natural-button">
                 <User className="w-5 h-5" />
               </Button>
             </div>
@@ -99,7 +99,7 @@ export default function HomePage() {
                 placeholder="여행 제목이나 국가로 검색..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12"
+                className="pl-12 rounded-natural-medium"
               />
             </div>
             
@@ -108,12 +108,12 @@ export default function HomePage() {
                 variant="outline" 
                 size="sm"
                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                className="hidden sm:flex"
+                className="hidden sm:flex natural-button"
               >
                 {viewMode === 'grid' ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
               </Button>
               
-              <Button onClick={handleCreateTrip} className="w-full sm:w-auto">
+              <Button onClick={handleCreateTrip} className="w-full sm:w-auto natural-button">
                 <Plus className="w-5 h-5 mr-2" />
                 새 여행 만들기
               </Button>
@@ -127,7 +127,7 @@ export default function HomePage() {
                 variant={selectedCountry === '' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCountry('')}
-                className="whitespace-nowrap"
+                className="whitespace-nowrap natural-button"
               >
                 전체
               </Button>
@@ -137,7 +137,7 @@ export default function HomePage() {
                   variant={selectedCountry === country ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedCountry(country)}
-                  className="whitespace-nowrap"
+                  className="whitespace-nowrap natural-button"
                 >
                   {country}
                 </Button>
@@ -149,10 +149,10 @@ export default function HomePage() {
         {/* 여행 카드 그리드 */}
         {loading ? (
           <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center animate-pulse">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-accent-100 rounded-natural-xlarge flex items-center justify-center animate-natural-bounce">
               <span className="text-4xl">🌍</span>
             </div>
-            <h3 className="text-xl font-bold text-secondary-900 mb-3">
+            <h3 className="text-xl font-bold text-secondary-900 mb-3 golden-text-title">
               여행 데이터를 불러오는 중...
             </h3>
           </div>
@@ -181,20 +181,20 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-accent-100 rounded-natural-xlarge flex items-center justify-center animate-natural-spring">
               <span className="text-4xl">🌍</span>
             </div>
-            <h3 className="text-xl font-bold text-secondary-900 mb-3">
+            <h3 className="text-xl font-bold text-secondary-900 mb-3 golden-text-title">
               {searchTerm || selectedCountry ? '검색 결과가 없습니다' : '아직 여행이 없습니다'}
             </h3>
-            <p className="text-secondary-600 mb-8 max-w-md mx-auto">
+            <p className="text-secondary-600 mb-8 max-w-md mx-auto golden-text-body">
               {searchTerm || selectedCountry 
                 ? '다른 검색어를 시도해보거나 필터를 초기화해보세요.'
                 : '첫 번째 여행을 만들어보세요! 여행의 모든 순간을 특별하게 만들어드릴게요.'
               }
             </p>
             {!searchTerm && !selectedCountry && (
-              <Button onClick={handleCreateTrip} size="lg">
+              <Button onClick={handleCreateTrip} size="lg" className="natural-button">
                 <Plus className="w-5 h-5 mr-2" />
                 여행 시작하기
               </Button>
@@ -205,40 +205,40 @@ export default function HomePage() {
         {/* 통계 정보 */}
         {trips.length > 0 && (
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-soft border border-secondary-200">
+            <div className="bg-white p-6 rounded-natural-large shadow-natural-medium border border-secondary-200 natural-card animate-natural-fade">
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary-100 rounded-natural-medium flex items-center justify-center">
                   <Calendar className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-secondary-600">총 여행</p>
-                  <p className="text-2xl font-bold text-secondary-900">{trips.length}개</p>
+                  <p className="text-sm font-medium text-secondary-600 golden-text-body">총 여행</p>
+                  <p className="text-2xl font-bold text-secondary-900 golden-text-h1">{trips.length}개</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl shadow-soft border border-secondary-200">
+            <div className="bg-white p-6 rounded-natural-large shadow-natural-medium border border-secondary-200 natural-card animate-natural-fade" style={{animationDelay: '0.1s'}}>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-success-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-success-100 rounded-natural-medium flex items-center justify-center">
                   <Map className="w-6 h-6 text-success-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-secondary-600">방문 국가</p>
-                  <p className="text-2xl font-bold text-secondary-900">
+                  <p className="text-sm font-medium text-secondary-600 golden-text-body">방문 국가</p>
+                  <p className="text-2xl font-bold text-secondary-900 golden-text-h1">
                     {uniqueCountries}개
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl shadow-soft border border-secondary-200">
+            <div className="bg-white p-6 rounded-natural-large shadow-natural-medium border border-secondary-200 natural-card animate-natural-fade" style={{animationDelay: '0.2s'}}>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-accent-100 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-accent-100 rounded-natural-medium flex items-center justify-center">
                   <User className="w-6 h-6 text-accent-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-secondary-600">총 계획</p>
-                  <p className="text-2xl font-bold text-secondary-900">
+                  <p className="text-sm font-medium text-secondary-600 golden-text-body">총 계획</p>
+                  <p className="text-2xl font-bold text-secondary-900 golden-text-h1">
                     {totalPlans}개
                   </p>
                 </div>

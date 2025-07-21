@@ -24,17 +24,17 @@ const PlanCard: React.FC<PlanCardProps> = ({
     return (
       <Card 
         className={cn(
-          'cursor-pointer transition-all duration-200 hover:shadow-medium border-2 border-dashed border-primary-300 hover:border-primary-500 bg-primary-50/50',
+          'cursor-pointer transition-all duration-300 hover:shadow-natural-medium border-2 border-dashed border-primary-300 hover:border-primary-500 bg-primary-50/50 natural-card',
           onClick && 'hover:bg-primary-50'
         )}
         onClick={onClick}
       >
         <div className="p-6 text-center">
-          <div className="w-12 h-12 mx-auto mb-3 bg-primary-100 rounded-full flex items-center justify-center">
+          <div className="w-12 h-12 mx-auto mb-3 bg-primary-100 rounded-natural-medium flex items-center justify-center animate-natural-spring">
             <Plus className="w-6 h-6 text-primary-500" />
           </div>
-          <p className="text-base font-semibold text-primary-700">계획 추가</p>
-          <p className="text-sm text-primary-500 mt-1">새로운 장소를 추가하세요</p>
+          <p className="text-base font-semibold text-primary-700 golden-text-title">계획 추가</p>
+          <p className="text-sm text-primary-500 mt-1 golden-text-body">새로운 장소를 추가하세요</p>
         </div>
       </Card>
     );
@@ -47,26 +47,26 @@ const PlanCard: React.FC<PlanCardProps> = ({
   return (
     <Card 
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-medium group',
+        'cursor-pointer transition-all duration-300 hover:shadow-natural-medium group natural-card',
         onClick && 'hover:border-primary-300'
       )}
       onClick={onClick}
     >
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={cn(
-              'w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shadow-soft',
-              typeConfig.color
-            )}>
-              {typeConfig.icon}
-            </div>
+                      <div className="flex items-center space-x-3">
+              <div className={cn(
+                'w-10 h-10 rounded-natural-medium flex items-center justify-center text-white text-lg shadow-natural-soft',
+                typeConfig.color
+              )}>
+                {typeConfig.icon}
+              </div>
             <div className="flex-1 min-w-0">
               <CardTitle className="text-base line-clamp-1 group-hover:text-primary-600 transition-colors duration-200">
                 {plan.place_name}
               </CardTitle>
               <div className="flex items-center text-xs text-secondary-500 mt-1 space-x-2">
-                <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-medium">
+                <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-natural-medium font-medium">
                   Day {plan.day}
                 </span>
                 <span>•</span>
@@ -111,7 +111,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           {hasPhotos && (
             <div className="grid grid-cols-3 gap-2">
               {plan.photos.slice(0, 3).map((photo, index) => (
-                <div key={index} className="aspect-square relative overflow-hidden rounded-xl">
+                <div key={index} className="aspect-square relative overflow-hidden rounded-natural-medium">
                   <Image
                     src={photo}
                     alt={`${plan.place_name} 사진 ${index + 1}`}
@@ -120,7 +120,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
                     sizes="(max-width: 768px) 33vw, 100px"
                   />
                   {index === 2 && plan.photos.length > 3 && (
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center rounded-natural-medium">
                       <span className="text-white text-sm font-bold">
                         +{plan.photos.length - 3}
                       </span>
@@ -141,7 +141,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
           
           {/* 메모 */}
           {plan.memo && showDetails && (
-            <div className="text-sm text-secondary-700 bg-secondary-50 p-4 rounded-xl">
+            <div className="text-sm text-secondary-700 bg-secondary-50 p-4 rounded-natural-medium">
               <p className="line-clamp-3">{plan.memo}</p>
             </div>
           )}
