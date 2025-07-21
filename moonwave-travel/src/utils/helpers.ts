@@ -1,6 +1,50 @@
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
+// 황금비율 상수 및 함수
+export const GOLDEN_RATIO = 1.618;
+
+export const goldenRatio = (size: number): number => {
+  return size * GOLDEN_RATIO;
+};
+
+export const goldenRatioInverse = (size: number): number => {
+  return size / GOLDEN_RATIO;
+};
+
+// 황금비율 기반 크기 계산
+export const goldenSizes = {
+  // 카드 크기 (320px : 198px)
+  card: {
+    width: 320,
+    height: Math.round(320 / GOLDEN_RATIO), // 198px
+  },
+  // 이미지 크기 (360px : 223px)
+  image: {
+    width: 360,
+    height: Math.round(360 / GOLDEN_RATIO), // 223px
+  },
+  // 버튼 크기 (65px : 40px)
+  button: {
+    width: Math.round(40 * GOLDEN_RATIO), // 65px
+    height: 40,
+  },
+  // 폰트 크기
+  typography: {
+    body: 16,
+    title: Math.round(16 * GOLDEN_RATIO), // 26px
+    h1: Math.round(26 * GOLDEN_RATIO), // 42px
+    h2: Math.round(16 * GOLDEN_RATIO), // 26px
+  },
+  // 여백/패딩
+  spacing: {
+    small: 8,
+    medium: Math.round(8 * GOLDEN_RATIO), // 13px
+    large: Math.round(13 * GOLDEN_RATIO), // 21px
+    xlarge: Math.round(21 * GOLDEN_RATIO), // 34px
+  },
+};
+
 // 날짜 포맷팅
 export const formatDate = (date: string | Date, formatStr: string = 'yyyy-MM-dd') => {
   const dateObj = typeof date === 'string' ? parseISO(date) : date;

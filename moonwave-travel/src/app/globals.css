@@ -3,6 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* 황금비율 변수 */
+    --golden-ratio: 1.618;
+    --golden-ratio-inverse: 0.618;
+    
+    /* 황금비율 기반 크기 */
+    --card-width: 320px;
+    --card-height: calc(var(--card-width) / var(--golden-ratio));
+    --image-width: 360px;
+    --image-height: calc(var(--image-width) / var(--golden-ratio));
+    --button-height: 40px;
+    --button-width: calc(var(--button-height) * var(--golden-ratio));
+    
+    /* 황금비율 기반 폰트 */
+    --font-body: 16px;
+    --font-title: calc(var(--font-body) * var(--golden-ratio));
+    --font-h1: calc(var(--font-title) * var(--golden-ratio));
+    --font-h2: calc(var(--font-body) * var(--golden-ratio));
+    
+    /* 황금비율 기반 간격 */
+    --spacing-small: 8px;
+    --spacing-medium: calc(var(--spacing-small) * var(--golden-ratio));
+    --spacing-large: calc(var(--spacing-medium) * var(--golden-ratio));
+    --spacing-xlarge: calc(var(--spacing-large) * var(--golden-ratio));
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
     font-family: 'Pretendard', 'Inter', system-ui, sans-serif;
@@ -11,6 +37,7 @@
   body {
     @apply text-secondary-900 bg-secondary-50;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+    line-height: var(--golden-ratio);
   }
   
   /* 모바일 최적화 */
@@ -40,6 +67,65 @@
 }
 
 @layer components {
+  /* 황금비율 기반 컴포넌트 */
+  .golden-card {
+    width: var(--card-width);
+    height: var(--card-height);
+  }
+  
+  .golden-image {
+    width: var(--image-width);
+    height: var(--image-height);
+  }
+  
+  .golden-button {
+    height: var(--button-height);
+    width: var(--button-width);
+  }
+  
+  .golden-container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  /* 황금비율 기반 타이포그래피 */
+  .golden-text-body {
+    font-size: var(--font-body);
+    line-height: var(--golden-ratio);
+  }
+  
+  .golden-text-title {
+    font-size: var(--font-title);
+    line-height: 1.4;
+  }
+  
+  .golden-text-h1 {
+    font-size: var(--font-h1);
+    line-height: 1.3;
+  }
+  
+  .golden-text-h2 {
+    font-size: var(--font-h2);
+    line-height: 1.4;
+  }
+  
+  /* 황금비율 기반 간격 */
+  .golden-spacing-small {
+    padding: var(--spacing-small);
+  }
+  
+  .golden-spacing-medium {
+    padding: var(--spacing-medium);
+  }
+  
+  .golden-spacing-large {
+    padding: var(--spacing-large);
+  }
+  
+  .golden-spacing-xlarge {
+    padding: var(--spacing-xlarge);
+  }
+  
   /* 카드 호버 효과 */
   .card-hover {
     @apply transition-all duration-200 hover:shadow-medium hover:scale-[1.02];
@@ -164,6 +250,23 @@
 }
 
 @layer utilities {
+  /* 황금비율 유틸리티 */
+  .golden-ratio {
+    aspect-ratio: 1 / 1.618;
+  }
+  
+  .golden-ratio-inverse {
+    aspect-ratio: 1.618 / 1;
+  }
+  
+  .golden-width {
+    width: calc(100% / 1.618);
+  }
+  
+  .golden-height {
+    height: calc(100% / 1.618);
+  }
+  
   /* 텍스트 그림자 */
   .text-shadow {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
