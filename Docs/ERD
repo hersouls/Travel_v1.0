@@ -1,0 +1,73 @@
+# 데이터베이스 설계서(ERD) – 모바일 여행 플래너 웹서비스
+
+## 1. 핵심 테이블 구조
+
+### 1) Trip (여행일정) 테이블
+
+| 필드명      | 타입      | PK | FK | 설명                 |
+| --------- | ------- |----|----|--------------------|
+| tripId    | String  | ●  |    | 여행일정 고유 ID      |
+| userId    | String  |    | ●  | 사용자 ID            |
+| tripTitle | String  |    |    | 여행 국가/제목        |
+| coverImage| String  |    |    | 대표 이미지 URL       |
+| startDate | Date    |    |    | 여행 시작일          |
+| endDate   | Date    |    |    | 여행 종료일          |
+| createdAt | DateTime|    |    | 생성 일시            |
+
+### 2) Plan (여행계획) 테이블
+
+| 필드명         | 타입         | PK | FK | 설명                     |
+| ------------- | ---------- |----|----|------------------------|
+| planId        | String     | ●  |    | 여행계획 고유 ID          |
+| tripId        | String     |    | ●  | 소속 여행일정 ID          |
+| day           | Integer    |    |    | 여행 N일차                |
+| photos        | Array/Text |    |    | 사진 URL 목록              |
+| youtubeLink   | String     |    |    | 유튜브 링크               |
+| startTime     | DateTime   |    |    | 계획 시작 시간             |
+| endTime       | DateTime   |    |    | 계획 종료 시간             |
+| type          | Enum       |    |    | 계획 유형(맛집/관광 등)    |
+| placeName     | String     |    |    | 장소명                     |
+| memo          | Text       |    |    | 메모                       |
+| googlePlaceId | String     |    |    | Google Place ID           |
+| address       | String     |    |    | 장소 주소                  |
+| latitude      | Double     |    |    | 위도                       |
+| longitude     | Double     |    |    | 경도                       |
+| openingHours  | String     |    |    | 영업시간                   |
+| website       | String     |    |    | 웹사이트                   |
+| priceLevel    | Integer    |    |    | 가격 수준                  |
+| rating        | Float      |    |    | 평점                       |
+| createdAt     | DateTime   |    |    | 생성 일시                  |
+
+### 3) User (사용자) 테이블 (예시)
+
+| 필드명      | 타입      | PK | 설명                |
+| ---------- | ------- |----|-------------------|
+| userId     | String  | ●  | 사용자 고유 ID       |
+| email      | String  |    | 이메일(로그인)       |
+| password   | String  |    | 암호화 비밀번호      |
+| nickname   | String  |    | 닉네임              |
+| profileImg | String  |    | 프로필 이미지 URL    |
+| createdAt  | DateTime|    | 가입일시            |
+
+---
+
+## 2. 테이블 관계(ERD 요약)
+
+- **User 1:N Trip**
+  - 한 사용자는 여러 여행일정(Trip)을 생성 가능
+- **Trip 1:N Plan**
+  - 한 여행일정(Trip)은 여러 여행계획(Plan)으로 구성
+- (Option) Plan ↔ Place (Place 테이블 확장 가능)
+  - 장소정보 별도 테이블로 분리/중복 최소화
+
+---
+
+## 3. 데이터 흐름 예시
+
+- 여행일정카드(Trip) 생성 → Day 수만큼 기본 Plan(여행계획) 자동 생성
+- Plan에서 장소 검색/선택 시 Google Place 데이터 자동 매핑/저장
+- 사용자별 Trip/Plan 목록 및 상세 쿼리 지원
+
+---
+
+(※ 실제 프로젝트에서는 DBMS별 DDL, Index, 제약조건, 샘플 데이터 등 상세화)
