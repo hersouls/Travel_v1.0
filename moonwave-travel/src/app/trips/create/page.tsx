@@ -132,8 +132,8 @@ export default function CreateTripPage() {
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 히어로 섹션 */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-            <Globe className="w-8 h-8 text-blue-600" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+            <Globe className="w-8 h-8 text-primary-500" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             새로운 여행을 시작해보세요
@@ -288,7 +288,7 @@ export default function CreateTripPage() {
             <Button
               onClick={handleCreateTrip}
               disabled={!canSave || isLoading || calculateDuration() > 30}
-              className="w-full max-w-md bg-blue-600 hover:bg-blue-700"
+              className="w-full max-w-md bg-primary-500 hover:bg-primary-600"
               size="lg"
             >
               {isLoading ? (

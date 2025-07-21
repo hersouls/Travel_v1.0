@@ -64,7 +64,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-bold text-gray-900">
@@ -194,7 +194,7 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              <Button href="/trips/create" className="bg-blue-600 hover:bg-blue-700">
+              <Button href="/trips/create" className="bg-primary-500 hover:bg-primary-600">
                 <Plus className="w-5 h-5 mr-2" />
                 새 여행 만들기
               </Button>
@@ -230,8 +230,8 @@ export default function HomePage() {
         {/* 여행 카드 그리드 */}
         {loading ? (
           <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-              <Globe className="w-8 h-8 text-blue-600 animate-spin" />
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+              <Globe className="w-8 h-8 text-primary-500 animate-spin" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               여행 데이터를 불러오는 중...
@@ -282,8 +282,8 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-              <Globe className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+              <Globe className="w-8 h-8 text-primary-500" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               {searchTerm || selectedCountry ? '검색 결과가 없습니다' : '아직 여행이 없습니다'}
@@ -295,7 +295,7 @@ export default function HomePage() {
               }
             </p>
             {!searchTerm && !selectedCountry && (
-              <Button href="/trips/create" size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button href="/trips/create" size="lg" className="bg-primary-500 hover:bg-primary-600">
                 <Plus className="w-5 h-5 mr-2" />
                 여행 시작하기
               </Button>
@@ -310,8 +310,8 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-primary-500" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">총 여행</p>
@@ -322,8 +322,8 @@ export default function HomePage() {
               
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Map className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                    <Map className="w-6 h-6 text-success-500" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">방문 국가</p>
@@ -336,8 +336,8 @@ export default function HomePage() {
               
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-accent-500" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">총 계획</p>
