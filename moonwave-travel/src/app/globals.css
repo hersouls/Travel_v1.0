@@ -126,6 +126,85 @@
     padding: var(--spacing-xlarge);
   }
   
+  /* 물리학 기반 자연스러운 디자인 */
+  .natural-card {
+    border-radius: 24px;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .natural-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .natural-button {
+    border-radius: 20px;
+    padding: 12px 24px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .natural-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .natural-button:active {
+    transform: translateY(0);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* 자연스러운 그림자 */
+  .shadow-natural-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shadow-natural-medium {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  
+  .shadow-natural-strong {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  }
+  
+  .shadow-natural-floating {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* 자연스러운 곡선 */
+  .rounded-natural-small {
+    border-radius: 12px;
+  }
+  
+  .rounded-natural-medium {
+    border-radius: 18px;
+  }
+  
+  .rounded-natural-large {
+    border-radius: 24px;
+  }
+  
+  .rounded-natural-xlarge {
+    border-radius: 32px;
+  }
+  
+  /* 물리 기반 애니메이션 */
+  .animate-natural-spring {
+    animation: naturalSpring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .animate-natural-bounce {
+    animation: naturalBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .animate-natural-fade {
+    animation: naturalFade 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
   /* 카드 호버 효과 */
   .card-hover {
     @apply transition-all duration-200 hover:shadow-medium hover:scale-[1.02];
@@ -422,6 +501,50 @@
   50% {
     transform: none;
     animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* 물리학 기반 자연스러운 애니메이션 */
+@keyframes naturalSpring {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  50% {
+    transform: scale(1.05) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes naturalBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-10px);
+  }
+  70% {
+    transform: scale(0.9) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes naturalFade {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

@@ -7,10 +7,10 @@
 **Moonwave Travel**은 사용자가 간편하게 여행 일정을 생성하고, Day별 세부 계획을 직관적으로 관리하며, 지도 기반 시각화까지 지원하는 모바일 웹서비스입니다.
 
 ### 🎯 핵심 기능
-- **여행일정카드 생성** - 여행 국가와 기간 선택, 일정 자동 생성
-- **여행계획카드 등록** - Day별로 사진, 시간, 장소, 메모 등 상세 계획 기록
-- **Google 지도 연동** - 장소 검색 시 상세 정보 자동 불러오기
-- **전체 일정 지도 뷰** - 모든 계획을 지도 위에서 시각화
+- **여행일정카드 생성** - 여행 국가와 기간을 선택하여 전체 여행의 기본 틀을 자동 생성
+- **여행계획카드 등록** - Day별로 사진, 시간, 장소, 메모 등 상세 계획을 구체적으로 기록
+- **Google 지도 API 연동** - 장소 검색 시 Google Place API를 통해 장소의 상세 정보(영업시간, 평점, 웹사이트 등)를 자동으로 불러와 저장
+- **지도 뷰** - 생성된 모든 계획을 지도 위에서 한눈에 확인
 
 ### 👥 타겟 사용자
 자유여행을 선호하며, 스마트폰으로 일정을 세부적으로 관리하고 싶은 여행자
@@ -62,12 +62,13 @@
 
 ## 📱 사용자 플로우
 
-1. **메인화면** → 여행일정카드 목록 조회
-2. **여행일정카드 생성** → 국가/기간 설정
-3. **Day별 상세** → 여행계획카드 추가/수정
-4. **장소 검색** → Google Place API 연동
-5. **전체 지도** → 등록된 모든 계획 지도 뷰
-6. **계정 관리** → 프로필 및 설정
+1. **메인 화면 (여행일정카드 목록)** → 사용자가 생성한 모든 여행일정카드 조회
+2. **여행일정카드 생성** → 여행 국가와 기간을 설정하여 새로운 여행 생성
+3. **여행일정 상세 (Day별 목록)** → Day별 여행계획카드 목록 조회 및 관리
+4. **여행계획카드 상세/수정** → Day별 세부 일정 등록 및 수정
+5. **장소 검색 (Google API)** → Google Places API를 활용한 장소 검색 및 선택
+6. **전체 일정 지도 보기** → 등록된 모든 계획을 지도 위에서 시각화
+7. **계정 관리** → 프로필 및 설정 관리
 
 ## 🗄 데이터베이스 구조
 
@@ -77,8 +78,8 @@
 - **plans** - 여행계획 (Trip 1:N)
 
 ### 주요 필드
-- 여행일정: id, user_id, title, country, start_date, end_date, cover_image
-- 여행계획: id, trip_id, day, place_name, start_time, end_time, type, photos, memo, google_place_id
+- **Trip (여행일정)**: tripId, userId, tripTitle, coverImage, startDate, endDate, createdAt
+- **Plan (여행계획)**: planId, tripId, day, photos, youtubeLink, startTime, endTime, type, placeName, memo, googlePlaceId, address, latitude, longitude, openingHours, website, priceLevel, rating, createdAt
 
 ## 🔌 API 구조
 
@@ -109,8 +110,9 @@
 ### 1단계 (MVP) ✅
 - [x] 프로젝트 초기 설정
 - [x] 기본 UI 컴포넌트 구축
-- [x] Mock 데이터 구현
-- [x] 메인 페이지 구현
+- [x] Mock 데이터 구현 및 Supabase 블록처리
+- [x] 메인 페이지 구현 (Mock 데이터 연동)
+- [x] 데이터 서비스 레이어 구축
 - [ ] 여행 생성/수정 기능
 - [ ] 여행 상세 페이지
 
@@ -139,7 +141,10 @@ cd moonwave-travel
 npm install
 ```
 
-### 3. 환경 변수 설정
+### 3. 환경 변수 설정 (선택사항)
+현재 Mock 데이터 모드로 설정되어 있어 Supabase 설정 없이도 실행 가능합니다.
+
+Supabase 연동을 원하는 경우:
 ```bash
 cp .env.local.example .env.local
 ```
@@ -159,10 +164,20 @@ npm run dev
 
 ## 🗄 데이터베이스 설정
 
-### Supabase 프로젝트 생성
+### 현재 상태: Mock 데이터 모드
+프로젝트는 현재 Mock 데이터를 사용하여 프론트엔드 개발을 진행할 수 있도록 설정되어 있습니다.
+
+- **Mock 데이터 위치**: `src/lib/mockData.ts`
+- **데이터 서비스**: `src/lib/dataService.ts`
+- **Supabase 연동**: `src/lib/supabase.ts` (주석 처리됨)
+
+### Supabase 연동 (향후)
+Supabase 연동을 원하는 경우:
+
 1. [Supabase](https://supabase.com)에서 새 프로젝트 생성
 2. SQL Editor에서 `supabase-schema.sql` 실행
 3. 프로젝트 설정에서 URL과 API 키 복사
+4. `src/lib/supabase.ts`의 주석을 해제하고 환경 변수 설정
 
 ### 스키마 적용
 ```bash

@@ -1,167 +1,122 @@
 import React from 'react';
-import Image from 'next/image';
+import { Card, CardContent } from '@/components/ui/card';
 import { Plan } from '@/types';
-import { formatTime, truncateText, getYouTubeEmbedUrl } from '@/utils/helpers';
-import { planTypeConfig } from '@/utils/mockData';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { MapPin, Clock, Star, ExternalLink, Play, Plus } from 'lucide-react';
+import { planTypeConfig } from '@/lib/mockData';
+import { formatTime } from '@/utils/helpers';
 import { cn } from '@/utils/helpers';
+import { Clock, MapPin } from 'lucide-react';
 
 interface PlanCardProps {
   plan: Plan;
   onClick?: () => void;
   showDetails?: boolean;
-  isCreateCard?: boolean;
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({ 
   plan, 
   onClick, 
-  showDetails = true,
-  isCreateCard = false
+  showDetails = true 
 }) => {
-  if (isCreateCard) {
-    return (
-      <Card 
-        className={cn(
-          'cursor-pointer transition-all duration-200 hover:shadow-medium border-2 border-dashed border-primary-300 hover:border-primary-500 bg-primary-50/50',
-          onClick && 'hover:bg-primary-50'
-        )}
-        onClick={onClick}
-      >
-        <div className="p-6 text-center">
-          <div className="w-12 h-12 mx-auto mb-3 bg-primary-100 rounded-full flex items-center justify-center">
-            <Plus className="w-6 h-6 text-primary-500" />
-          </div>
-          <p className="text-base font-semibold text-primary-700">계획 추가</p>
-          <p className="text-sm text-primary-500 mt-1">새로운 장소를 추가하세요</p>
-        </div>
-      </Card>
-    );
-  }
-
-  const typeConfig = planTypeConfig[plan.type];
-  const hasPhotos = plan.photos && plan.photos.length > 0;
-  const hasYouTube = plan.youtube_url;
+  const config = planTypeConfig[plan.type] || planTypeConfig.other;
 
   return (
     <Card 
       className={cn(
-        'cursor-pointer transition-all duration-200 hover:shadow-medium group',
+        'cursor-pointer transition-all duration-300 hover:shadow-natural-strong hover:scale-[1.02] group natural-card',
         onClick && 'hover:border-primary-300'
       )}
       onClick={onClick}
     >
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={cn(
-              'w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shadow-soft',
-              typeConfig.color
-            )}>
-              {typeConfig.icon}
-            </div>
-            <div className="flex-1 min-w-0">
-              <CardTitle className="text-base line-clamp-1 group-hover:text-primary-600 transition-colors duration-200">
-                {plan.place_name}
-              </CardTitle>
-              <div className="flex items-center text-xs text-secondary-500 mt-1 space-x-2">
-                <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-medium">
-                  Day {plan.day}
-                </span>
-                <span>•</span>
-                <span className="font-medium">{typeConfig.label}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          {/* 시간 정보 */}
-          {(plan.start_time || plan.end_time) && (
-            <div className="flex items-center text-sm text-secondary-600">
-              <Clock className="w-4 h-4 mr-2 flex-shrink-0 text-primary-500" />
-              <span className="font-medium">
-                {plan.start_time && formatTime(plan.start_time)}
-                {plan.start_time && plan.end_time && ' - '}
-                {plan.end_time && formatTime(plan.end_time)}
+      <CardContent className="p-4">
+        <div className="flex items-start space-x-4">
+          {/* 시간 및 유형 */}
+          <div className="flex-shrink-0">
+            <div className="flex items-center space-x-2 mb-2">
+              <Clock className="w-4 h-4 text-secondary-400" />
+              <span className="text-sm font-medium text-secondary-900 golden-text-body">
+                {formatTime(plan.start_time)} - {formatTime(plan.end_time)}
               </span>
             </div>
-          )}
-          
-          {/* 주소 */}
-          {plan.address && (
-            <div className="flex items-start text-sm text-secondary-600">
-              <MapPin className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5 text-primary-500" />
-              <span className="line-clamp-2">{plan.address}</span>
+            
+            <div className={cn(
+              'inline-flex items-center space-x-2 px-3 py-1.5 rounded-natural-medium text-sm font-medium',
+              config.color === 'bg-blue-500' ? 'bg-blue-100 text-blue-700' :
+              config.color === 'bg-green-500' ? 'bg-green-100 text-green-700' :
+              config.color === 'bg-orange-500' ? 'bg-orange-100 text-orange-700' :
+              config.color === 'bg-purple-500' ? 'bg-purple-100 text-purple-700' :
+              'bg-gray-100 text-gray-700'
+            )}>
+              <span>{config.icon}</span>
+              <span>{config.label}</span>
             </div>
-          )}
-          
-          {/* 평점 */}
-          {plan.rating && (
-            <div className="flex items-center text-sm text-secondary-600">
-              <Star className="w-4 h-4 mr-1 text-accent-500 fill-current" />
-              <span className="font-medium">{plan.rating}</span>
-            </div>
-          )}
-          
-          {/* 사진 갤러리 */}
-          {hasPhotos && (
-            <div className="grid grid-cols-3 gap-2">
-              {plan.photos.slice(0, 3).map((photo, index) => (
-                <div key={index} className="aspect-square relative overflow-hidden rounded-xl">
-                  <Image
-                    src={photo}
-                    alt={`${plan.place_name} 사진 ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 33vw, 100px"
-                  />
-                  {index === 2 && plan.photos.length > 3 && (
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">
-                        +{plan.photos.length - 3}
-                      </span>
+          </div>
+
+          {/* 장소 정보 */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start space-x-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-secondary-900 golden-text-title line-clamp-2 group-hover:text-primary-600 transition-colors duration-200">
+                  {plan.place_name}
+                </h3>
+                
+                {showDetails && (
+                  <div className="mt-2 space-y-1">
+                    {plan.address && (
+                      <div className="flex items-center space-x-2 text-sm text-secondary-600 golden-text-body">
+                        <MapPin className="w-3 h-3 flex-shrink-0" />
+                        <span className="line-clamp-1">{plan.address}</span>
+                      </div>
+                    )}
+                    
+                    {plan.rating > 0 && (
+                      <div className="flex items-center space-x-1 text-sm text-secondary-600 golden-text-body">
+                        <span className="text-yellow-500">
+                          {'★'.repeat(Math.floor(plan.rating))}
+                          {'☆'.repeat(5 - Math.floor(plan.rating))}
+                        </span>
+                        <span>({plan.rating})</span>
+                      </div>
+                    )}
+                    
+                    {plan.memo && (
+                      <p className="text-sm text-secondary-600 golden-text-body line-clamp-2">
+                        {plan.memo}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 사진 미리보기 */}
+              {plan.photos && plan.photos.length > 0 && (
+                <div className="flex-shrink-0">
+                  <div className="w-16 h-16 rounded-natural-medium overflow-hidden">
+                    <img
+                      src={plan.photos[0]}
+                      alt={plan.place_name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {plan.photos.length > 1 && (
+                    <div className="absolute top-1 right-1 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded-natural-small">
+                      +{plan.photos.length - 1}
                     </div>
                   )}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-          
-          {/* YouTube 링크 */}
-          {hasYouTube && (
-            <div className="flex items-center text-sm text-error-500 hover:text-error-600">
-              <Play className="w-4 h-4 mr-2" />
-              <span className="font-medium">YouTube 영상</span>
-            </div>
-          )}
-          
-          {/* 메모 */}
-          {plan.memo && showDetails && (
-            <div className="text-sm text-secondary-700 bg-secondary-50 p-4 rounded-xl">
-              <p className="line-clamp-3">{plan.memo}</p>
-            </div>
-          )}
-          
-          {/* 웹사이트 링크 */}
-          {plan.website && showDetails && (
-            <div className="flex items-center text-sm text-primary-600 hover:text-primary-700">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              <a 
-                href={plan.website} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="font-medium"
-              >
-                웹사이트 방문
-              </a>
-            </div>
-          )}
+          </div>
         </div>
+
+        {/* 유튜브 링크 표시 */}
+        {plan.youtube_link && (
+          <div className="mt-3 pt-3 border-t border-secondary-100">
+            <div className="flex items-center space-x-2 text-sm text-secondary-600 golden-text-body">
+              <span className="text-red-500">▶</span>
+              <span className="line-clamp-1">유튜브 영상 포함</span>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

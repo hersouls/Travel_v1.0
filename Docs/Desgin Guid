@@ -95,8 +95,88 @@ function goldenRatio(size) {
 const goldenWidth = goldenRatio(240); // 388.32
 ```
 
-07. 아이콘 & 이미지 가이드
-7.1 아이콘 가이드
+07. 물리학 기반 자연스러운 디자인 가이드
+
+7.1 원리 개요 – '자연은 왜 아름다운가?'
+- **자연계의 질서:** 곡선, 파동, 성장, 균형, 불균일의 조화(완벽한 대칭이 아닌 "살아있는 흐름")
+- **황금비율**: 자연물(소라, 꽃, 은하 등)에서 발견되는 성장 비율
+- **파동(웨이브):** 곡선과 진동의 리듬감, 지나치게 각진 형태가 아닌 완만한 흐름 강조
+- **중력·균형:** 아래로 갈수록 무게중심이 잡히는 안정, 시각적 '착지감'
+- **프랙탈/성장:** 가지, 혈관, 번개 등 "자기유사적 확장"이 반복적으로 등장
+
+7.2 디자인 적용법
+
+[1] 곡선 & 파동(웨이브) 적용
+- **컨테이너, 카드, 버튼, 리스트** 등에 둥근 모서리(Radius 18~24px) 적극 활용
+- **직선 기반 레이아웃에 약간의 곡률 부여** (완전한 직선 대신 미세한 둥글림)
+- 한 화면 내 100% 정렬보다, 미묘하게 어긋난 간격/크기(±8~13%)로 생동감 부여
+
+[2] 중력·균형 원리
+- 헤더/네비는 가볍고, 주요 정보·버튼은 하단부에 '착지'(무게감) 있게 배치
+- CTA 버튼·FAB 등은 화면 하단 모서리→중앙으로 자연스레 유도
+- 플로팅 요소(알림, 툴팁 등)는 중력·반동 효과(애니메이션 이징: cubic-bezier, spring 등)로 "떨어지듯" 나타내기
+
+[3] 성장·프랙탈 패턴
+- 반복되는 리스트/카드/버튼은 "한 가지 규칙 내 미묘한 변주" 적용(예: 카드 크기 95/100/105%로 랜덤 배치)
+- 섹션/정보블록 확장 시 "스케일+투명도"로 성장하는 듯한 등장 애니메이션 활용
+- 프랙탈/나뭇가지형 장식은 필요시 아주 미묘하게 포인트로만 사용(과도한 배경패턴 지양)
+
+[4] 색·광·에너지
+- 자연광에서 온듯한 Gradient(Linear/Radial), 투명도, 그림자(Shadow Y축+α) 활용
+- 텍스트·버튼 등 액티브 요소는 '에너지 흐름'(색상 변화, 잔상 등)으로 시선 이동 유도
+
+7.3 실전 예시
+
+- **버튼**: 
+  - 정사각형 X → 약간 길쭉한 타원(1:1.5~1.618), Radius 20px 이상
+  - 클릭시 "파동 이펙트"(ripple/wave effect) 적용
+- **카드/리스트**:
+  - 상하/좌우 일정하지 않은 간격, 랜덤 Drop Shadow
+  - 등장/삭제시 spring(물리 기반) 애니메이션
+
+7.4 CSS/JS 구현 예시
+```css
+/* 자연스러운 곡선과 그림자 */
+.natural-card {
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.natural-button {
+  border-radius: 20px;
+  padding: 12px 24px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.natural-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+```
+
+```javascript
+// 물리 기반 애니메이션 (Framer Motion 예시)
+const springConfig = {
+  type: "spring",
+  stiffness: 300,
+  damping: 30
+};
+
+// 카드 등장 애니메이션
+<motion.div
+  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+  animate={{ opacity: 1, scale: 1, y: 0 }}
+  transition={springConfig}
+>
+  카드 내용
+</motion.div>
+```
+
+08. 아이콘 & 이미지 가이드
+8.1 아이콘 가이드
 기본 스타일: Lucide(권장), Radix, Tabler 등 단일 라인 아이콘 세트 사용
 사이즈: 기본 20~24px, 버튼 내 아이콘은 18px, 모바일 최소 16px
 컬러: 기본 텍스트 색상에 맞춤, 강조 필요시 Accent 컬러 사용
@@ -104,7 +184,7 @@ const goldenWidth = goldenRatio(240); // 388.32
 사용 예시
 <ArrowRight className="w-5 h-5 text-accent" />
 접근성: 의미 있는 아이콘에는 aria-label, 데코레이션용은 aria-hidden
-7.2 이미지 가이드
+8.2 이미지 가이드
 비율: 대표 이미지/썸네일은 16:9, 프로필 이미지는 1:1 비율 권장
 최소 해상도: 480x270px, 고해상도(Retina)는 2x 지원
 배치: 이미지+텍스트 조합(병렬, 스택형 등) 자유롭게 활용
@@ -112,8 +192,8 @@ const goldenWidth = goldenRatio(240); // 388.32
 대체 텍스트: 모든 이미지 alt 속성 필수, 데코레이션 이미지는 alt=""
 저작권/출처 표기: 외부 이미지 사용시 출처 명확히 기재
 
-08. 반응형 & 접근성 원칙
-8.1 반응형 원칙
+09. 반응형 & 접근성 원칙
+9.1 반응형 원칙
 모바일 우선(Mobile First): 모바일 레이아웃을 우선 설계하고 데스크탑으로 확장합니다.
 브레이크포인트
 sm: 640px
@@ -128,7 +208,7 @@ xl: 1280px
 콘텐츠 리플로우: 화면 크기에 따라 자연스럽게 배치 변경, 가로 스크롤은 원칙적으로 금지
 불필요 요소 숨김: PC 전용 UI/이미지는 모바일에서 숨김 처리
 반응형 이미지: Next.js Image 컴포넌트와 sizes, srcSet 적극 활용
-8.2 접근성(Accessibility) 원칙
+9.2 접근성(Accessibility) 원칙
 명확한 색상 대비: 텍스트와 배경은 WCAG 기준 4.5:1 이상 대비 확보
 스크린리더 대응: aria-label, role 등 시맨틱 마크업 준수
 키보드 내비게이션: Tab, Enter, ESC 등 키보드만으로 모든 UI 조작 가능해야 함
@@ -139,15 +219,15 @@ xl: 1280px
 폼 입력: label 태그 명확히 연결, 모든 에러/경고/성공 메시지에 스크린리더 지원
 접근성 테스트: Lighthouse, axe 등 도구로 정기적 검사 및 개선
 
-09. 디자인 리소스 관리
-9.1 Figma 및 디자인 파일 관리
+10. 디자인 리소스 관리
+10.1 Figma 및 디자인 파일 관리
 Figma 프로젝트명: moonwave-coding-design
 버전 관리: 주요 업데이트 시 파일 복제, 날짜·버전명을 명확히 표기 (예: main_v1.1_2024-07-17)
 컴포넌트 라이브러리: Button, Card, Modal 등 마스터 컴포넌트 중심 관리
 공유/권한: 외부 협업자 초대 시 뷰어/에디터 권한 분리 관리
 디자인 템플릿화: 반복되는 UI/패턴은 템플릿으로 등록, 변경 시 전체 동기화
 정기 백업: 주요 버전별로 Figma 파일 별도 백업 권장
-9.2 이미지/아이콘 파일 관리
+10.2 이미지/아이콘 파일 관리
 폴더 구조 예시
 /design
   /figma
@@ -160,8 +240,8 @@ Figma 프로젝트명: moonwave-coding-design
 공유 경로: NAS, Notion, 구글드라이브 등 중앙 저장소와 연동 관리
 삭제/변경 이력 관리: 파일 이동·삭제 시 기록 유지(필요시 버전 관리 툴 활용)
 
-10. 실전 적용 예시 & 코드스니펫
-10.1 Button 컴포넌트 (TailwindCSS + React)
+11. 실전 적용 예시 & 코드스니펫
+11.1 Button 컴포넌트 (TailwindCSS + React)
 import { cn } from "@/lib/utils";
 
 export function Button({ children, className, ...props }) {
@@ -177,7 +257,7 @@ export function Button({ children, className, ...props }) {
     </button>
   );
 }
-10.2 Card 컴포넌트 (TailwindCSS + React)
+11.2 Card 컴포넌트 (TailwindCSS + React)
 export function Card({ children, className }) {
   return (
     <div className={cn("rounded-2xl p-6 shadow-md bg-white", className)}>
@@ -185,11 +265,11 @@ export function Card({ children, className }) {
     </div>
   );
 }
-10.3 그리드 레이아웃 예시 (TailwindCSS)
+11.3 그리드 레이아웃 예시 (TailwindCSS)
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
   {/* 카드/섹션 반복 */}
 </div>
-10.4 반응형 이미지 적용 예시 (Next.js)
+11.4 반응형 이미지 적용 예시 (Next.js)
 import Image from "next/image";
 
 <Image
@@ -201,8 +281,8 @@ import Image from "next/image";
   className="rounded-xl"
 />
 
-11. 기타: 애니메이션, 모션, 브랜드 일관성
-11.1 Motion / Animation 가이드
+12. 기타: 애니메이션, 모션, 브랜드 일관성
+12.1 Motion / Animation 가이드
 Framer Motion 권장: 주요 Fade, Slide, Scale 애니메이션은 Framer Motion 라이브러리 활용을 기본 원칙으로 합니다.
 지속 시간: 애니메이션은 0.2~0.4초 내에서 자연스러운 가속도(Easing) 적용
 반응형 모션: 모바일 환경에서는 모션 효과 최소화, 핵심 액션/전환에만 적용
@@ -217,7 +297,7 @@ import { motion } from "framer-motion";
 >
   콘텐츠 내용
 </motion.div>
-11.2 브랜드 Tone & Voice
+12.2 브랜드 Tone & Voice
 컬러, 폰트, 모서리, 그림자 등 모든 UI 요소에 브랜드 일관성 유지
 텍스트 스타일: 친근함, 명확함, 불필요한 전문용어/관공서 말투 지양
 UI 피드백 일관화: 토스트, 모달, 에러/성공 메시지 등 동일 톤&스타일 적용
