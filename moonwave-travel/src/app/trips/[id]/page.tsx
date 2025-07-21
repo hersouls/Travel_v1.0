@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Map, MoreVertical, Plus } from 'lucide-react';
+import { ArrowLeft, Map, MoreVertical, Plus, Calendar, Clock, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/Badge';
 import { dataService } from '@/lib/dataService';
 import { Trip, Plan } from '@/types';
 import { formatDate, calculateTripDuration } from '@/utils/helpers';
@@ -86,12 +87,12 @@ export default function TripDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary-100 to-accent-100 rounded-natural-xlarge flex items-center justify-center animate-natural-bounce">
-            <span className="text-2xl">🌍</span>
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center animate-spin">
+            <Calendar className="w-8 h-8 text-blue-600" />
           </div>
-          <p className="text-secondary-600 golden-text-body">여행 정보를 불러오는 중...</p>
+          <p className="text-gray-600">여행 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -99,10 +100,10 @@ export default function TripDetailPage() {
 
   if (!trip) {
     return (
-      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-secondary-600 golden-text-body">여행을 찾을 수 없습니다.</p>
-          <Button onClick={() => router.push('/')} className="mt-4 natural-button">
+          <p className="text-gray-600 mb-4">여행을 찾을 수 없습니다.</p>
+          <Button onClick={() => router.push('/')} className="bg-blue-600 hover:bg-blue-700">
             홈으로 돌아가기
           </Button>
         </div>
@@ -111,20 +112,19 @@ export default function TripDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-natural-soft border-b border-secondary-200 sticky top-0 z-50 backdrop-blur-sm rounded-natural-medium">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => router.push('/')}
-              className="natural-button"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-xl font-bold text-secondary-900 golden-text-title">
+            <h1 className="text-xl font-bold text-gray-900">
               {trip.country}
             </h1>
             <div className="flex items-center space-x-2">
@@ -132,14 +132,12 @@ export default function TripDetailPage() {
                 variant="ghost"
                 size="sm"
                 onClick={handleViewMap}
-                className="natural-button"
               >
                 <Map className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="natural-button"
               >
                 <MoreVertical className="w-5 h-5" />
               </Button>
@@ -151,11 +149,11 @@ export default function TripDetailPage() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 여행 정보 */}
-        <Card className="natural-card mb-8">
+        <Card className="mb-8 overflow-hidden">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               {trip.coverImage && (
-                <div className="w-20 h-20 rounded-natural-medium overflow-hidden flex-shrink-0">
+                <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                   <img
                     src={trip.coverImage}
                     alt={trip.title}
@@ -164,15 +162,19 @@ export default function TripDetailPage() {
                 </div>
               )}
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-secondary-900 golden-text-title mb-2">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
                   {trip.title}
                 </h2>
-                <p className="text-secondary-600 golden-text-body">
-                  {formatDate(trip.startDate)} ~ {formatDate(trip.endDate)}
-                </p>
-                <p className="text-sm text-secondary-500 golden-text-body">
-                  총 {totalDays}일간의 여행
-                </p>
+                <div className="flex items-center space-x-4 text-gray-600">
+                  <div className="flex items-center">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <span>{formatDate(trip.startDate)} ~ {formatDate(trip.endDate)}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-1" />
+                    <span>총 {totalDays}일간의 여행</span>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -180,7 +182,7 @@ export default function TripDetailPage() {
 
         {/* Day 탭 */}
         <div className="mb-6">
-          <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex space-x-2 overflow-x-auto pb-2">
             {Array.from({ length: totalDays }, (_, index) => {
               const day = index + 1;
               const planCount = getDayPlanCount(day);
@@ -189,24 +191,25 @@ export default function TripDetailPage() {
                   key={day}
                   onClick={() => setSelectedDay(day)}
                   className={`
-                    flex items-center space-x-2 px-4 py-2 rounded-natural-medium font-medium whitespace-nowrap transition-all duration-200 natural-button
+                    flex items-center space-x-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200
                     ${selectedDay === day 
-                      ? 'bg-primary-500 text-white shadow-natural-medium' 
-                      : 'bg-white text-secondary-700 hover:bg-secondary-50'
+                      ? 'bg-blue-600 text-white shadow-md' 
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                     }
                   `}
                 >
                   <span>Day {day}</span>
                   {planCount > 0 && (
-                    <span className={`
-                      text-xs px-2 py-1 rounded-natural-small
-                      ${selectedDay === day 
-                        ? 'bg-white/20 text-white' 
-                        : 'bg-primary-100 text-primary-700'
+                    <Badge 
+                      variant={selectedDay === day ? 'secondary' : 'default'}
+                      className={
+                        selectedDay === day 
+                          ? 'bg-white/20 text-white border-0' 
+                          : 'bg-blue-100 text-blue-700'
                       }
-                    `}>
+                    >
                       {planCount}
-                    </span>
+                    </Badge>
                   )}
                 </button>
               );
@@ -228,18 +231,18 @@ export default function TripDetailPage() {
                 />
               ))
           ) : (
-            <Card className="natural-card">
+            <Card>
               <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-secondary-100 rounded-natural-medium flex items-center justify-center">
-                  <span className="text-2xl">📝</span>
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <MapPin className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-secondary-900 mb-2 golden-text-title">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Day {selectedDay}에 등록된 계획이 없습니다
                 </h3>
-                <p className="text-secondary-600 mb-6 golden-text-body">
+                <p className="text-gray-600 mb-6">
                   첫 번째 계획을 추가해보세요!
                 </p>
-                <Button onClick={handleAddPlan} className="natural-button">
+                <Button onClick={handleAddPlan} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="w-5 h-5 mr-2" />
                   계획 추가하기
                 </Button>
@@ -254,7 +257,7 @@ export default function TripDetailPage() {
             <Button
               onClick={handleAddPlan}
               size="lg"
-              className="w-14 h-14 rounded-full shadow-natural-floating natural-button"
+              className="w-14 h-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="w-6 h-6" />
             </Button>
