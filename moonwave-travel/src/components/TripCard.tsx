@@ -14,7 +14,7 @@ interface TripCardProps {
   isCreateCard?: boolean;
 }
 
-const TripCard: React.FC<TripCardProps> = ({ 
+const TripCard = React.memo<TripCardProps>(({ 
   trip, 
   onClick, 
   showPlansCount = true,
@@ -133,6 +133,8 @@ const TripCard: React.FC<TripCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+TripCard.displayName = 'TripCard';
 
 export default TripCard;

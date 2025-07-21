@@ -33,6 +33,7 @@ export interface Plan {
   type: 'accommodation' | 'attraction' | 'restaurant' | 'transport' | 'other';
   photos: string[];
   youtube_url?: string;
+  youtube_link?: string; // 호환성을 위한 별칭
   memo?: string;
   google_place_id?: string;
   latitude?: number;
@@ -41,6 +42,8 @@ export interface Plan {
   rating?: number;
   website?: string;
   phone?: string;
+  opening_hours?: string;
+  price_level?: number;
   created_at: string;
   updated_at: string;
 }

@@ -387,14 +387,19 @@ export const mockDataService = {
     };
   },
 
-  createTrip: async (tripData: any): Promise<ApiResponse<Trip>> => {
+  createTrip: async (tripData: Partial<Omit<Trip, 'id' | 'user_id' | 'created_at' | 'updated_at'>> & {
+    tripTitle?: string;
+    startDate?: string;
+    endDate?: string;
+    coverImage?: string;
+  }): Promise<ApiResponse<Trip>> => {
     const newTrip: Trip = {
       id: `trip-${Date.now()}`,
       user_id: 'mock-user-id-123',
-      title: tripData.tripTitle || tripData.title,
-      country: tripData.country,
-      start_date: tripData.startDate || tripData.start_date,
-      end_date: tripData.endDate || tripData.end_date,
+      title: tripData.tripTitle || tripData.title || '새로운 여행',
+      country: tripData.country || '미정',
+      start_date: tripData.startDate || tripData.start_date || new Date().toISOString().split('T')[0],
+      end_date: tripData.endDate || tripData.end_date || new Date().toISOString().split('T')[0],
       cover_image: tripData.coverImage || tripData.cover_image || 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=400&fit=crop',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -454,10 +459,16 @@ export const mockDataService = {
     };
   },
 
-  createPlan: async (planData: any): Promise<ApiResponse<Plan>> => {
+  createPlan: async (planData: Partial<Omit<Plan, 'id' | 'created_at' | 'updated_at'>> & {
+    tripId?: string;
+    placeName?: string;
+    startTime?: string;
+    endTime?: string;
+    youtubeLink?: string;
+  }): Promise<ApiResponse<Plan>> => {
     const newPlan: Plan = {
       id: `plan-${Date.now()}`,
-      trip_id: planData.tripId || planData.trip_id,
+      trip_id: planData.tripId || planData.trip_id || 'unknown-trip',
       day: planData.day || 1,
       place_name: planData.placeName || planData.place_name || '',
       start_time: planData.startTime || planData.start_time || '',

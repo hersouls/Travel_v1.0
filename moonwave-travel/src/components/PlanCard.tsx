@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Plan } from '@/types';
 import { planTypeConfig } from '@/lib/mockData';
 import { formatTime } from '@/utils/helpers';
@@ -13,7 +13,7 @@ interface PlanCardProps {
   showDetails?: boolean;
 }
 
-const PlanCard: React.FC<PlanCardProps> = ({ 
+const PlanCard = React.memo<PlanCardProps>(({ 
   plan, 
   onClick, 
   showDetails = true 
@@ -35,7 +35,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
             <div className="flex items-center space-x-2 mb-2">
               <Clock className="w-4 h-4 text-gray-400" />
               <span className="text-sm font-medium text-gray-900">
-                {formatTime(plan.start_time)} - {formatTime(plan.end_time)}
+                {plan.start_time && formatTime(plan.start_time)} - {plan.end_time && formatTime(plan.end_time)}
               </span>
             </div>
             
@@ -75,7 +75,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
                       </div>
                     )}
                     
-                    {plan.rating > 0 && (
+                    {plan.rating && plan.rating > 0 && (
                       <div className="flex items-center space-x-1 text-sm text-gray-600">
                         <div className="flex items-center">
                           {Array.from({ length: 5 }).map((_, i) => (
@@ -83,7 +83,7 @@ const PlanCard: React.FC<PlanCardProps> = ({
                               key={i}
                               className={cn(
                                 "w-3 h-3",
-                                i < Math.floor(plan.rating) 
+                                i < Math.floor(plan.rating || 0) 
                                   ? "text-yellow-400 fill-current" 
                                   : "text-gray-300"
                               )}
@@ -139,6 +139,8 @@ const PlanCard: React.FC<PlanCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+PlanCard.displayName = 'PlanCard';
 
 export default PlanCard;

@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Calendar, MapPin, Globe, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card, CardContent } from '@/components/ui/Card';
 import { countries } from '@/lib/mockData';
 import { dataService } from '@/lib/dataService';
-import { formatDate } from '@/utils/helpers';
+// import { formatDate } from '@/utils/helpers'; // 현재 사용하지 않음
 import { cn } from '@/utils/helpers';
 
 export default function CreateTripPage() {
@@ -17,7 +17,7 @@ export default function CreateTripPage() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [coverImage, setCoverImage] = useState<File | null>(null);
+  // const [coverImage, setCoverImage] = useState<File | null>(null); // 현재 사용하지 않음
   const [coverImagePreview, setCoverImagePreview] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
@@ -48,7 +48,7 @@ export default function CreateTripPage() {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setCoverImage(file);
+      // setCoverImage(file); // 현재 사용하지 않음
       const reader = new FileReader();
       reader.onload = (e) => {
         setCoverImagePreview(e.target?.result as string);
@@ -85,16 +85,16 @@ export default function CreateTripPage() {
       }
 
       const tripData = {
-        tripTitle,
+        title: tripTitle,
         country: selectedCountry,
-        startDate,
-        endDate,
-        coverImage: coverImagePreview || '',
+        start_date: startDate,
+        end_date: endDate,
+        cover_image: coverImagePreview || '',
       };
 
       const result = await dataService.createTrip(tripData);
       
-      if (result.success) {
+      if (result.success && result.data) {
         router.push(`/trips/${result.data.id}`);
       } else {
         alert('여행 생성에 실패했습니다: ' + result.error);
@@ -200,7 +200,7 @@ export default function CreateTripPage() {
                   type="text"
                   placeholder="여행 제목을 입력하세요"
                   value={tripTitle}
-                  onChange={(e) => setTripTitle(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTripTitle(e.target.value)}
                 />
               </div>
 
@@ -216,7 +216,7 @@ export default function CreateTripPage() {
                       type="text"
                       placeholder="어디로 떠나시나요?"
                       value={selectedCountry}
-                      onChange={(e) => handleCountrySearch(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCountrySearch(e.target.value)}
                       onFocus={() => setShowCountryDropdown(true)}
                       className="pl-10"
                     />
@@ -250,7 +250,7 @@ export default function CreateTripPage() {
                     <Input
                       type="date"
                       value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartDate(e.target.value)}
                       className="pl-10"
                     />
                   </div>
@@ -259,7 +259,7 @@ export default function CreateTripPage() {
                     <Input
                       type="date"
                       value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndDate(e.target.value)}
                       min={startDate}
                       className="pl-10"
                     />

@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Search, Map, Calendar, User, Grid, List, Globe, TrendingUp, Users, Settings } from 'lucide-react';
 import TripCard from '@/components/TripCard';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import { TripCardSkeleton } from '@/components/Skeleton';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
@@ -13,6 +15,7 @@ import { cn } from '@/utils/helpers';
 import { dataService } from '@/lib/dataService';
 
 export default function HomePage() {
+  const router = useRouter();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -145,7 +148,7 @@ export default function HomePage() {
                 type="text"
                 placeholder="여행 제목이나 국가로 검색..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -235,6 +238,25 @@ export default function HomePage() {
                 trip={trip}
                 onClick={() => handleTripClick(trip)}
               />
+            ))}
+          </div>
+        ) : loading ? (
+          <div className={cn(
+            "grid gap-6",
+            viewMode === 'grid' 
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+              : "grid-cols-1"
+          )}>
+            {/* 생성 카드 */}
+            <TripCard
+              trip={{} as Trip}
+              onClick={handleCreateTrip}
+              isCreateCard={true}
+            />
+            
+            {/* 스켈레톤 로딩 */}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <TripCardSkeleton key={i} />
             ))}
           </div>
         ) : (
