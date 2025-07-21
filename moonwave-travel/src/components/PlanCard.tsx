@@ -22,10 +22,10 @@ const PlanCard = React.memo<PlanCardProps>(({
 
   return (
     <Card 
-      className={cn(
-        'cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group overflow-hidden',
-        onClick && 'hover:border-blue-300'
-      )}
+              className={cn(
+          'cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group overflow-hidden',
+          onClick && 'hover:border-primary-300'
+        )}
       onClick={onClick}
     >
       <CardContent className="p-4">
@@ -41,15 +41,15 @@ const PlanCard = React.memo<PlanCardProps>(({
             
             <Badge 
               variant={
-                config.color === 'bg-blue-500' ? 'default' :
-                config.color === 'bg-green-500' ? 'secondary' :
-                config.color === 'bg-orange-500' ? 'outline' :
-                config.color === 'bg-purple-500' ? 'default' :
+                config.color === 'bg-primary-500' ? 'default' :
+                config.color === 'bg-success-500' ? 'secondary' :
+                config.color === 'bg-accent-500' ? 'outline' :
+                config.color === 'bg-secondary-500' ? 'default' :
                 'secondary'
               }
               className={
-                config.color === 'bg-orange-500' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                config.color === 'bg-purple-500' ? 'bg-purple-100 text-purple-700' :
+                config.color === 'bg-accent-500' ? 'bg-accent-100 text-accent-700 border-accent-200' :
+                config.color === 'bg-secondary-500' ? 'bg-secondary-100 text-secondary-700' :
                 ''
               }
             >
@@ -62,7 +62,7 @@ const PlanCard = React.memo<PlanCardProps>(({
           <div className="flex-1 min-w-0">
             <div className="flex items-start space-x-3">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-primary-600 transition-colors duration-200">
                   {plan.place_name}
                 </h3>
                 
@@ -106,7 +106,14 @@ const PlanCard = React.memo<PlanCardProps>(({
               {/* 사진 미리보기 */}
               {plan.photos && plan.photos.length > 0 && (
                 <div className="flex-shrink-0 relative">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden">
+                  <div 
+                    className="w-16 h-16 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // 사진 확대 보기 기능 추가 예정
+                      console.log('사진 확대 보기:', plan.photos);
+                    }}
+                  >
                     <img
                       src={plan.photos[0]}
                       alt={plan.place_name}
@@ -130,10 +137,16 @@ const PlanCard = React.memo<PlanCardProps>(({
         {/* 유튜브 링크 표시 */}
         {plan.youtube_link && (
           <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <a
+              href={plan.youtube_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-sm text-gray-600 hover:text-red-500 transition-colors duration-200 cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Play className="w-3 h-3 text-red-500" />
-              <span className="line-clamp-1">유튜브 영상 포함</span>
-            </div>
+              <span className="line-clamp-1">유튜브 영상 보기</span>
+            </a>
           </div>
         )}
       </CardContent>

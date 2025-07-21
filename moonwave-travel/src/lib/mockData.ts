@@ -581,27 +581,27 @@ export const mockAuthService = {
 export const planTypeConfig = {
   accommodation: {
     label: '숙박',
-    color: 'bg-blue-500',
+    color: 'bg-primary-500',
     icon: '🏨',
   },
   attraction: {
     label: '관광',
-    color: 'bg-green-500',
+    color: 'bg-success-500',
     icon: '🏛️',
   },
   restaurant: {
     label: '식당',
-    color: 'bg-orange-500',
+    color: 'bg-accent-500',
     icon: '🍽️',
   },
   transport: {
     label: '교통',
-    color: 'bg-purple-500',
+    color: 'bg-secondary-500',
     icon: '🚇',
   },
   other: {
     label: '기타',
-    color: 'bg-gray-500',
+    color: 'bg-secondary-400',
     icon: '📍',
   },
 } as const;
