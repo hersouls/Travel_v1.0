@@ -94,10 +94,43 @@
 
 ## 🎨 UI/UX 특징
 
-- **모바일 최적화** - iOS/Android 브라우저 지원
-- **직관적 카드 UI** - 즉시성·가독성 극대화
-- **3회 이내 터치** - 모든 주요 동작 완결
-- **반응형 디자인** - 다양한 화면 크기 지원
+### 디자인 철학
+- **"파동, 연결, 확장성"** - Moonwave Coding의 핵심 디자인 원칙
+- **빠른 프로토타입, 심플함, 감성적 깊이** 공존
+- **부드러운 사용자 경험** - 사용자의 흐름을 끊지 않는 UI
+
+### 컬러 시스템
+- **Primary**: #6C63FF (Moonwave Main)
+- **Secondary**: #F3F4F6 (Background)
+- **Accent**: #FFD700 (Highlight)
+- **Error**: #FF3860, **Success**: #21B573
+
+### 타이포그래피
+- **기본 폰트**: Pretendard / Inter
+- **모바일 최적화**: H1 1.5rem, Body 0.95rem
+- **데스크탑**: H1 2rem, H2 1.5rem, Body 1rem
+
+### 레이아웃 & 반응형
+- **12-Column Grid**: 데스크탑 기준 그리드 시스템
+- **Mobile First**: 모바일 1~2컬럼, 데스크탑 12컬럼 확장
+- **브레이크포인트**: sm(640px), md(768px), lg(1024px), xl(1280px), 2xl(1536px)
+- **터치 영역**: 최소 48x48px 이상 권장
+
+### 컴포넌트 디자인
+- **Button**: 둥근 모서리, 그림자 효과, Radix 기준
+- **Card**: 최소 padding 20px, xl 라운드, soft shadow
+- **Modal**: Center align, 배경 dimmed
+
+### 접근성
+- **WCAG 기준**: 텍스트와 배경 4.5:1 이상 대비
+- **스크린리더 대응**: aria-label, role 등 시맨틱 마크업
+- **키보드 내비게이션**: Tab, Enter, ESC 등 모든 UI 조작 가능
+- **모션 감소**: motion-reduce 설정 시 애니메이션 제거
+
+### 애니메이션 & 모션
+- **Framer Motion**: 주요 Fade, Slide, Scale 애니메이션
+- **지속 시간**: 0.2~0.4초 자연스러운 가속도
+- **모바일 최소화**: 핵심 액션/전환에만 모션 적용
 
 ## 📅 개발 로드맵
 
