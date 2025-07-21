@@ -1,19 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Plus, Search, Map, Calendar, User, Filter, Grid, List } from 'lucide-react';
-import { mockTrips } from '@/utils/mockData';
+import React, { useState, useEffect } from 'react';
+import { Plus, Search, Map, Calendar, User, Grid, List } from 'lucide-react';
 import TripCard from '@/components/TripCard';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Trip } from '@/types';
 import { cn } from '@/utils/helpers';
+import { dataService } from '@/lib/dataService';
 
 export default function HomePage() {
-  const [trips, setTrips] = useState<Trip[]>(mockTrips);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
+
+  // 여행 데이터 로드
+  useEffect(() => {
+    const loadTrips = async () => {
+      try {
+        setLoading(true);
+        const response = await dataService.getTrips();
+        if (response.success && response.data) {
+          setTrips(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to load trips:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTrips();
+  }, []);
 
   const filteredTrips = trips.filter(trip => {
     const matchesSearch = trip.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -127,7 +147,16 @@ export default function HomePage() {
         </div>
 
         {/* 여행 카드 그리드 */}
-        {filteredTrips.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center animate-pulse">
+              <span className="text-4xl">🌍</span>
+            </div>
+            <h3 className="text-xl font-bold text-secondary-900 mb-3">
+              여행 데이터를 불러오는 중...
+            </h3>
+          </div>
+        ) : filteredTrips.length > 0 ? (
           <div className={cn(
             "grid gap-6",
             viewMode === 'grid' 

@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { Plan } from '@/types';
-import { formatTime, truncateText, getYouTubeEmbedUrl } from '@/utils/helpers';
-import { planTypeConfig } from '@/utils/mockData';
+import { formatTime } from '@/utils/helpers';
+import { planTypeConfig } from '@/lib/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { MapPin, Clock, Star, ExternalLink, Play, Plus } from 'lucide-react';
 import { cn } from '@/utils/helpers';

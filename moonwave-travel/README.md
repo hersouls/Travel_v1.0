@@ -109,8 +109,9 @@
 ### 1단계 (MVP) ✅
 - [x] 프로젝트 초기 설정
 - [x] 기본 UI 컴포넌트 구축
-- [x] Mock 데이터 구현
-- [x] 메인 페이지 구현
+- [x] Mock 데이터 구현 및 Supabase 블록처리
+- [x] 메인 페이지 구현 (Mock 데이터 연동)
+- [x] 데이터 서비스 레이어 구축
 - [ ] 여행 생성/수정 기능
 - [ ] 여행 상세 페이지
 
@@ -139,7 +140,10 @@ cd moonwave-travel
 npm install
 ```
 
-### 3. 환경 변수 설정
+### 3. 환경 변수 설정 (선택사항)
+현재 Mock 데이터 모드로 설정되어 있어 Supabase 설정 없이도 실행 가능합니다.
+
+Supabase 연동을 원하는 경우:
 ```bash
 cp .env.local.example .env.local
 ```
@@ -159,10 +163,20 @@ npm run dev
 
 ## 🗄 데이터베이스 설정
 
-### Supabase 프로젝트 생성
+### 현재 상태: Mock 데이터 모드
+프로젝트는 현재 Mock 데이터를 사용하여 프론트엔드 개발을 진행할 수 있도록 설정되어 있습니다.
+
+- **Mock 데이터 위치**: `src/lib/mockData.ts`
+- **데이터 서비스**: `src/lib/dataService.ts`
+- **Supabase 연동**: `src/lib/supabase.ts` (주석 처리됨)
+
+### Supabase 연동 (향후)
+Supabase 연동을 원하는 경우:
+
 1. [Supabase](https://supabase.com)에서 새 프로젝트 생성
 2. SQL Editor에서 `supabase-schema.sql` 실행
 3. 프로젝트 설정에서 URL과 API 키 복사
+4. `src/lib/supabase.ts`의 주석을 해제하고 환경 변수 설정
 
 ### 스키마 적용
 ```bash
