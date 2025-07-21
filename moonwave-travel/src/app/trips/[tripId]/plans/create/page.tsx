@@ -40,6 +40,35 @@ export default function CreatePlanPage() {
     rating: 0,
   });
 
+  // URL 파라미터에서 장소 정보 로드
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeName = urlParams.get('placeName');
+    const googlePlaceId = urlParams.get('googlePlaceId');
+    const address = urlParams.get('address');
+    const latitude = urlParams.get('latitude');
+    const longitude = urlParams.get('longitude');
+    const rating = urlParams.get('rating');
+    const openingHours = urlParams.get('openingHours');
+    const website = urlParams.get('website');
+    const priceLevel = urlParams.get('priceLevel');
+
+    if (placeName) {
+      setPlan(prev => ({
+        ...prev,
+        placeName,
+        googlePlaceId: googlePlaceId || '',
+        address: address || '',
+        latitude: latitude ? parseFloat(latitude) : 0,
+        longitude: longitude ? parseFloat(longitude) : 0,
+        rating: rating ? parseFloat(rating) : 0,
+        openingHours: openingHours || '',
+        website: website || '',
+        priceLevel: priceLevel ? parseInt(priceLevel) : 0,
+      }));
+    }
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
@@ -319,7 +348,7 @@ export default function CreatePlanPage() {
           </Card>
 
           {/* Google 지도 연동 정보 */}
-          {plan.googlePlaceId && (
+          {(plan.googlePlaceId || plan.address || plan.rating > 0) && (
             <Card className="natural-card">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-secondary-900 mb-4 golden-text-title">
