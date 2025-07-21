@@ -45,13 +45,11 @@ export default function HomePage() {
   const countries = Array.from(new Set(trips.map(trip => trip.country)));
 
   const handleCreateTrip = () => {
-    // TODO: 여행 생성 모달 또는 페이지로 이동
-    console.log('Create new trip');
+    router.push('/trips/create');
   };
 
   const handleTripClick = (trip: Trip) => {
-    // TODO: 여행 상세 페이지로 이동
-    console.log('Trip clicked:', trip.id);
+    router.push(`/trips/${trip.id}`);
   };
 
   const totalPlans = trips.reduce((total, trip) => total + (trip.plans?.length || 0), 0);
