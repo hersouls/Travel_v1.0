@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Trip } from '@/types';
 import { formatDate, calculateTripDuration } from '@/utils/helpers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -20,6 +21,8 @@ const TripCard = React.memo<TripCardProps>(({
   showPlansCount = true,
   isCreateCard = false
 }) => {
+  const router = useRouter();
+
   if (isCreateCard) {
     return (
       <Card 
@@ -34,8 +37,8 @@ const TripCard = React.memo<TripCardProps>(({
             <div className="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-full flex items-center justify-center">
               <Plus className="w-8 h-8 text-primary-500" />
             </div>
-                          <p className="font-semibold text-primary-600 text-lg">새로운 여행</p>
-              <p className="text-primary-500 mt-1">여행을 시작해보세요</p>
+            <p className="font-semibold text-primary-600 text-lg">새로운 여행</p>
+            <p className="text-primary-500 mt-1">여행을 시작해보세요</p>
           </div>
         </div>
       </Card>
@@ -45,12 +48,25 @@ const TripCard = React.memo<TripCardProps>(({
   const duration = calculateTripDuration(trip.start_date, trip.end_date);
   const plansCount = trip.plans?.length || 0;
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // 즐겨찾기 토글 기능 - 실제 구현 시 상태 관리 필요
+    console.log('즐겨찾기 토글:', trip.id);
+    // TODO: 즐겨찾기 상태를 전역 상태나 API로 관리
+  };
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // 이미지 클릭 시 여행 상세 페이지로 이동
+    router.push(`/trips/${trip.id}`);
+  };
+
   return (
     <Card 
-              className={cn(
-          'cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group overflow-hidden',
-          onClick && 'hover:border-primary-300'
-        )}
+      className={cn(
+        'cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group overflow-hidden',
+        onClick && 'hover:border-primary-300'
+      )}
       onClick={onClick}
     >
       <div className="relative">
@@ -62,14 +78,13 @@ const TripCard = React.memo<TripCardProps>(({
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              onClick={(e) => {
-                e.stopPropagation();
-                // 사진 확대 보기 기능 추가 예정
-                console.log('커버 이미지 확대 보기:', trip.cover_image);
-              }}
+              onClick={handleImageClick}
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+            <div 
+              className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center cursor-pointer"
+              onClick={handleImageClick}
+            >
               <Globe className="w-12 h-12 text-white" />
             </div>
           )}
@@ -87,11 +102,7 @@ const TripCard = React.memo<TripCardProps>(({
           {/* 즐겨찾기 버튼 */}
           <button 
             className="absolute top-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
-            onClick={(e) => {
-              e.stopPropagation();
-              // 즐겨찾기 토글 기능 추가 예정
-              console.log('즐겨찾기 토글:', trip.id);
-            }}
+            onClick={handleFavoriteClick}
           >
             <Star className="w-4 h-4 text-gray-600" />
           </button>

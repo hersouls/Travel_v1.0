@@ -77,10 +77,7 @@ export default function HomePage() {
                 variant="ghost" 
                 size="sm" 
                 className="hidden sm:flex"
-                onClick={() => {
-                  // 지도 보기 기능 추가 예정
-                  console.log('지도 보기');
-                }}
+                href="/map"
               >
                 <Map className="w-5 h-5" />
               </Button>
@@ -88,10 +85,7 @@ export default function HomePage() {
                 variant="ghost" 
                 size="sm" 
                 className="hidden sm:flex"
-                onClick={() => {
-                  // 캘린더 보기 기능 추가 예정
-                  console.log('캘린더 보기');
-                }}
+                href="/calendar"
               >
                 <Calendar className="w-5 h-5" />
               </Button>
@@ -104,17 +98,11 @@ export default function HomePage() {
                 }
                 align="right"
               >
-                <DropdownMenuItem onClick={() => {
-                  // 프로필 페이지로 이동 예정
-                  console.log('프로필 페이지로 이동');
-                }}>
+                <DropdownMenuItem onClick={() => router.push('/profile')}>
                   <User className="w-4 h-4 mr-2" />
                   프로필
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {
-                  // 설정 페이지로 이동 예정
-                  console.log('설정 페이지로 이동');
-                }}>
+                <DropdownMenuItem onClick={() => router.push('/settings')}>
                   <Settings className="w-4 h-4 mr-2" />
                   설정
                 </DropdownMenuItem>
@@ -122,6 +110,7 @@ export default function HomePage() {
                 <DropdownMenuItem onClick={() => {
                   // 로그아웃 기능 추가 예정
                   console.log('로그아웃');
+                  router.push('/login');
                 }}>
                   로그아웃
                 </DropdownMenuItem>
