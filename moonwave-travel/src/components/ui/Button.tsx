@@ -6,6 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'success';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
   href?: string;
   as?: React.ElementType;
@@ -23,8 +24,11 @@ interface LinkButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> 
 
 type ButtonComponentProps = ButtonProps | LinkButtonProps;
 
+// Helper type to extract the correct ref type
+type ButtonRef = React.ForwardedRef<HTMLButtonElement | HTMLAnchorElement>;
+
 const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonComponentProps>(
-  ({ className, variant = 'default', size = 'md', loading = false, disabled, children, href, as, ...props }, ref) => {
+  ({ className, variant = 'default', size = 'md', loading = false, children, href, as, ...props }, ref) => {
     const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
     
     const variants = {
@@ -92,7 +96,7 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonCom
         <Component
           className={buttonClasses}
           ref={ref}
-          disabled={disabled || loading}
+          disabled={loading}
           {...props}
         >
           {loading && (
@@ -124,12 +128,12 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonCom
     
     // 일반 버튼인 경우
     return (
-      <button
-        className={buttonClasses}
-        ref={ref}
-        disabled={disabled || loading}
-        {...props}
-      >
+              <button
+          className={buttonClasses}
+          ref={ref as React.Ref<HTMLButtonElement>}
+          disabled={loading}
+          {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
         {loading && (
           <svg
             className="mr-2 h-4 w-4 animate-spin"
