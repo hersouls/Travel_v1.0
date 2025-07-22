@@ -21,7 +21,7 @@ export default function TripDetailPage() {
     const loadTrip = async () => {
       try {
         setLoading(true);
-        const response = await dataService.getTrip(tripId);
+        const response = await dataService.getTripById(tripId);
         if (response.success && response.data) {
           setTrip(response.data);
         } else {
@@ -179,14 +179,7 @@ export default function TripDetailPage() {
                 </div>
               </div>
               
-              {trip.description && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">여행 설명</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {trip.description}
-                  </p>
-                </div>
-              )}
+
             </div>
             
             {/* 오른쪽: 커버 이미지 */}
@@ -233,10 +226,10 @@ export default function TripDetailPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-gray-900">
-                        Day {index + 1}: {plan.title}
+                        Day {plan.day}: {plan.place_name}
                       </h4>
                       <p className="text-sm text-gray-600 mt-1">
-                        {plan.location} • {plan.date}
+                        {plan.address || plan.place_name} • {plan.type}
                       </p>
                     </div>
                     <Button 
