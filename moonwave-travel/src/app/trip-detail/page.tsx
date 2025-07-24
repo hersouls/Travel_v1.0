@@ -9,6 +9,8 @@ import { Trip } from '@/types';
 import { formatDate, calculateTripDuration } from '@/utils/helpers';
 import { dataService } from '@/lib/dataService';
 
+
+
 export default function TripDetailPage() {
   const router = useRouter();
   const params = useParams();
