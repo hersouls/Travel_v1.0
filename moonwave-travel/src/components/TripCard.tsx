@@ -58,7 +58,7 @@ const TripCard = React.memo<TripCardProps>(({
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     // 이미지 클릭 시 여행 상세 페이지로 이동
-    router.push(`/trips/${trip.id}`);
+    router.push(`/trip-detail?id=${trip.id}`);
   };
 
   return (
