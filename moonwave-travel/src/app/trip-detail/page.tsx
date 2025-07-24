@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, MapPin, Calendar, Clock, Edit, Trash2, Plus, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -9,12 +9,10 @@ import { Trip } from '@/types';
 import { formatDate, calculateTripDuration } from '@/utils/helpers';
 import { dataService } from '@/lib/dataService';
 
-
-
-export default function TripDetailPage() {
+function TripDetailContent() {
   const router = useRouter();
-  const params = useParams();
-  const tripId = params.id as string;
+  const searchParams = useSearchParams();
+  const tripId = searchParams.get('id');
   
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,6 +21,10 @@ export default function TripDetailPage() {
     const loadTrip = async () => {
       try {
         setLoading(true);
+        if (!tripId) {
+          console.error('No trip ID provided');
+          return;
+        }
         const response = await dataService.getTripById(tripId);
         if (response.success && response.data) {
           setTrip(response.data);
@@ -102,177 +104,169 @@ export default function TripDetailPage() {
                 {trip.title}
               </h1>
             </div>
-            
             <div className="flex items-center space-x-2">
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm"
-                onClick={() => {
-                  // 즐겨찾기 토글 기능
-                  console.log('즐겨찾기 토글:', trip.id);
-                }}
+                onClick={() => router.push(`/trip-detail/edit?id=${tripId}`)}
               >
-                <Star className="w-4 h-4" />
+                <Edit className="w-5 h-5" />
               </Button>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm"
                 onClick={() => {
-                  // 편집 페이지로 이동
-                  router.push(`/trips/${trip.id}/edit`);
-                }}
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  // 삭제 확인 다이얼로그
                   if (confirm('정말로 이 여행을 삭제하시겠습니까?')) {
-                    console.log('여행 삭제:', trip.id);
+                    // 삭제 로직
                     router.push('/');
                   }
                 }}
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-5 h-5" />
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* 메인 컨텐츠 */}
+      {/* 메인 콘텐츠 */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 여행 정보 카드 */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 왼쪽: 여행 정보 */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Badge variant="secondary" className="bg-black/70 text-white border-0">
-                  {trip.country}
-                </Badge>
-                <Badge variant="outline">
-                  {duration}일
-                </Badge>
-              </div>
-              
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {trip.title}
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center text-gray-600">
-                  <MapPin className="w-5 h-5 mr-3 flex-shrink-0 text-primary-500" />
-                  <span className="font-medium">{trip.country}</span>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{trip.title}</h2>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700">{trip.country}</span>
                 </div>
-                
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="w-5 h-5 mr-3 flex-shrink-0 text-primary-500" />
-                  <span>
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700">
                     {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
                   </span>
                 </div>
-                
-                <div className="flex items-center text-gray-600">
-                  <Clock className="w-5 h-5 mr-3 flex-shrink-0 text-primary-500" />
-                  <span className="font-medium">{duration}일 여행</span>
+                <div className="flex items-center space-x-3">
+                  <Clock className="w-5 h-5 text-gray-400" />
+                  <span className="text-gray-700">{duration}일</span>
                 </div>
               </div>
-              
-
             </div>
-            
-            {/* 오른쪽: 커버 이미지 */}
-            <div className="relative">
-              {trip.cover_image ? (
-                <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
-                  <img
-                    src={trip.cover_image}
-                    alt={trip.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-[4/3] bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-16 h-16 text-white" />
-                </div>
-              )}
+            <div className="flex flex-col justify-between">
+              <div className="text-right">
+                <Badge variant="default">
+                  진행중
+                </Badge>
+              </div>
+              <div className="text-right mt-4">
+                <p className="text-sm text-gray-500">여행 기간</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {duration}일
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* 계획 섹션 */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        {/* 계획 목록 */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900">
-              여행 계획 ({plansCount}개)
+              여행 계획 ({plansCount})
             </h3>
             <Button 
-              onClick={() => {
-                // 새 계획 추가 페이지로 이동
-                router.push(`/trips/${trip.id}/plans/create`);
-              }}
+              onClick={() => router.push(`/plan-create?tripId=${tripId}`)}
               className="bg-primary-500 hover:bg-primary-600"
             >
               <Plus className="w-4 h-4 mr-2" />
-              새 계획 추가
+              계획 추가
             </Button>
           </div>
-          
-          {plansCount > 0 ? (
+
+          {trip.plans && trip.plans.length > 0 ? (
             <div className="space-y-4">
-              {trip.plans?.map((plan, index) => (
-                <div key={plan.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+              {trip.plans.map((plan, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-900">
-                        Day {plan.day}: {plan.place_name}
-                      </h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {plan.address || plan.place_name} • {plan.type}
-                      </p>
+                      <h4 className="font-semibold text-gray-900">{plan.place_name}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{plan.memo || plan.type}</p>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <span className="text-xs text-gray-500">
+                          Day {plan.day}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {plan.type}
+                        </span>
+                      </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => {
-                        // 계획 상세 페이지로 이동
-                        router.push(`/trips/${trip.id}/plans/${plan.id}`);
-                      }}
-                    >
-                      자세히 보기
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => router.push(`/plan-edit?tripId=${tripId}&planIndex=${index}`)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          if (confirm('이 계획을 삭제하시겠습니까?')) {
+                            // 삭제 로직
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
-                <Plus className="w-8 h-8 text-primary-500" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <Plus className="w-8 h-8 text-gray-400" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              <h4 className="text-lg font-medium text-gray-900 mb-2">
                 아직 계획이 없습니다
               </h4>
               <p className="text-gray-600 mb-6">
-                첫 번째 여행 계획을 만들어보세요!
+                첫 번째 여행 계획을 추가해보세요!
               </p>
               <Button 
-                onClick={() => {
-                  // 새 계획 추가 페이지로 이동
-                  router.push(`/trips/${trip.id}/plans/create`);
-                }}
+                onClick={() => router.push(`/plan-create?tripId=${tripId}`)}
                 className="bg-primary-500 hover:bg-primary-600"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                첫 계획 만들기
+                계획 추가하기
               </Button>
             </div>
           )}
         </div>
       </main>
     </div>
+  );
+}
+
+export default function TripDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <div className="text-center py-16">
+          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            페이지를 불러오는 중...
+          </h3>
+          <p className="text-gray-600">잠시만 기다려주세요</p>
+        </div>
+      </div>
+    }>
+      <TripDetailContent />
+    </Suspense>
   );
 }
