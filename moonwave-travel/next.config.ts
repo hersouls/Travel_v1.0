@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   },
   basePath: '',
   assetPrefix: '',
+  output: 'export',
+  distDir: 'out',
 };
 
 export default nextConfig;

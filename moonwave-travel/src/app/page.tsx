@@ -51,7 +51,7 @@ export default function HomePage() {
   const countries = Array.from(new Set(trips.map(trip => trip.country)));
 
   const handleTripClick = (trip: Trip) => {
-    router.push(`/trips/${trip.id}`);
+    router.push(`/trip-detail?id=${trip.id}`);
   };
 
   const totalPlans = trips.reduce((total, trip) => total + (trip.plans?.length || 0), 0);
