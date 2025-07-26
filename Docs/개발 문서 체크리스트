@@ -157,7 +157,7 @@ app/
 - **Authentication**: Supabase Auth
 - **Real-time**: Supabase Realtime
 - **Storage**: Supabase Storage
-- **Hosting**: GitHub Pages
+- **Hosting**: Vercel
 - **Domain**: xxx.moonwave.kr
 
 #### Future (Next.js + Enhanced)
@@ -722,7 +722,7 @@ export const revalidate = 3600; // 1시간 캐시
 
 ## 🚀 확장 가능한 배포 전략
 
-### Current Deployment (React + GitHub Pages)
+### Previous Deployment (React + GitHub Pages)
 ```yaml
 # .github/workflows/react-deploy.yml
 name: React App Deploy
@@ -751,7 +751,7 @@ jobs:
         cname: moonwave.kr
 ```
 
-### Future Deployment (Next.js + Vercel)
+### Current Deployment (Next.js + Vercel)
 ```yaml
 # .github/workflows/nextjs-deploy.yml (백업 배포)
 name: Next.js Deploy to Vercel
@@ -785,22 +785,20 @@ jobs:
 ```typescript
 // 점진적 마이그레이션 배포 전략
 
-// Phase 1: React (MVP) - GitHub Pages
+// Phase 1: React (MVP) - GitHub Pages (완료)
 Domain: moonwave.kr
 Hosting: GitHub Pages
-CDN: Cloudflare (선택)
-SSL: GitHub Pages 자동
+SSL: Vercel 자동
 
-// Phase 2: Parallel Deployment
-React App: moonwave.kr (현재 사용자 유지)
-Next.js App: beta.moonwave.kr (베타 테스트)
+// Phase 2: Migration to Vercel (완료)
+Next.js App: travel.moonwave.kr (메인 서비스)
+Hosting: Vercel
+SSL: Vercel 자동
 
-// Phase 3: Full Migration
-React App: legacy.moonwave.kr (폴백)
-Next.js App: moonwave.kr (메인 서비스)
-
-// Phase 4: Legacy Deprecation
-Next.js App: moonwave.kr (완전 이전)
+// Phase 3: Current State
+Next.js App: travel.moonwave.kr (프로덕션)
+Hosting: Vercel
+Features: 동적 기능, 이미지 최적화, API Routes
 ```
 
 ### Infrastructure Comparison
@@ -1184,7 +1182,7 @@ jobs:
 - [ ] GitHub Repository 설정
 - [ ] React + Vite + Supabase 기본 구조
 - [ ] Core 기능 개발 (CRUD)
-- [ ] GitHub Pages 배포
+- [x] Vercel 배포 ✅ 완료
 - [ ] Next.js 호환성 고려한 컴포넌트 설계
 
 ### Phase 2: Enhancement & Preparation (Month 3-4)
@@ -1570,12 +1568,12 @@ Total Time: ~5분
 1. **Code Quality Check**: TypeScript, ESLint
 2. **Build**: Vite 빌드 프로세스
 3. **Test**: 환경 변수 검증, Supabase 연결 테스트
-4. **Deploy**: GitHub Pages 자동 배포
+4. **Deploy**: Vercel 자동 배포
 5. **Verify**: 배포 후 Health Check
 
 ### 롤백 전략
 - **자동 롤백**: 배포 실패 시 이전 버전으로 자동 복구
-- **수동 롤백**: GitHub Pages 이전 배포 선택
+- **수동 롤백**: Vercel 이전 배포 선택
 
 ## 🔐 환경 변수 관리
 

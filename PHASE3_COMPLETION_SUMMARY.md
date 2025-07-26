@@ -150,7 +150,7 @@ export async function generateMetadata() {
 
 ### 호환성
 
-- **정적 배포**: ✅ GitHub Pages 호환
+- **Vercel 배포**: ✅ 동적 기능 최적화
 - **환경 변수**: ✅ 폴백 메커니즘 구현
 - **크로스 브라우저**: ✅ 현대 브라우저 지원
 
@@ -233,7 +233,7 @@ const searchParams = useSearchParams();
 - **TypeScript**: 100% 타입 안전성
 - **ESLint**: 모든 규칙 준수
 - **빌드**: 성공적 정적 배포
-- **호환성**: GitHub Pages 완전 지원
+- **호환성**: Vercel 플랫폼 완전 최적화
 
 ---
 

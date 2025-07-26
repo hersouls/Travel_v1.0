@@ -313,7 +313,7 @@ const TravelBadge = ({ type, className }: Props) => {
 - **External API**: Google Places API, Google Maps Geocoding API
 
 #### 5.1.3 Infrastructure (Moonwave 표준)
-- **Hosting**: GitHub Pages (정적 호스팅만)
+- **Hosting**: Vercel (동적 기능 지원)
 - **CI/CD**: GitHub Actions
 - **Domain**: travel.moonwave.kr
 - **Environment**: Production Only (localhost 개발 금지)
