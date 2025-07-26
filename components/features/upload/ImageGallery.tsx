@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { X, Maximize2, Trash2, Download, Loader2 } from 'lucide-react';
@@ -45,7 +45,7 @@ export function ImageGallery({
     currentIndex: 0,
   });
   const [deletingImages, setDeletingImages] = useState<Set<string>>(new Set());
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const openLightbox = useCallback((index: number) => {
     setLightbox({ isOpen: true, currentIndex: index });

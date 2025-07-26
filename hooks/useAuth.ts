@@ -1,9 +1,9 @@
 'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
 interface AuthState {
   user: User | null;
@@ -18,7 +18,7 @@ export function useAuth() {
     error: null,
   });
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   useEffect(() => {
     // Get initial session

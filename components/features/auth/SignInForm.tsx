@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Loader2, Mail, Chrome } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 interface AuthError {
   message: string;
@@ -16,7 +16,7 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [authMessage, setAuthMessage] = useState<AuthError | null>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
