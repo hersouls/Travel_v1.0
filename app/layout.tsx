@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
+import { MainNavigation } from '@/components/features/navigation/MainNavigation';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -63,8 +64,9 @@ export default function RootLayout({
       </head>
       <body className="h-full font-pretendard antialiased tracking-korean-normal break-keep-ko">
         <SupabaseProvider>
-          <div id="root" className="h-full">
-            <main id="main-content" className="h-full">
+          <div id="root" className="h-full flex flex-col">
+            <MainNavigation />
+            <main id="main-content" className="flex-1">
               {children}
             </main>
           </div>
