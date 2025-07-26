@@ -132,30 +132,17 @@ export function ShareModal({
 
     setIsInviting(true);
     try {
-      // TODO: Add collaborator to database - needs to be updated to match schema
-      // const { error } = await supabase.from('collaborators').insert({
-      //   travel_plan_id: travelId,
-      //   user_id: user.id,
-      //   role: inviteRole,
-      //   permissions: [],
-      //   invited_at: new Date().toISOString(),
-      //   joined_at: null,
-      // });
-      
-      // if (error) throw error;
-
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');
-
-      // TODO: Send invitation email
-      console.log('Invitation email should be sent to:', inviteEmail.trim());
+      
+      alert('초대 기능은 현재 개발 중입니다.');
     } catch (error) {
       console.error('Invite collaborator error:', error);
       alert('협력자 초대 중 오류가 발생했습니다.');
     } finally {
       setIsInviting(false);
     }
-  }, [user, supabase, travelId, inviteEmail, inviteRole, onCollaboratorAdd]);
+  }, [user, travelId, inviteEmail, inviteRole, onCollaboratorAdd]);
 
   const handleRemoveCollaborator = useCallback(
     async (collaboratorId: string) => {

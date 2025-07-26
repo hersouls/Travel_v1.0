@@ -16,30 +16,19 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
-import { 
-  TravelPlan as BaseTravelPlan,
-  TravelDay as BaseTravelDay,
-  DayPlan as BaseDayPlan,
-  Collaborator
-} from '@/lib/types/database';
-
-interface TravelPlan extends BaseTravelPlan {
   profiles: {
     name: string | null;
     avatar_url: string | null;
   } | null;
-  travel_days: TravelDay[];
+  travel_days: (TravelDay & {
+    day_plans: DayPlan[];
+  })[];
 }
-
-interface TravelDay extends BaseTravelDay {
-  day_plans: BaseDayPlan[];
-}
-
 
 
 interface SharedTravelViewProps {
-  travel: TravelPlan;
-  collaborators: Collaborator[];
+  travel: ExtendedTravelPlan;
+  collaborators: ExtendedCollaborator[];
 }
 
 export function SharedTravelView({
