@@ -81,6 +81,7 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 ### GitHub Pages → Vercel 마이그레이션 완료 ✅
 
 **주요 변경사항:**
+
 - ✅ **정적 Export 제거**: 동적 기능 활성화 (Server Actions, API Routes)
 - ✅ **이미지 최적화**: Vercel 네이티브 이미지 최적화 지원
 - ✅ **자동 배포**: GitHub 연동을 통한 자동 배포 설정
@@ -88,6 +89,7 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 - ✅ **도메인 설정**: `travel.moonwave.kr` 커스텀 도메인 연결
 
 **마이그레이션 혜택:**
+
 - 더 빠른 빌드 및 배포 시간
 - 실시간 Preview 배포 (Pull Request)
 - 향상된 이미지 최적화 (WebP, AVIF)
