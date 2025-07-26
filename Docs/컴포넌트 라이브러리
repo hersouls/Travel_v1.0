@@ -1,0 +1,1425 @@
+## 요약
+Moonwave Travel의 컴포넌트 라이브러리 문서를 작성합니다. Pretendard 폰트 최적화, Container Queries 반응형, 여행 도메인 특화 컴포넌트를 체계적으로 정리합니다.
+
+## 분석
+컴포넌트 구성:
+- **기본 UI**: Button, Card, Input, Badge, Modal
+- **여행 특화**: TravelCard, DayPlanCard, PlaceSearch
+- **레이아웃**: Container, Grid, Stack
+- **피드백**: Loading, Error, Empty states
+
+## 실행
+
+# Moonwave Travel 컴포넌트 라이브러리 v1.0
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - Pretendard + Container Queries 기반 컴포넌트 시스템
+
+## 📚 목차
+1. [디자인 원칙](#1-디자인-원칙)
+2. [기본 컴포넌트](#2-기본-컴포넌트)
+3. [여행 도메인 컴포넌트](#3-여행-도메인-컴포넌트)
+4. [레이아웃 컴포넌트](#4-레이아웃-컴포넌트)
+5. [피드백 컴포넌트](#5-피드백-컴포넌트)
+6. [복합 컴포넌트](#6-복합-컴포넌트)
+7. [컴포넌트 개발 가이드](#7-컴포넌트-개발-가이드)
+
+---
+
+## 1. 디자인 원칙
+
+### 1.1 Moonwave 컴포넌트 철학
+
+```typescript
+const COMPONENT_PRINCIPLES = {
+  // Pretendard 한글 최적화
+  typography: "모든 텍스트에 font-pretendard 적용",
+  
+  // Container Queries 우선
+  responsive: "@container 기반 반응형 설계",
+  
+  // 실제 데이터 연동
+  realData: "Supabase 실시간 데이터 고려",
+  
+  // 접근성 기본
+  accessibility: "ARIA 속성과 키보드 내비게이션 필수"
+} as const;
+```
+
+### 1.2 컴포넌트 네이밍 규칙
+
+```typescript
+// 기본 패턴
+Button          // 기본 UI 컴포넌트
+TravelCard      // 도메인 특화 컴포넌트
+useTravelPlans  // 커스텀 훅
+formatDate      // 유틸리티 함수
+```
+
+---
+
+## 2. 기본 컴포넌트
+
+### 2.1 Button
+
+**설명**: Moonwave 디자인 시스템의 기본 버튼 컴포넌트
+
+```typescript
+// components/ui/Button.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost' | 'link';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
+  loading?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+}
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ 
+    className, 
+    variant = 'primary', 
+    size = 'md', 
+    loading = false,
+    icon,
+    iconPosition = 'left',
+    fullWidth = false,
+    children, 
+    disabled,
+    ...props 
+  }, ref) => {
+    const baseStyles = cn(
+      'font-pretendard antialiased font-medium rounded-lg',
+      'transition-all duration-200 ease-in-out',
+      'focus:outline-none focus:ring-2 focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed',
+      'inline-flex items-center justify-center gap-2',
+      'tracking-korean-normal'
+    );
+
+    const variants = {
+      primary: cn(
+        'bg-blue-600 hover:bg-blue-700 active:bg-blue-800',
+        'text-white shadow-sm hover:shadow-md',
+        'focus:ring-blue-500'
+      ),
+      secondary: cn(
+        'bg-white hover:bg-gray-50 active:bg-gray-100',
+        'text-gray-900 border border-gray-300',
+        'focus:ring-gray-500'
+      ),
+      destructive: cn(
+        'bg-red-600 hover:bg-red-700 active:bg-red-800',
+        'text-white shadow-sm hover:shadow-md',
+        'focus:ring-red-500'
+      ),
+      ghost: cn(
+        'bg-transparent hover:bg-gray-100 active:bg-gray-200',
+        'text-gray-700',
+        'focus:ring-gray-500'
+      ),
+      link: cn(
+        'bg-transparent underline-offset-4 hover:underline',
+        'text-blue-600 hover:text-blue-700',
+        'focus:ring-blue-500'
+      )
+    };
+
+    const sizes = {
+      sm: 'h-8 px-3 text-sm',
+      md: 'h-10 px-4 text-base',
+      lg: 'h-12 px-6 text-lg',
+      icon: 'h-10 w-10 p-0'
+    };
+
+    const widthStyles = fullWidth ? 'w-full' : '';
+
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          sizes[size],
+          widthStyles,
+          className
+        )}
+        disabled={disabled || loading}
+        {...props}
+      >
+        {loading && (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        )}
+        {!loading && icon && iconPosition === 'left' && icon}
+        {children}
+        {!loading && icon && iconPosition === 'right' && icon}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+```
+
+**사용 예제**:
+
+```tsx
+// 기본 사용
+<Button>여행 추가</Button>
+
+// 변형
+<Button variant="secondary">취소</Button>
+<Button variant="destructive">삭제</Button>
+
+// 크기
+<Button size="sm">작은 버튼</Button>
+<Button size="lg">큰 버튼</Button>
+
+// 아이콘
+<Button icon={<Plus className="h-4 w-4" />}>
+  새 여행
+</Button>
+
+// 로딩 상태
+<Button loading>저장 중...</Button>
+
+// 전체 너비
+<Button fullWidth>로그인</Button>
+```
+
+### 2.2 Card
+
+**설명**: Container Queries를 활용한 반응형 카드 컴포넌트
+
+```typescript
+// components/ui/Card.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'outlined' | 'elevated';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  interactive?: boolean;
+}
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ 
+    className, 
+    variant = 'default', 
+    padding = 'md',
+    interactive = false,
+    children,
+    ...props 
+  }, ref) => {
+    const baseStyles = cn(
+      '@container rounded-xl overflow-hidden',
+      'transition-all duration-200'
+    );
+
+    const variants = {
+      default: 'bg-white border border-gray-200 shadow-sm',
+      outlined: 'bg-white border-2 border-gray-300',
+      elevated: 'bg-white shadow-lg hover:shadow-xl'
+    };
+
+    const paddings = {
+      none: '',
+      sm: 'p-4',
+      md: 'p-6',
+      lg: 'p-8'
+    };
+
+    const interactiveStyles = interactive ? cn(
+      'cursor-pointer',
+      'hover:shadow-lg hover:scale-[1.02]',
+      'active:scale-[0.98]'
+    ) : '';
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          paddings[padding],
+          interactiveStyles,
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Card.displayName = 'Card';
+
+// Card 하위 컴포넌트들
+export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...props
+}) => (
+  <div className={cn('mb-4 @md:mb-6', className)} {...props}>
+    {children}
+  </div>
+);
+
+export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
+  className,
+  children,
+  ...props
+}) => (
+  <h3 className={cn(
+    'font-pretendard font-semibold text-lg @md:text-xl',
+    'text-gray-900 tracking-korean-tight break-keep-ko',
+    className
+  )} {...props}>
+    {children}
+  </h3>
+);
+
+export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  children,
+  ...props
+}) => (
+  <div className={cn('text-gray-600', className)} {...props}>
+    {children}
+  </div>
+);
+```
+
+**사용 예제**:
+
+```tsx
+// 기본 카드
+<Card>
+  <CardHeader>
+    <CardTitle>제주도 여행</CardTitle>
+  </CardHeader>
+  <CardContent>
+    2025년 8월 15일 - 8월 20일
+  </CardContent>
+</Card>
+
+// 인터랙티브 카드
+<Card interactive onClick={handleClick}>
+  <CardTitle>클릭 가능한 카드</CardTitle>
+</Card>
+
+// 변형
+<Card variant="elevated" padding="lg">
+  <CardContent>높은 그림자 효과</CardContent>
+</Card>
+```
+
+### 2.3 Input
+
+**설명**: 한글 입력에 최적화된 입력 컴포넌트
+
+```typescript
+// components/ui/Input.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helper?: string;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+}
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ 
+    className,
+    label,
+    error,
+    helper,
+    icon,
+    iconPosition = 'left',
+    id,
+    ...props 
+  }, ref) => {
+    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const baseStyles = cn(
+      'font-pretendard antialiased w-full rounded-lg',
+      'border border-gray-300 bg-white',
+      'px-3 py-2 text-base',
+      'placeholder:text-gray-400',
+      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+      'disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500',
+      'transition-all duration-200',
+      'tracking-korean-normal'
+    );
+
+    const errorStyles = error ? cn(
+      'border-red-500',
+      'focus:ring-red-500 focus:border-red-500'
+    ) : '';
+
+    const iconPadding = icon ? (iconPosition === 'left' ? 'pl-10' : 'pr-10') : '';
+
+    return (
+      <div className="w-full">
+        {label && (
+          <label 
+            htmlFor={inputId}
+            className={cn(
+              'block mb-2 text-sm font-medium',
+              'font-pretendard text-gray-700',
+              'tracking-korean-normal'
+            )}
+          >
+            {label}
+          </label>
+        )}
+        
+        <div className="relative">
+          {icon && iconPosition === 'left' && (
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-gray-400">{icon}</span>
+            </div>
+          )}
+          
+          <input
+            ref={ref}
+            id={inputId}
+            className={cn(
+              baseStyles,
+              errorStyles,
+              iconPadding,
+              className
+            )}
+            {...props}
+          />
+          
+          {icon && iconPosition === 'right' && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span className="text-gray-400">{icon}</span>
+            </div>
+          )}
+        </div>
+        
+        {(error || helper) && (
+          <p className={cn(
+            'mt-2 text-sm font-pretendard',
+            error ? 'text-red-600' : 'text-gray-500'
+          )}>
+            {error || helper}
+          </p>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = 'Input';
+```
+
+**사용 예제**:
+
+```tsx
+// 기본 입력
+<Input 
+  placeholder="여행 제목을 입력하세요"
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/>
+
+// 라벨과 도움말
+<Input 
+  label="목적지"
+  helper="여행할 도시나 국가를 입력하세요"
+  placeholder="예: 제주도, 부산"
+/>
+
+// 아이콘
+<Input 
+  icon={<MapPin className="h-5 w-5" />}
+  placeholder="장소 검색"
+/>
+
+// 에러 상태
+<Input 
+  label="이메일"
+  error="올바른 이메일 형식이 아닙니다"
+  value={email}
+/>
+```
+
+### 2.4 Badge
+
+**설명**: 여행 유형, 상태 등을 표시하는 뱃지 컴포넌트
+
+```typescript
+// components/ui/Badge.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+}
+
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ 
+    className, 
+    variant = 'default', 
+    size = 'md',
+    icon,
+    children,
+    ...props 
+  }, ref) => {
+    const baseStyles = cn(
+      'font-pretendard font-medium inline-flex items-center gap-1',
+      'rounded-full border tracking-korean-wide',
+      'transition-colors duration-200'
+    );
+
+    const variants = {
+      default: 'bg-gray-100 text-gray-800 border-gray-200',
+      primary: 'bg-blue-100 text-blue-800 border-blue-200',
+      success: 'bg-green-100 text-green-800 border-green-200',
+      warning: 'bg-amber-100 text-amber-800 border-amber-200',
+      danger: 'bg-red-100 text-red-800 border-red-200',
+      info: 'bg-purple-100 text-purple-800 border-purple-200'
+    };
+
+    const sizes = {
+      sm: 'px-2 py-0.5 text-xs',
+      md: 'px-2.5 py-1 text-sm',
+      lg: 'px-3 py-1.5 text-base'
+    };
+
+    return (
+      <span
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          sizes[size],
+          className
+        )}
+        {...props}
+      >
+        {icon && <span className="flex-shrink-0">{icon}</span>}
+        {children}
+      </span>
+    );
+  }
+);
+
+Badge.displayName = 'Badge';
+
+// 여행 특화 Badge 변형
+export const TravelTypeBadge: React.FC<{ type: string }> = ({ type }) => {
+  const typeConfig = {
+    sightseeing: { label: '관광', variant: 'primary' as const, icon: '🏛️' },
+    dining: { label: '식당', variant: 'warning' as const, icon: '🍽️' },
+    shopping: { label: '쇼핑', variant: 'info' as const, icon: '🛍️' },
+    transportation: { label: '이동', variant: 'default' as const, icon: '🚗' },
+    accommodation: { label: '숙박', variant: 'success' as const, icon: '🏨' }
+  };
+
+  const config = typeConfig[type as keyof typeof typeConfig] || {
+    label: type,
+    variant: 'default' as const,
+    icon: '📍'
+  };
+
+  return (
+    <Badge variant={config.variant} size="sm">
+      <span>{config.icon}</span>
+      {config.label}
+    </Badge>
+  );
+};
+```
+
+**사용 예제**:
+
+```tsx
+// 기본 뱃지
+<Badge>기본</Badge>
+<Badge variant="primary">진행중</Badge>
+<Badge variant="success">완료</Badge>
+
+// 크기
+<Badge size="sm">작은 뱃지</Badge>
+<Badge size="lg">큰 뱃지</Badge>
+
+// 아이콘
+<Badge icon={<Clock className="h-3 w-3" />}>
+  09:00
+</Badge>
+
+// 여행 유형 뱃지
+<TravelTypeBadge type="sightseeing" />
+<TravelTypeBadge type="dining" />
+```
+
+---
+
+## 3. 여행 도메인 컴포넌트
+
+### 3.1 TravelCard
+
+**설명**: 여행 정보를 표시하는 카드 컴포넌트
+
+```typescript
+// components/features/travel/TravelCard.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Calendar, MapPin, Users } from 'lucide-react';
+import type { TravelPlan } from '@/types/travel';
+
+export interface TravelCardProps {
+  travel: TravelPlan;
+  onClick?: (travelId: string) => void;
+  className?: string;
+}
+
+export const TravelCard: React.FC<TravelCardProps> = ({
+  travel,
+  onClick,
+  className
+}) => {
+  const dayCount = Math.ceil(
+    (new Date(travel.end_date).getTime() - new Date(travel.start_date).getTime()) 
+    / (1000 * 60 * 60 * 24)
+  ) + 1;
+
+  const statusConfig = {
+    planning: { label: '계획중', variant: 'default' as const },
+    ongoing: { label: '진행중', variant: 'primary' as const },
+    completed: { label: '완료', variant: 'success' as const },
+    cancelled: { label: '취소', variant: 'danger' as const }
+  };
+
+  const status = statusConfig[travel.status];
+
+  return (
+    <Card
+      interactive
+      onClick={() => onClick?.(travel.id)}
+      className={cn('@container/travel-card', className)}
+    >
+      {travel.cover_image_url && (
+        <div className="relative h-48 @md/travel-card:h-56 -m-6 mb-4">
+          <img
+            src={travel.cover_image_url}
+            alt={travel.title}
+            className="w-full h-full object-cover rounded-t-xl"
+          />
+          <div className="absolute top-4 right-4">
+            <Badge variant={status.variant}>
+              {status.label}
+            </Badge>
+          </div>
+        </div>
+      )}
+      
+      <div className="@lg/travel-card:flex @lg/travel-card:items-start @lg/travel-card:justify-between">
+        <div className="@lg/travel-card:flex-1">
+          <h3 className={cn(
+            'font-pretendard font-bold text-lg @md/travel-card:text-xl',
+            'text-gray-900 tracking-korean-tight break-keep-ko mb-2'
+          )}>
+            {travel.title}
+          </h3>
+          
+          <div className="space-y-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-gray-400" />
+              <span className="font-pretendard tracking-korean-normal">
+                {travel.destination}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-gray-400" />
+              <span className="font-pretendard text-numeric">
+                {new Date(travel.start_date).toLocaleDateString('ko-KR')} - 
+                {new Date(travel.end_date).toLocaleDateString('ko-KR')}
+              </span>
+              <Badge size="sm" variant="info">
+                {dayCount}일
+              </Badge>
+            </div>
+            
+            {travel.collaborators && travel.collaborators.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-gray-400" />
+                <span className="font-pretendard">
+                  {travel.collaborators.length + 1}명
+                </span>
+              </div>
+            )}
+          </div>
+          
+          {travel.description && (
+            <p className={cn(
+              'font-pretendard text-sm text-gray-600 mt-3',
+              '@lg/travel-card:line-clamp-2 line-clamp-3',
+              'tracking-korean-normal break-keep-ko'
+            )}>
+              {travel.description}
+            </p>
+          )}
+        </div>
+        
+        <div className="@lg/travel-card:ml-6 @lg/travel-card:flex-shrink-0 mt-4 @lg/travel-card:mt-0">
+          <div className="flex @lg/travel-card:flex-col gap-2">
+            <Badge variant="primary" size="sm">
+              {travel.metadata?.tags?.[0] || '여행'}
+            </Badge>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+```
+
+### 3.2 DayPlanCard
+
+**설명**: Day별 세부 계획을 표시하는 카드
+
+```typescript
+// components/features/plans/DayPlanCard.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/Card';
+import { TravelTypeBadge } from '@/components/ui/Badge';
+import { Clock, MapPin, DollarSign, Image as ImageIcon } from 'lucide-react';
+import type { DayPlan } from '@/types/travel';
+
+export interface DayPlanCardProps {
+  plan: DayPlan;
+  onEdit?: (plan: DayPlan) => void;
+  onDelete?: (planId: string) => void;
+  className?: string;
+}
+
+export const DayPlanCard: React.FC<DayPlanCardProps> = ({
+  plan,
+  onEdit,
+  onDelete,
+  className
+}) => {
+  return (
+    <Card className={cn('@container/plan-card', className)}>
+      <div className="@md/plan-card:flex @md/plan-card:gap-4">
+        {/* 시간 표시 */}
+        {plan.planned_time && (
+          <div className="@md/plan-card:flex-shrink-0 mb-3 @md/plan-card:mb-0">
+            <div className="flex items-center gap-2 text-blue-600">
+              <Clock className="h-4 w-4" />
+              <span className="font-pretendard font-medium text-numeric">
+                {plan.planned_time}
+              </span>
+            </div>
+            {plan.duration_minutes && (
+              <p className="text-xs text-gray-500 mt-1 ml-6">
+                {plan.duration_minutes}분
+              </p>
+            )}
+          </div>
+        )}
+        
+        {/* 메인 콘텐츠 */}
+        <div className="@md/plan-card:flex-1">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <h4 className={cn(
+                'font-pretendard font-semibold text-base @lg/plan-card:text-lg',
+                'text-gray-900 tracking-korean-tight break-keep-ko'
+              )}>
+                {plan.place_name}
+              </h4>
+              {plan.place_address && (
+                <p className="flex items-center gap-1 mt-1 text-sm text-gray-600">
+                  <MapPin className="h-3 w-3" />
+                  <span className="font-pretendard tracking-korean-normal">
+                    {plan.place_address}
+                  </span>
+                </p>
+              )}
+            </div>
+            
+            <TravelTypeBadge type={plan.plan_type} />
+          </div>
+          
+          {plan.notes && (
+            <p className={cn(
+              'font-pretendard text-sm text-gray-600 mb-3',
+              'tracking-korean-normal break-keep-ko'
+            )}>
+              {plan.notes}
+            </p>
+          )}
+          
+          {/* 메타 정보 */}
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            {plan.budget && (
+              <div className="flex items-center gap-1 text-gray-500">
+                <DollarSign className="h-3 w-3" />
+                <span className="font-pretendard text-numeric">
+                  {plan.budget.toLocaleString()}원
+                </span>
+              </div>
+            )}
+            
+            {plan.image_urls && plan.image_urls.length > 0 && (
+              <div className="flex items-center gap-1 text-gray-500">
+                <ImageIcon className="h-3 w-3" />
+                <span>{plan.image_urls.length}장</span>
+              </div>
+            )}
+            
+            {plan.metadata?.rating && (
+              <div className="flex items-center gap-1">
+                <span className="text-yellow-500">★</span>
+                <span className="font-pretendard text-numeric">
+                  {plan.metadata.rating}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          {/* 액션 버튼 */}
+          {(onEdit || onDelete) && (
+            <div className="flex gap-2 mt-4">
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(plan)}
+                  className={cn(
+                    'font-pretendard text-sm text-blue-600',
+                    'hover:text-blue-700 transition-colors'
+                  )}
+                >
+                  수정
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => onDelete(plan.id)}
+                  className={cn(
+                    'font-pretendard text-sm text-red-600',
+                    'hover:text-red-700 transition-colors'
+                  )}
+                >
+                  삭제
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        
+        {/* 이미지 썸네일 */}
+        {plan.image_urls && plan.image_urls[0] && (
+          <div className="@md/plan-card:w-24 @lg/plan-card:w-32 mt-3 @md/plan-card:mt-0">
+            <img
+              src={plan.image_urls[0]}
+              alt={plan.place_name}
+              className="w-full h-20 @lg/plan-card:h-24 object-cover rounded-lg"
+            />
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
+```
+
+### 3.3 PlaceSearch
+
+**설명**: Google Places API를 활용한 장소 검색 컴포넌트
+
+```typescript
+// components/features/maps/PlaceSearch.tsx
+import React, { useRef, useEffect } from 'react';
+import { Input } from '@/components/ui/Input';
+import { MapPin } from 'lucide-react';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+
+export interface PlaceSearchProps {
+  onPlaceSelect: (place: google.maps.places.PlaceResult) => void;
+  defaultValue?: string;
+  placeholder?: string;
+  className?: string;
+}
+
+export const PlaceSearch: React.FC<PlaceSearchProps> = ({
+  onPlaceSelect,
+  defaultValue = '',
+  placeholder = '장소를 검색하세요',
+  className
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const { isLoaded } = useGoogleMaps();
+
+  useEffect(() => {
+    if (!isLoaded || !inputRef.current) return;
+
+    // Autocomplete 초기화
+    autocompleteRef.current = new google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ['establishment', 'geocode'],
+        componentRestrictions: { country: 'kr' },
+        fields: [
+          'place_id',
+          'name',
+          'formatted_address',
+          'geometry',
+          'rating',
+          'opening_hours',
+          'website',
+          'photos'
+        ]
+      }
+    );
+
+    // 장소 선택 이벤트
+    const listener = autocompleteRef.current.addListener(
+      'place_changed',
+      () => {
+        const place = autocompleteRef.current?.getPlace();
+        if (place && place.place_id) {
+          onPlaceSelect(place);
+        }
+      }
+    );
+
+    return () => {
+      google.maps.event.removeListener(listener);
+    };
+  }, [isLoaded, onPlaceSelect]);
+
+  return (
+    <Input
+      ref={inputRef}
+      icon={<MapPin className="h-5 w-5" />}
+      placeholder={placeholder}
+      defaultValue={defaultValue}
+      className={className}
+      data-testid="place-search"
+    />
+  );
+};
+```
+
+---
+
+## 4. 레이아웃 컴포넌트
+
+### 4.1 Container
+
+**설명**: 반응형 컨테이너 컴포넌트
+
+```typescript
+// components/layout/Container.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  padding?: boolean;
+}
+
+export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
+  ({ className, size = 'lg', padding = true, children, ...props }, ref) => {
+    const sizes = {
+      sm: 'max-w-3xl',
+      md: 'max-w-5xl',
+      lg: 'max-w-7xl',
+      xl: 'max-w-[90rem]',
+      full: 'max-w-full'
+    };
+
+    const paddingStyles = padding ? 'px-4 sm:px-6 lg:px-8' : '';
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'mx-auto w-full',
+          sizes[size],
+          paddingStyles,
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Container.displayName = 'Container';
+```
+
+### 4.2 Grid
+
+**설명**: Container Queries 기반 그리드 레이아웃
+
+```typescript
+// components/layout/Grid.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+  cols?: 1 | 2 | 3 | 4 | 5 | 6;
+  gap?: 'sm' | 'md' | 'lg';
+  responsive?: boolean;
+}
+
+export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
+  ({ className, cols = 3, gap = 'md', responsive = true, children, ...props }, ref) => {
+    const gaps = {
+      sm: 'gap-4',
+      md: 'gap-6',
+      lg: 'gap-8'
+    };
+
+    const baseGrid = `grid ${gaps[gap]}`;
+    
+    const responsiveGrid = responsive ? cn(
+      'grid-cols-1',
+      cols >= 2 && '@md:grid-cols-2',
+      cols >= 3 && '@lg:grid-cols-3',
+      cols >= 4 && '@xl:grid-cols-4',
+      cols >= 5 && '@2xl:grid-cols-5',
+      cols >= 6 && '@3xl:grid-cols-6'
+    ) : `grid-cols-${cols}`;
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          '@container',
+          baseGrid,
+          responsiveGrid,
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Grid.displayName = 'Grid';
+```
+
+---
+
+## 5. 피드백 컴포넌트
+
+### 5.1 Loading
+
+**설명**: 로딩 상태 표시 컴포넌트
+
+```typescript
+// components/feedback/Loading.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
+
+export interface LoadingProps {
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+  fullScreen?: boolean;
+  className?: string;
+}
+
+export const Loading: React.FC<LoadingProps> = ({
+  size = 'md',
+  text,
+  fullScreen = false,
+  className
+}) => {
+  const sizes = {
+    sm: 'h-4 w-4',
+    md: 'h-8 w-8',
+    lg: 'h-12 w-12'
+  };
+
+  const Wrapper = fullScreen ? 'div' : React.Fragment;
+  const wrapperProps = fullScreen ? {
+    className: 'fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center'
+  } : {};
+
+  return (
+    <Wrapper {...wrapperProps}>
+      <div className={cn('flex flex-col items-center gap-3', className)}>
+        <Loader2 className={cn('animate-spin text-blue-600', sizes[size])} />
+        {text && (
+          <p className="font-pretendard text-sm text-gray-600 tracking-korean-normal">
+            {text}
+          </p>
+        )}
+      </div>
+    </Wrapper>
+  );
+};
+
+// 스켈레톤 로더
+export const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
+  <div className={cn(
+    'animate-pulse bg-gray-200 rounded',
+    className
+  )} />
+);
+
+// 여행 카드 스켈레톤
+export const TravelCardSkeleton: React.FC = () => (
+  <Card>
+    <Skeleton className="h-48 -m-6 mb-4 rounded-t-xl" />
+    <Skeleton className="h-6 w-3/4 mb-2" />
+    <Skeleton className="h-4 w-1/2 mb-4" />
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-5/6" />
+    </div>
+  </Card>
+);
+```
+
+### 5.2 Empty
+
+**설명**: 빈 상태 표시 컴포넌트
+
+```typescript
+// components/feedback/Empty.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+
+export interface EmptyProps {
+  icon?: React.ReactNode;
+  title: string;
+  description?: string;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  className?: string;
+}
+
+export const Empty: React.FC<EmptyProps> = ({
+  icon,
+  title,
+  description,
+  action,
+  className
+}) => {
+  return (
+    <div className={cn(
+      'flex flex-col items-center justify-center py-12 px-4 text-center',
+      className
+    )}>
+      {icon && (
+        <div className="mb-4 text-gray-400">
+          {icon}
+        </div>
+      )}
+      
+      <h3 className={cn(
+        'font-pretendard font-semibold text-lg text-gray-900',
+        'tracking-korean-tight break-keep-ko mb-2'
+      )}>
+        {title}
+      </h3>
+      
+      {description && (
+        <p className={cn(
+          'font-pretendard text-sm text-gray-600',
+          'tracking-korean-normal break-keep-ko mb-6',
+          'max-w-sm'
+        )}>
+          {description}
+        </p>
+      )}
+      
+      {action && (
+        <Button onClick={action.onClick}>
+          {action.label}
+        </Button>
+      )}
+    </div>
+  );
+};
+```
+
+### 5.3 ErrorBoundary
+
+**설명**: 에러 처리 컴포넌트
+
+```typescript
+// components/feedback/ErrorBoundary.tsx
+import React from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+export class ErrorBoundary extends React.Component
+  { children: React.ReactNode },
+  ErrorBoundaryState
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-[400px] flex items-center justify-center p-4">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="font-pretendard font-semibold text-lg text-gray-900 mb-2">
+              문제가 발생했습니다
+            </h2>
+            <p className="font-pretendard text-sm text-gray-600 mb-6 max-w-sm">
+              일시적인 오류가 발생했습니다. 
+              페이지를 새로고침하거나 잠시 후 다시 시도해주세요.
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              페이지 새로고침
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+---
+
+## 6. 복합 컴포넌트
+
+### 6.1 Modal
+
+**설명**: 모달 다이얼로그 컴포넌트
+
+```typescript
+// components/ui/Modal.tsx
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
+import { Button } from './Button';
+
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  showCloseButton?: boolean;
+  className?: string;
+}
+
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  size = 'md',
+  showCloseButton = true,
+  className
+}) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const sizes = {
+    sm: 'max-w-md',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl'
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-4">
+        {/* 백드롭 */}
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+          onClick={onClose}
+        />
+        
+        {/* 모달 콘텐츠 */}
+        <div className={cn(
+          'relative w-full bg-white rounded-xl shadow-xl',
+          'transform transition-all',
+          sizes[size],
+          className
+        )}>
+          {/* 헤더 */}
+          {(title || showCloseButton) && (
+            <div className="flex items-center justify-between p-6 border-b">
+              {title && (
+                <h2 className={cn(
+                  'font-pretendard font-semibold text-xl',
+                  'text-gray-900 tracking-korean-tight'
+                )}>
+                  {title}
+                </h2>
+              )}
+              {showCloseButton && (
+                <button
+                  onClick={onClose}
+                  className={cn(
+                    'p-2 rounded-lg text-gray-400',
+                    'hover:bg-gray-100 hover:text-gray-500',
+                    'transition-colors'
+                  )}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+          )}
+          
+          {/* 바디 */}
+          <div className="p-6">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+// 모달 Footer 컴포넌트
+export const ModalFooter: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className }) => (
+  <div className={cn(
+    'flex items-center justify-end gap-3 pt-6 mt-6 border-t',
+    className
+  )}>
+    {children}
+  </div>
+);
+```
+
+---
+
+## 7. 컴포넌트 개발 가이드
+
+### 7.1 컴포넌트 생성 체크리스트
+
+```typescript
+// 새 컴포넌트 생성 시 확인사항
+const COMPONENT_CHECKLIST = [
+  "✅ Pretendard 폰트 클래스 적용 (font-pretendard, antialiased)",
+  "✅ 한글 최적화 클래스 (tracking-korean-normal, break-keep-ko)",
+  "✅ Container Queries 반응형 (@container, @md:, @lg:)",
+  "✅ TypeScript Props 인터페이스 export",
+  "✅ forwardRef 사용 (필요한 경우)",
+  "✅ displayName 설정",
+  "✅ ARIA 속성 및 접근성",
+  "✅ 키보드 내비게이션 지원",
+  "✅ 에러 상태 처리",
+  "✅ 로딩 상태 고려"
+];
+```
+
+### 7.2 컴포넌트 파일 구조
+
+```
+components/
+├── ui/                    # 기본 UI 컴포넌트
+│   ├── Button.tsx
+│   ├── Button.test.tsx    # 테스트 파일
+│   ├── Button.stories.tsx # Storybook (선택)
+│   └── index.ts          # 내보내기
+├── features/             # 도메인 특화 컴포넌트
+│   ├── travel/
+│   │   ├── TravelCard.tsx
+│   │   └── index.ts
+│   └── plans/
+│       ├── DayPlanCard.tsx
+│       └── index.ts
+└── index.ts             # 전체 내보내기
+```
+
+### 7.3 컴포넌트 내보내기 패턴
+
+```typescript
+// components/ui/index.ts
+export * from './Button';
+export * from './Card';
+export * from './Input';
+export * from './Badge';
+export * from './Modal';
+
+// components/index.ts
+export * from './ui';
+export * from './features/travel';
+export * from './features/plans';
+export * from './layout';
+export * from './feedback';
+```
+
+---
+
+**Moonwave Travel 컴포넌트 라이브러리 v1.0**  
+*"가짜 흐름이 아닌, 실제 흐름으로 설계한다"*  
+*Pretendard + Container Queries + 실시간 데이터 연동*
+
+이 컴포넌트 라이브러리는 Moonwave Travel의 모든 UI 요구사항을 충족하며, 일관된 디자인 시스템과 뛰어난 사용자 경험을 제공합니다.
