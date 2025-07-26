@@ -1,0 +1,562 @@
+# Moonwave Travel v3.0 - Cursor AI 개발 규칙
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - 여행 플래닝 시스템
+
+## 🚫 절대 금지 사항 (NEVER)
+
+### 1. localhost 개발 환경 완전 금지
+```typescript
+// ❌ 절대 사용하지 말 것
+npm run dev
+yarn dev
+localhost:3000
+"dev": "next dev"
+```
+
+### 2. Mock 데이터 사용 완전 금지
+```typescript
+// ❌ 절대 사용하지 말 것
+const mockTravelPlans = [...]
+const dummyDestinations = [...]
+const testData = [...]
+if (isDev) useMockData()
+hardcoded arrays for testing
+```
+
+### 3. 가짜 흐름 패턴 금지
+```typescript
+// ❌ 절대 사용하지 말 것
+const data = process.env.NODE_ENV === 'development' ? mockData : realData
+if (typeof window === 'undefined') return dummyData
+localStorage fallback patterns
+```
+
+## ✅ 필수 실행 사항 (ALWAYS)
+
+### 1. GitHub Repository 직접 연동
+- Cursor AI는 GitHub Repository에 직접 접속하여 코드 작성
+- 모든 변경사항은 즉시 GitHub에 commit/push
+- GitHub Actions를 통해 travel.moonwave.kr 자동 배포
+
+### 2. Supabase 실시간 DB 연동 필수
+```typescript
+// ✅ 반드시 사용해야 할 패턴
+import { useSupabase } from '@/contexts/SupabaseContext';
+
+const { data, error } = await supabase
+  .from('travel_plans')
+  .select('*')
+  .eq('user_id', user.id);
+```
+
+### 3. 실제 데이터 흐름만 사용
+- 프로젝트 시작부터 Supabase DB 연동
+- 모든 UI는 실제 데이터 기반으로 구현
+- 테스트도 실제 Supabase 테스트 환경 사용
+
+## 🎨 디자인 시스템 (Pretendard + Container Queries)
+
+### 1. Pretendard 폰트 필수 적용
+```typescript
+// ✅ 모든 텍스트 컴포넌트에 필수 적용
+className={cn(
+  'font-pretendard antialiased',
+  'tracking-korean-normal break-keep-ko'
+)}
+```
+
+### 2. 한글 최적화 클래스 필수
+```css
+/* 필수 적용 클래스 */
+.tracking-korean-tight { letter-spacing: -0.02em; }
+.tracking-korean-normal { letter-spacing: -0.01em; }
+.break-keep-ko { word-break: keep-all; overflow-wrap: break-word; }
+.text-numeric { font-variant-numeric: tabular-nums; }
+```
+
+### 3. Container Queries 반응형 시스템
+```typescript
+// ✅ 모든 반응형 컴포넌트에 필수 적용
+<div className="@container">
+  <div className="@lg:flex-row @lg:items-center @lg:justify-between flex flex-col">
+    <h3 className="@lg:text-xl text-lg font-pretendard">
+      {title}
+    </h3>
+  </div>
+</div>
+```
+
+## 🏗 프로젝트 구조
+
+### 1. Next.js App Router 구조
+```
+app/
+├── layout.tsx              # 루트 레이아웃 (Pretendard 설정)
+├── page.tsx               # 메인 페이지 (여행 목록)
+├── globals.css            # Tailwind + Pretendard CSS
+├── travels/               # 여행 관련 페이지
+│   ├── page.tsx          # 여행 목록
+│   ├── new/              # 여행 생성
+│   └── [travelId]/       # 여행 상세
+│       ├── page.tsx      # 여행 상세 보기
+│       ├── edit/         # 여행 수정
+│       └── plans/        # Day별 계획
+└── map/                  # 지도 뷰
+    └── page.tsx
+```
+
+### 2. 컴포넌트 구조
+```
+components/
+├── ui/                   # 기본 UI 컴포넌트
+│   ├── Button.tsx       # Pretendard + 접근성 적용
+│   ├── Card.tsx         # Container Queries 적용
+│   ├── Input.tsx        # 한글 입력 최적화
+│   └── Badge.tsx        # 여행 유형 표시
+├── features/            # 도메인 특화 컴포넌트
+│   ├── travel/          # 여행 관련
+│   │   ├── TravelCard.tsx
+│   │   └── TravelList.tsx
+│   ├── plans/           # 계획 관련
+│   │   ├── DayPlanCard.tsx
+│   │   └── PlanEditor.tsx
+│   └── maps/            # 지도 관련
+│       └── TravelMap.tsx
+└── providers/           # 전역 프로바이더
+    └── SupabaseProvider.tsx
+```
+
+## 📊 데이터베이스 스키마 (Supabase)
+
+### 1. 핵심 테이블 구조
+```sql
+-- 사용자 프로필
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 여행 계획
+CREATE TABLE travel_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id),
+  title TEXT NOT NULL,
+  destination TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  description TEXT,
+  cover_image_url TEXT,
+  is_public BOOLEAN DEFAULT FALSE,
+  status TEXT DEFAULT 'planning',
+  collaborators TEXT[],
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Day별 일정
+CREATE TABLE travel_days (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  travel_plan_id UUID REFERENCES travel_plans(id),
+  day_number INTEGER NOT NULL,
+  date DATE NOT NULL,
+  title TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 세부 계획
+CREATE TABLE day_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  travel_day_id UUID REFERENCES travel_days(id),
+  place_name TEXT NOT NULL,
+  place_address TEXT,
+  google_place_id TEXT,
+  latitude DECIMAL(10,8),
+  longitude DECIMAL(11,8),
+  planned_time TIME,
+  duration_minutes INTEGER,
+  plan_type TEXT DEFAULT 'sightseeing',
+  notes TEXT,
+  image_urls TEXT[],
+  youtube_url TEXT,
+  budget DECIMAL(10,2),
+  order_index INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### 2. RLS 정책 필수 설정
+```sql
+-- 사용자별 데이터 격리
+ALTER TABLE travel_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can manage own travel plans" 
+ON travel_plans FOR ALL USING (auth.uid() = user_id);
+```
+
+## 🔌 API 연동 패턴
+
+### 1. Supabase 연동 표준 패턴
+```typescript
+// ✅ hooks/useTravelPlans.ts
+export const useTravelPlans = () => {
+  const { user, supabase } = useSupabase();
+  const [travelPlans, setTravelPlans] = useState<TravelPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTravelPlans = useCallback(async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('travel_plans')
+      .select(`
+        *,
+        travel_days (
+          *,
+          day_plans (*)
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('여행 데이터 로딩 실패:', error);
+      return;
+    }
+    
+    setTravelPlans(data || []);
+  }, [user, supabase]);
+
+  // 실시간 구독
+  useEffect(() => {
+    if (!user) return;
+    
+    fetchTravelPlans();
+    
+    const subscription = supabase
+      .channel('travel_plans_realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'travel_plans',
+        filter: `user_id=eq.${user.id}`
+      }, () => fetchTravelPlans())
+      .subscribe();
+
+    return () => subscription.unsubscribe();
+  }, [fetchTravelPlans, user, supabase]);
+
+  return { travelPlans, loading };
+};
+```
+
+### 2. Google Maps API 연동
+```typescript
+// ✅ hooks/useGoogleMaps.ts
+export const useGoogleMaps = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  useEffect(() => {
+    const loader = new Loader({
+      apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+      version: "weekly",
+      libraries: ["places", "geometry"]
+    });
+    
+    loader.load().then(() => setIsLoaded(true));
+  }, []);
+  
+  return { isLoaded };
+};
+```
+
+## 🎯 컴포넌트 개발 표준
+
+### 1. 컴포넌트 생성 템플릿
+```typescript
+// ✅ 모든 컴포넌트는 이 패턴을 따라야 함
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Database } from '@/types/supabase';
+
+type TravelPlan = Database['public']['Tables']['travel_plans']['Row'];
+
+export interface TravelCardProps {
+  travel: TravelPlan;
+  onEdit?: (travel: TravelPlan) => void;
+  className?: string;
+}
+
+export const TravelCard = React.forwardRef<HTMLDivElement, TravelCardProps>(
+  ({ travel, onEdit, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          // 기본 스타일 - Pretendard 적용
+          'font-pretendard antialiased',
+          
+          // Container Queries 설정
+          '@container bg-white rounded-xl border border-gray-200',
+          'shadow-sm hover:shadow-lg transition-all duration-200',
+          
+          className
+        )}
+        {...props}
+      >
+        <div className="@md:p-6 p-4">
+          <h3 className={cn(
+            'font-pretendard font-semibold text-lg @md:text-xl',
+            'text-gray-900 tracking-korean-tight break-keep-ko mb-2'
+          )}>
+            {travel.title}
+          </h3>
+          
+          <p className={cn(
+            'font-pretendard text-sm text-gray-600',
+            'tracking-korean-normal break-keep-ko'
+          )}>
+            {travel.destination}
+          </p>
+        </div>
+      </div>
+    );
+  }
+);
+
+TravelCard.displayName = 'TravelCard';
+```
+
+### 2. 필수 체크리스트
+```typescript
+const COMPONENT_CHECKLIST = [
+  "✅ font-pretendard antialiased 클래스 적용",
+  "✅ tracking-korean-normal, break-keep-ko 클래스 적용",
+  "✅ @container 기반 반응형 처리",
+  "✅ Supabase Database 타입 사용",
+  "✅ React.forwardRef 적용 (필요한 경우)",
+  "✅ displayName 설정",
+  "✅ ARIA 접근성 속성",
+  "✅ 실제 데이터만 사용",
+  "❌ Mock 데이터 사용 금지",
+  "❌ localhost 관련 코드 금지"
+];
+```
+
+## 🔧 환경 설정
+
+### 1. Next.js 설정 (next.config.js)
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',  // GitHub Pages 배포용
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      }
+    ],
+  },
+  env: {
+    NEXT_PUBLIC_SITE_URL: 'https://travel.moonwave.kr',
+  },
+  experimental: {
+    typedRoutes: true,
+  }
+};
+
+module.exports = nextConfig;
+```
+
+### 2. Tailwind 설정 (tailwind.config.js)
+```javascript
+module.exports = {
+  content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        pretendard: [
+          'Pretendard Variable', 
+          'Pretendard', 
+          '-apple-system', 
+          'BlinkMacSystemFont', 
+          'system-ui', 
+          'sans-serif'
+        ]
+      },
+      colors: {
+        moonwave: {
+          primary: '#2563EB',
+          secondary: '#8B5CF6',
+        }
+      }
+    }
+  },
+  plugins: [require('@tailwindcss/container-queries')]
+};
+```
+
+### 3. 환경 변수 (필수)
+```bash
+# GitHub Secrets에 설정해야 할 환경 변수
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-key
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=your-google-places-key
+NEXT_PUBLIC_SITE_URL=https://travel.moonwave.kr
+```
+
+## 🧪 테스트 전략
+
+### 1. 실제 데이터 기반 테스트
+```typescript
+// ✅ 테스트도 실제 Supabase 테스트 환경 사용
+import { setupTestDatabase, cleanupTestDatabase } from '@/test/setup/supabase-test';
+
+describe('useTravelPlans', () => {
+  let testUser: any;
+
+  beforeEach(async () => {
+    const setup = await setupTestDatabase();
+    testUser = setup.user;
+  });
+
+  afterEach(async () => {
+    await cleanupTestDatabase(testUser.id);
+  });
+
+  it('실제 Supabase 데이터를 가져와야 함', async () => {
+    const { result } = renderHook(() => useTravelPlans());
+    
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    
+    expect(result.current.travelPlans).toHaveLength(1);
+  });
+});
+```
+
+## 🚀 배포 및 성능
+
+### 1. GitHub Actions (자동 배포)
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to travel.moonwave.kr
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install and Build
+      run: |
+        npm ci
+        npm run build
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./out
+        cname: travel.moonwave.kr
+```
+
+### 2. 성능 목표
+```typescript
+const PERFORMANCE_TARGETS = {
+  LCP: '< 2.5초',          // Largest Contentful Paint
+  FID: '< 100ms',          // First Input Delay  
+  CLS: '< 0.1',            // Cumulative Layout Shift
+  Bundle: '< 500KB',       // 번들 크기
+  'Pretendard Loading': '< 500ms'  // 폰트 로딩
+};
+```
+
+## 📝 코딩 컨벤션
+
+### 1. 네이밍 규칙
+```typescript
+// 컴포넌트: PascalCase
+TravelCard.tsx
+DayPlanCard.tsx
+
+// 훅: camelCase with 'use' prefix
+useTravelPlans.ts
+useDayPlans.ts
+
+// 유틸리티: camelCase
+formatDate.ts
+formatCurrency.ts
+
+// 타입: Database 타입 사용
+type TravelPlan = Database['public']['Tables']['travel_plans']['Row'];
+```
+
+### 2. 파일 구조
+```typescript
+// 컴포넌트 파일 구조
+export interface ComponentProps {
+  // Props 정의
+}
+
+export const Component = React.forwardRef<HTMLElement, ComponentProps>(
+  ({ ...props }, ref) => {
+    // 컴포넌트 로직
+    return (
+      <div ref={ref} className="font-pretendard antialiased">
+        {/* JSX */}
+      </div>
+    );
+  }
+);
+
+Component.displayName = 'Component';
+```
+
+## 🏆 최종 검증 체크리스트
+
+```typescript
+const FINAL_CHECKLIST = [
+  // 금지 사항 확인
+  "❌ localhost 코드 없음",
+  "❌ Mock 데이터 없음", 
+  "❌ 하드코딩된 배열 없음",
+  
+  // 필수 사항 확인
+  "✅ Supabase 실시간 연동",
+  "✅ Pretendard 폰트 적용",
+  "✅ Container Queries 반응형",
+  "✅ Google Maps API 연동",
+  "✅ TypeScript strict 모드",
+  "✅ 접근성 ARIA 속성",
+  
+  // 배포 확인
+  "✅ GitHub Actions 배포 성공",
+  "✅ travel.moonwave.kr 접속 확인",
+  "✅ 실제 데이터 로딩 확인",
+  "✅ 성능 목표 달성"
+];
+```
+
+---
+
+**Moonwave Travel v3.0 Cursor Rules**  
+*"가짜 흐름이 아닌, 실제 흐름으로 설계한다"*  
+*Next.js + Supabase + Google Maps + Pretendard + Container Queries*
+
+이 규칙을 따라 일관되고 고품질의 여행 플래닝 시스템을 구축하세요.
