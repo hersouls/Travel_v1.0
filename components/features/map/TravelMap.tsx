@@ -6,7 +6,7 @@ import { useTravelDays } from '@/lib/hooks/useTravelDays'
 import { useTravelPlans } from '@/hooks/useTravelPlans'
 import PlanMarker from './PlanMarker'
 import { DayPlan } from '@/lib/types/database'
-import { MapPin, Route, EyeOff, Navigation } from 'lucide-react'
+
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -15,6 +15,15 @@ interface TravelMapProps {
   travelId?: string
   dayId?: string
   className?: string
+}
+
+// Type guard to check if a plan has latitude and longitude
+function hasLatLng(plan: any): plan is DayPlan & { latitude: number; longitude: number } {
+  return plan && 
+         typeof plan.latitude === 'number' && 
+         typeof plan.longitude === 'number' &&
+         plan.latitude !== null &&
+         plan.longitude !== null
 }
 
 export default function TravelMap({ travelId, dayId, className }: TravelMapProps) {
@@ -33,9 +42,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
   const { data: travelDays } = useTravelDays(travelId || '')
   const { travelPlans } = useTravelPlans()
 
-  // 모든 계획 데이터 수집
-  const allPlans = useMemo(() => {
-    return travelId 
+
       ? travelDays?.flatMap(day => 
           dayId 
             ? day.id === dayId ? day.day_plans || [] : []
@@ -44,7 +51,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       : travelPlans?.flatMap(travel => 
           travel.travel_days?.flatMap(day => day.day_plans || []) || []
         ) || []
-  }, [travelId, travelDays, dayId, travelPlans])
+
 
   // 지도 초기화
   const initializeMap = useCallback(async () => {
@@ -94,12 +101,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       if (allPlans.length > 0) {
         const bounds = new google.maps.LatLngBounds()
         allPlans.forEach(plan => {
-          if (plan.latitude && plan.longitude) {
-            bounds.extend({
-              lat: parseFloat(plan.latitude.toString()),
-              lng: parseFloat(plan.longitude.toString())
-            })
-          }
+
         })
         map.fitBounds(bounds)
       }
@@ -118,17 +120,14 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     if (!mapInstanceRef.current || !directionsServiceRef.current || !directionsRendererRef.current) return
 
     if (showDirections) {
-      directionsRendererRef.current.setDirections({
-        routes: [],
-        request: {} as google.maps.DirectionsRequest
-      } as google.maps.DirectionsResult)
+
       setShowDirections(false)
       return
     }
 
     // 시간이 설정된 계획들만 경로 계산
     const timedPlans = allPlans
-      .filter(plan => plan.planned_time && plan.latitude && plan.longitude)
+
       .sort((a, b) => a.planned_time!.localeCompare(b.planned_time!))
 
     if (timedPlans.length < 2) {
@@ -137,17 +136,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     }
 
     const origin = {
-      lat: parseFloat(timedPlans[0].latitude!.toString()),
-      lng: parseFloat(timedPlans[0].longitude!.toString())
-    }
-    const destination = {
-      lat: parseFloat(timedPlans[timedPlans.length - 1].latitude!.toString()),
-      lng: parseFloat(timedPlans[timedPlans.length - 1].longitude!.toString())
-    }
-    const waypoints = timedPlans.slice(1, -1).map(plan => ({
-      location: {
-        lat: parseFloat(plan.latitude!.toString()),
-        lng: parseFloat(plan.longitude!.toString())
+
       },
       stopover: true
     }))
