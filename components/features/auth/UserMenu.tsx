@@ -1,111 +1,110 @@
-'use client'
+'use client';
 
-import { useState, useRef, useEffect } from 'react'
-import { useAuth } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/Button'
-import { User, LogOut, Settings, Loader2 } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/Button';
+import { User, LogOut, Settings, Loader2 } from 'lucide-react';
 
 export function UserMenu() {
-  const { user, loading, signOut } = useAuth()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSigningOut, setIsSigningOut] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const { user, loading, signOut } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false)
+        setIsMenuOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSignOut = async () => {
-    setIsSigningOut(true)
-    await signOut()
-    setIsSigningOut(false)
-    setIsMenuOpen(false)
-  }
+    setIsSigningOut(true);
+    await signOut();
+    setIsSigningOut(false);
+    setIsMenuOpen(false);
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-10 h-10">
-        <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
+      <div className="flex h-10 w-10 items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
       </div>
-    )
+    );
   }
 
   if (!user) {
     return (
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         size="sm"
-        onClick={() => window.location.href = '/signin'}
+        onClick={() => (window.location.href = '/signin')}
         className="tracking-korean-normal"
       >
         로그인
       </Button>
-    )
+    );
   }
 
-  const userDisplayName = user.user_metadata?.name || user.email?.split('@')[0] || '사용자'
-  const userEmail = user.email || ''
+  const userDisplayName =
+    user.user_metadata?.name || user.email?.split('@')[0] || '사용자';
+  const userEmail = user.email || '';
 
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-gray-100"
         aria-label="사용자 메뉴"
       >
-        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-          <User className="w-4 h-4 text-white" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600">
+          <User className="h-4 w-4 text-white" />
         </div>
-        <div className="hidden sm:block text-left">
+        <div className="hidden text-left sm:block">
           <div className="text-sm font-medium text-gray-900 tracking-korean-normal">
             {userDisplayName}
           </div>
-          <div className="text-xs text-gray-500 truncate max-w-[120px]">
+          <div className="max-w-[120px] truncate text-xs text-gray-500">
             {userEmail}
           </div>
         </div>
       </button>
 
       {isMenuOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-          <div className="p-4 border-b border-gray-100">
+        <div className="absolute right-0 z-50 mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+          <div className="border-b border-gray-100 p-4">
             <div className="text-sm font-medium text-gray-900 tracking-korean-normal">
               {userDisplayName}
             </div>
-            <div className="text-xs text-gray-500 mt-1">
-              {userEmail}
-            </div>
+            <div className="mt-1 text-xs text-gray-500">{userEmail}</div>
           </div>
 
           <div className="p-2">
             <button
               onClick={() => {
-                setIsMenuOpen(false)
+                setIsMenuOpen(false);
                 // Navigate to settings page when implemented
-                console.log('Settings page not implemented yet')
+                console.log('Settings page not implemented yet');
               }}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors tracking-korean-normal"
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 transition-colors tracking-korean-normal hover:bg-gray-100"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="h-4 w-4" />
               설정
             </button>
 
             <button
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors tracking-korean-normal disabled:opacity-50"
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-red-600 transition-colors tracking-korean-normal hover:bg-red-50 disabled:opacity-50"
             >
               {isSigningOut ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <LogOut className="w-4 h-4" />
+                <LogOut className="h-4 w-4" />
               )}
               {isSigningOut ? '로그아웃 중...' : '로그아웃'}
             </button>
@@ -113,5 +112,5 @@ export function UserMenu() {
         </div>
       )}
     </div>
-  )
+  );
 }
