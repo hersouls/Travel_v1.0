@@ -47,7 +47,7 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 #### Next.js 프로젝트 초기화
 - [ ] Next.js 14 프로젝트 생성 (App Router)
 - [ ] `package.json` 설정 (dev 스크립트 localhost 금지)
-- [ ] `next.config.js` 설정 (Static Export)
+- [x] `next.config.js` 설정 (환경변수 및 보안 설정) ✅ 완료
 - [ ] `tailwind.config.js` 설정
   - [ ] Pretendard 폰트 설정
   - [ ] Container Queries 플러그인
@@ -128,7 +128,10 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 ### 🗺 Week 5: 지도 통합
 
 #### Google Maps 연동
-- [ ] Google Maps 초기화 설정
+- [x] Google Maps API 로더 구현 (`lib/google-maps/loader.ts`) ✅ 완료
+- [x] Google Maps 환경변수 검증 (`lib/google-maps/validate.ts`) ✅ 완료  
+- [x] Google Maps 타입 정의 (`lib/google-maps/types.ts`) ✅ 완료
+- [x] Google Maps 유틸리티 인덱스 (`lib/google-maps/index.ts`) ✅ 완료
 - [ ] 지도 페이지 (`app/map/page.tsx`)
 - [ ] TravelMap 컴포넌트
 - [ ] PlanMarker 컴포넌트
