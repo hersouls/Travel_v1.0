@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { MapPin, Route, Navigation, EyeOff } from 'lucide-react'
 import { loadGoogleMapsAPI, isGoogleMapsLoaded } from '@/lib/google-maps/loader'
 import { useTravelDays } from '@/lib/hooks/useTravelDays'
@@ -13,8 +14,6 @@ import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 
 interface TravelMapProps {
-  travelId?: string
-  dayId?: string
   className?: string
 }
 
@@ -27,7 +26,10 @@ function hasLatLng(plan: DayPlan): plan is DayPlan & { latitude: number; longitu
          plan.longitude !== null
 }
 
-export default function TravelMap({ travelId, dayId, className }: TravelMapProps) {
+export default function TravelMap({ className }: TravelMapProps) {
+  const searchParams = useSearchParams()
+  const travelId = searchParams.get('travelId') || undefined
+  const dayId = searchParams.get('dayId') || undefined
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<google.maps.Map | null>(null)
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null)
