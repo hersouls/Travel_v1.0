@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Add any Next.js configuration here
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  },
+  // Configure for GitHub Pages deployment
+  basePath: process.env.NODE_ENV === 'production' ? '' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 };
 
 module.exports = nextConfig;
