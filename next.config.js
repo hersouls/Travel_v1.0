@@ -1,28 +1,49 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 정적 내보내기는 GitHub Pages 배포 시에만 사용
-  // 개발 환경에서는 정적 내보내기를 사용하지 않음
-  output: undefined,
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
-    formats: ['image/webp', 'image/avif']
-  },
-  // Configure for GitHub Pages deployment
-  basePath: process.env.NODE_ENV === 'production' ? '' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  // output: 'export' 제거 (정적 export 비활성화)
+  // Vercel에서는 동적 렌더링과 API Routes 사용 가능
   
-  // Performance optimizations
+  // Vercel 최적화 설정
+  images: {
+    domains: [
+      'travel.moonwave.kr',
+      'images.unsplash.com',
+      'plus.unsplash.com',
+      'your-supabase-project.supabase.co' // Supabase 이미지 도메인으로 변경 필요
+    ],
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
+  
+  // 환경별 설정
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}/api`
+      : 'http://localhost:3000/api',
+  },
+  
+  // 실험적 기능 활성화
   experimental: {
+    serverActions: true, // Server Actions 사용
     optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
   },
   
-  // Compiler optimizations
+  // 컴파일러 최적화
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   
-  // Bundle analyzer for production
+  // Vercel에서 권장하는 설정
+  poweredByHeader: false,
+  
+  // 번들 분석기
   env: {
     ANALYZE: process.env.ANALYZE || 'false',
   },
