@@ -11,12 +11,12 @@ const nextConfig = {
   },
   // 보안: API 키가 소스맵에 노출되지 않도록
   productionBrowserSourceMaps: false,
-  // GitHub Pages를 위한 Static Export 설정
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
+  // GitHub Pages를 위한 Static Export 설정 (개발 중 비활성화)
+  // output: 'export',
+  // trailingSlash: true,
+  // images: {
+  //   unoptimized: true,
+  // },
 }
 
 module.exports = nextConfig
