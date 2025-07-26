@@ -25,7 +25,7 @@ const nextConfig = {
   // Security headers
   async headers() {
     const isDev = process.env.NODE_ENV === 'development';
-    
+
     // More permissive CSP for development, stricter for production
     const cspDirectives = [
       "default-src 'self'",
@@ -36,8 +36,10 @@ const nextConfig = {
       "connect-src 'self' https://*.supabase.co https://maps.googleapis.com",
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'"
-    ].filter(Boolean).join('; ');
+      "form-action 'self'",
+    ]
+      .filter(Boolean)
+      .join('; ');
 
     return [
       {
