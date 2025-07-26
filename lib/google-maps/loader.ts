@@ -32,7 +32,7 @@ export const loadGoogleMapsAPI = (): Promise<void> => {
 
 // Google Maps API가 로드되었는지 확인
 export const isGoogleMapsLoaded = (): boolean => {
-  return isLoaded && typeof window !== 'undefined' && window.google && window.google.maps
+  return isLoaded && typeof window !== 'undefined' && !!window.google && !!window.google.maps
 }
 
 // Google Maps API 로드 상태 리셋 (테스트용)

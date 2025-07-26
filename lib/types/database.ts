@@ -523,7 +523,7 @@ export type UpdateCollaborator = Database['public']['Tables']['collaborators']['
 // ===============================================
 
 // 여행 계획과 관련 데이터를 포함한 확장 타입
-export interface TravelPlanWithDetails extends TravelPlan {
+export interface TravelPlanWithDetails extends Omit<TravelPlan, 'collaborators'> {
   travel_days: (TravelDay & {
     day_plans: DayPlan[]
   })[]

@@ -34,7 +34,7 @@ export interface PlaceResult {
   }
   types: string[]
   rating?: number
-  photos?: google.maps.PlacePhoto[]
+  photos?: google.maps.places.PlacePhoto[]
 }
 
 export interface DirectionsRequest {
