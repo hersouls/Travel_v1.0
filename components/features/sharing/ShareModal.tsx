@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { 
   X, 
-  Link2, 
   Copy, 
   Mail, 
   Users, 

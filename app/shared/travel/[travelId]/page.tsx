@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: SharedTravelPageProps): Promi
         description: travel.description || `${travel.destination}으로의 특별한 여행`,
       },
     }
-  } catch (error) {
+  } catch {
     return {
       title: '여행 계획을 찾을 수 없습니다 | Moonwave Travel',
     }
