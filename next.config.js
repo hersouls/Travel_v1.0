@@ -1,13 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
+  // Only use static export for GitHub Pages deployment
+  ...(process.env.GITHUB_ACTIONS && {
+    output: 'export',
+    trailingSlash: true,
+    basePath: '',
+    assetPrefix: '',
+  }),
   images: {
     unoptimized: true
   },
-  // Configure for GitHub Pages deployment
-  basePath: process.env.NODE_ENV === 'production' ? '' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  // Experimental features for performance
+  experimental: {
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
+  },
 };
 
 module.exports = nextConfig;

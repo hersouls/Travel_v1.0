@@ -248,7 +248,7 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
             {/* 커버 이미지 URL */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Image className="w-4 h-4 inline mr-2" />
+                <Image className="w-4 h-4 inline mr-2" aria-label="이미지 아이콘" />
                 커버 이미지 URL (선택사항)
               </label>
               <Input

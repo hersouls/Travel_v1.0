@@ -1,4 +1,16 @@
 {
+  "app/travels/page.tsx -> @/components/features/travel/EmptyTravelState": {
+    "id": 3246,
+    "files": [
+      "static/chunks/246.79e7139d3f65f189.js"
+    ]
+  },
+  "app/travels/page.tsx -> @/components/features/travel/TravelList": {
+    "id": 2784,
+    "files": [
+      "static/chunks/784.2bd3871d97b002a9.js"
+    ]
+  },
   "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
     "id": 485,
     "files": []

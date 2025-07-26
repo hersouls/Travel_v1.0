@@ -1,15 +1,31 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { useTravelPlans } from '@/hooks/useTravelPlans';
-import { TravelList } from '@/components/features/travel/TravelList';
-import { EmptyTravelState } from '@/components/features/travel/EmptyTravelState';
 import { TravelListSkeleton } from '@/components/features/travel/TravelListSkeleton';
 import { Button } from '@/components/ui/Button';
 import { Plus, MapPin, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+
+// Dynamic imports for better performance
+const TravelList = dynamic(
+  () => import('@/components/features/travel/TravelList').then(mod => ({ default: mod.TravelList })),
+  { 
+    loading: () => <TravelListSkeleton />,
+    ssr: false 
+  }
+);
+
+const EmptyTravelState = dynamic(
+  () => import('@/components/features/travel/EmptyTravelState').then(mod => ({ default: mod.EmptyTravelState })),
+  { 
+    loading: () => <div className="animate-pulse h-64 bg-gray-100 rounded-lg" />,
+    ssr: false 
+  }
+);
 
 export default function TravelsPage() {
   const { user, loading: authLoading } = useSupabase();

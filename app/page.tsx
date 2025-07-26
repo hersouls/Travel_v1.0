@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { MapPin, Plus, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { reportWebVitals } from '@/lib/web-vitals';
 
 export default function HomePage() {
   const router = useRouter();
@@ -18,6 +19,13 @@ export default function HomePage() {
       router.push('/travels');
     }
   }, [user, loading, router]);
+
+  // Web Vitals 성능 측정
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      reportWebVitals();
+    }
+  }, []);
 
   if (loading) {
     return (
