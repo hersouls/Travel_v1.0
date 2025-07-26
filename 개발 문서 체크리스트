@@ -1,0 +1,1920 @@
+# Moonwave Phase 1 이전 필수 개발 문서 체크리스트
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - 완전한 문서 기반 개발 준비
+
+## 📋 문서 작성 우선순위 및 체크리스트
+
+### 🎯 **TIER 1: 핵심 전략 문서 (Phase 1 시작 전 필수)**
+
+#### 1.1 PRD (Product Requirements Document)
+```markdown
+# Moonwave 구독 관리 시스템 PRD v1.0
+
+## 🎯 제품 비전
+**Vision Statement**: 구독 서비스의 복잡함을 단순함으로 변화시켜, 사용자가 진정으로 가치 있는 서비스에만 투자할 수 있도록 돕는다.
+
+## 📊 문제 정의 (Problem Statement)
+- **현재 상황**: 평균 한국인이 관리하는 구독 서비스 7.2개, 월 평균 지출 89,000원
+- **핵심 문제**: 
+  1. 구독 서비스 현황 파악 어려움 (67% 사용자)
+  2. 불필요한 구독 지속 결제 (43% 사용자)
+  3. 결제일 관리 부재로 인한 예상치 못한 지출 (78% 사용자)
+
+## 🎯 목표 사용자 (Target Users)
+**Primary**: 25-40세 직장인, 월 5개 이상 구독 서비스 이용
+**Secondary**: 20-25세 대학생, 디지털 네이티브
+**Persona**: "체계적 관리를 원하지만 시간이 부족한 밀레니얼"
+
+## 🚀 핵심 기능 (Core Features)
+### MVP (Minimum Viable Product)
+1. **구독 서비스 등록 및 관리**
+   - 서비스명, 가격, 결제 주기, 다음 결제일
+   - 카테고리별 분류 (스트리밍, 소프트웨어, 게임, 뉴스 등)
+
+2. **대시보드 및 현황 분석**
+   - 월간/연간 총 구독료 계산
+   - 카테고리별 지출 분석
+   - 구독 수 및 평균 비용 통계
+
+3. **결제 알림 시스템**
+   - 결제 예정일 3일 전 알림
+   - 월간 구독료 요약 리포트
+
+### v1.1 확장 기능
+4. **구독 최적화 제안**
+   - 유사 서비스 비교 분석
+   - 비용 절약 제안
+   - 연간 결제 할인 알림
+
+5. **가족/팀 구독 관리**
+   - 공유 구독 관리
+   - 비용 분담 계산
+
+## 📏 성공 지표 (Success Metrics)
+- **사용자 참여**: 월 활성 사용자 1,000명 (3개월 내)
+- **기능 사용**: 구독 등록률 85%, 알림 확인률 70%
+- **비즈니스**: 사용자당 평균 구독료 절약 월 15,000원
+
+## 🛣 로드맵 (Roadmap)
+- **MVP**: 2025.08-09 (2개월)
+- **v1.1**: 2025.10-11 (2개월)  
+- **v1.2**: 2025.12-2026.01 (2개월)
+
+## 🚫 제약사항 (Constraints)
+- **기술적**: GitHub 직접 배포, Mock 데이터 사용 금지
+- **예산적**: 무료 티어 범위 내 개발 (Supabase, GitHub)
+- **시간적**: MVP 2개월 내 완성
+
+## 📋 요구사항 우선순위
+**Must Have**: 구독 CRUD, 대시보드, 결제일 알림
+**Should Have**: 카테고리 분류, 통계 분석
+**Could Have**: 최적화 제안, 리포트 생성
+**Won't Have**: 실제 결제 연동, 외부 API 자동 동기화
+```
+
+**체크리스트**: 
+- [ ] 제품 비전 및 목표 명확화
+- [ ] 타겟 사용자 페르소나 정의
+- [ ] MVP 기능 범위 확정
+- [ ] 성공 지표 설정
+- [ ] 개발 일정 계획
+
+---
+
+#### 1.2 기술 아키텍처 문서 (Technical Architecture Document)
+```markdown
+# Moonwave 기술 아키텍처 v2.0 (React → Next.js 확장 전략)
+
+## 🏗 시스템 아키텍처 개요
+
+### Frontend Architecture Evolution
+
+#### Phase 1: React + Vite (MVP - 빠른 출시)
+- **Framework**: React 18 + TypeScript 5
+- **Build Tool**: Vite (빠른 개발 속도)
+- **Styling**: Tailwind CSS + Container Queries
+- **State Management**: React Context + Custom Hooks + Zustand
+- **Routing**: React Router DOM
+- **Font**: Pretendard (한글 최적화)
+- **Target**: 빠른 MVP 개발 및 시장 검증
+
+#### Phase 2: Next.js Migration (확장 및 최적화)
+- **Framework**: Next.js 14+ (App Router)
+- **Rendering**: SSR + SSG + ISR (SEO 최적화)
+- **API Routes**: Next.js API Routes (풀스택 확장)
+- **Deployment**: Vercel (최적화된 배포)
+- **Image Optimization**: Next.js Image 컴포넌트
+- **Target**: SEO, 성능 최적화, 풀스택 확장
+
+### Migration Strategy (점진적 전환)
+
+#### 1단계: React 기반 MVP (2-3개월)
+```typescript
+// 현재 React 아키텍처
+src/
+├── components/          # Next.js 호환 컴포넌트 설계
+│   ├── ui/             # 재사용 가능한 UI 컴포넌트
+│   ├── features/       # 비즈니스 로직 컴포넌트
+│   └── layout/         # 레이아웃 컴포넌트
+├── hooks/              # Next.js에서 재사용 가능한 훅
+├── lib/                # 플랫폼 독립적 유틸리티
+├── types/              # 공통 타입 정의
+└── styles/             # Tailwind CSS
+```
+
+#### 2단계: Next.js 준비 (3-4개월)
+```typescript
+// Next.js 호환성을 고려한 컴포넌트 설계
+'use client'; // 클라이언트 컴포넌트 명시
+
+export const SubscriptionCard = ({ subscription }: Props) => {
+  // React와 Next.js에서 모두 동작하는 컴포넌트
+  return (
+    <div className="font-pretendard antialiased">
+      {/* 컴포넌트 구현 */}
+    </div>
+  );
+};
+```
+
+#### 3단계: Next.js 완전 마이그레이션 (4-6개월)
+```typescript
+// Next.js App Router 구조
+app/
+├── (auth)/             # 인증 관련 라우트
+├── dashboard/          # 대시보드 페이지
+├── subscriptions/      # 구독 관리 페이지
+├── api/               # API Routes (확장 기능)
+├── globals.css        # 글로벌 스타일
+├── layout.tsx         # 루트 레이아웃
+└── page.tsx           # 홈페이지
+```
+
+### Backend & Infrastructure
+
+#### Current (React + Supabase)
+- **Database**: Supabase PostgreSQL
+- **Authentication**: Supabase Auth
+- **Real-time**: Supabase Realtime
+- **Storage**: Supabase Storage
+- **Hosting**: GitHub Pages
+- **Domain**: xxx.moonwave.kr
+
+#### Future (Next.js + Enhanced)
+- **Database**: Supabase PostgreSQL (유지)
+- **Authentication**: NextAuth.js + Supabase Auth (확장)
+- **API Layer**: Next.js API Routes + Supabase
+- **Caching**: Next.js Built-in Caching + Redis (선택)
+- **Hosting**: Vercel (Next.js 최적화)
+- **CDN**: Vercel Edge Network
+- **Analytics**: Vercel Analytics + Google Analytics
+
+### Technology Stack Comparison
+
+| 기능 | React + Vite | Next.js 14+ | 비고 |
+|------|-------------|-------------|------|
+| **개발 속도** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | MVP 빠른 개발 |
+| **SEO** | ⭐⭐ | ⭐⭐⭐⭐⭐ | 검색 최적화 |
+| **성능** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | SSR, SSG, 최적화 |
+| **확장성** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 풀스택 확장 |
+| **학습곡선** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 팀 생산성 |
+| **배포 복잡도** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 배포 편의성 |
+
+## 🗃 확장 가능한 데이터베이스 설계
+
+### ERD (Entity Relationship Diagram) - Next.js 확장 고려
+```
+users (Next.js 확장 시 추가)
+├── id (UUID, PK)
+├── email (TEXT, UNIQUE)
+├── name (TEXT)
+├── image (TEXT) // NextAuth.js 호환
+├── email_verified (TIMESTAMP) // NextAuth.js 호환
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
+
+profiles (현재 Supabase Auth 연동)
+├── id (UUID, PK, FK → auth.users.id)
+├── email (TEXT, UNIQUE)
+├── name (TEXT)
+├── avatar_url (TEXT)
+├── subscription_count (INTEGER)
+├── total_monthly_cost (DECIMAL)
+├── preferences (JSONB) // 확장: 사용자 설정
+├── timezone (TEXT) // 확장: 시간대 설정
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
+
+subscriptions (확장 가능한 구독 테이블)
+├── id (UUID, PK)
+├── user_id (UUID, FK → profiles.id)
+├── name (TEXT)
+├── description (TEXT)
+├── price (DECIMAL)
+├── currency (TEXT)
+├── billing_cycle (TEXT)
+├── next_billing_date (DATE)
+├── category (TEXT)
+├── icon_url (TEXT)
+├── website_url (TEXT)
+├── is_active (BOOLEAN)
+├── metadata (JSONB) // 확장: 추가 메타데이터
+├── external_id (TEXT) // 확장: 외부 API 연동 ID
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
+
+payment_history (결제 이력)
+├── id (UUID, PK)
+├── subscription_id (UUID, FK → subscriptions.id)
+├── amount (DECIMAL)
+├── currency (TEXT)
+├── payment_date (DATE)
+├── status (TEXT)
+├── payment_method (TEXT) // 확장: 결제 방법
+├── receipt_url (TEXT) // 확장: 영수증 URL
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
+
+notifications (확장: 알림 시스템)
+├── id (UUID, PK)
+├── user_id (UUID, FK → profiles.id)
+├── type (TEXT) // billing_reminder, price_change, etc.
+├── title (TEXT)
+├── message (TEXT)
+├── is_read (BOOLEAN)
+├── scheduled_at (TIMESTAMP)
+├── sent_at (TIMESTAMP)
+├── metadata (JSONB)
+└── created_at (TIMESTAMP)
+
+categories (확장: 사용자 정의 카테고리)
+├── id (UUID, PK)
+├── user_id (UUID, FK → profiles.id)
+├── name (TEXT)
+├── color (TEXT)
+├── icon (TEXT)
+├── is_default (BOOLEAN)
+└── created_at (TIMESTAMP)
+```
+
+### 확장 시나리오별 데이터 모델
+
+#### Next.js + NextAuth.js 통합
+```sql
+-- NextAuth.js 호환 테이블 (Next.js 확장 시)
+CREATE TABLE accounts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  provider_account_id TEXT NOT NULL,
+  refresh_token TEXT,
+  access_token TEXT,
+  expires_at INTEGER,
+  token_type TEXT,
+  scope TEXT,
+  id_token TEXT,
+  session_state TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(provider, provider_account_id)
+);
+
+CREATE TABLE sessions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  session_token TEXT UNIQUE NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires TIMESTAMP WITH TIME ZONE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+### 데이터 제약사항
+- **RLS (Row Level Security)**: 모든 테이블 적용
+- **Cascade Delete**: 사용자 삭제 시 관련 데이터 모두 삭제
+- **Data Validation**: 클라이언트 + 서버 이중 검증
+
+## 🔄 확장 가능한 API 설계
+
+### Current: Supabase Client API (React Phase)
+```typescript
+// 구독 조회 (React + Supabase)
+const { data, error } = await supabase
+  .from('subscriptions')
+  .select('*')
+  .eq('user_id', user.id)
+  .eq('is_active', true)
+  .order('created_at', { ascending: false });
+```
+
+### Future: Next.js API Routes (확장 Phase)
+```typescript
+// app/api/subscriptions/route.ts (Next.js App Router)
+import { NextRequest, NextResponse } from 'next/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+
+export async function GET(request: NextRequest) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const { searchParams } = new URL(request.url);
+  
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '10');
+  const category = searchParams.get('category');
+  
+  try {
+    let query = supabase
+      .from('subscriptions')
+      .select('*, payment_history(*)')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+    
+    if (category) {
+      query = query.eq('category', category);
+    }
+    
+    const { data, error, count } = await query;
+    
+    if (error) throw error;
+    
+    return NextResponse.json({
+      data,
+      pagination: {
+        page,
+        limit,
+        total: count,
+        totalPages: Math.ceil((count || 0) / limit)
+      }
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch subscriptions' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const body = await request.json();
+  
+  // 입력 검증
+  const validatedData = subscriptionSchema.parse(body);
+  
+  try {
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .insert({
+        ...validatedData,
+        user_id: (await supabase.auth.getUser()).data.user?.id
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    // 확장: 알림 생성, 외부 API 연동 등
+    await createBillingReminder(data);
+    
+    return NextResponse.json({ data }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to create subscription' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### API Evolution Path
+```typescript
+// Phase 1: Direct Supabase (React)
+const useSubscriptions = () => {
+  // Direct Supabase client calls
+};
+
+// Phase 2: Hybrid (Next.js with Supabase)
+const useSubscriptions = () => {
+  // Next.js API Routes + Supabase
+  return useSWR('/api/subscriptions', fetcher);
+};
+
+// Phase 3: Full API (Next.js + External Services)
+const useSubscriptions = () => {
+  // Next.js API Routes + Supabase + External APIs
+  return useQuery(['subscriptions'], 
+    () => fetch('/api/subscriptions').then(res => res.json())
+  );
+};
+```
+
+### 확장 가능한 API 아키텍처
+
+#### Middleware Layer (Next.js 확장 시)
+```typescript
+// middleware.ts
+import { NextResponse } from 'next/server';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
+  
+  // 인증 확인
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  // API 라우트 보호
+  if (req.nextUrl.pathname.startsWith('/api/') && !session) {
+    return NextResponse.json(
+      { error: 'Unauthorized' }, 
+      { status: 401 }
+    );
+  }
+  
+  // 페이지 보호
+  if (req.nextUrl.pathname.startsWith('/dashboard') && !session) {
+    return NextResponse.redirect(new URL('/auth/signin', req.url));
+  }
+  
+  return res;
+}
+
+export const config = {
+  matcher: ['/api/:path*', '/dashboard/:path*']
+};
+```
+
+#### Service Layer Pattern
+```typescript
+// lib/services/subscriptionService.ts
+export class SubscriptionService {
+  constructor(private supabase: SupabaseClient) {}
+  
+  async getSubscriptions(userId: string, options?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+  }) {
+    // 비즈니스 로직 구현
+  }
+  
+  async createSubscription(data: CreateSubscriptionData) {
+    // 입력 검증, 비즈니스 규칙 적용
+    // 외부 API 연동 (선택)
+    // 알림 생성 등
+  }
+  
+  async updateSubscription(id: string, data: UpdateSubscriptionData) {
+    // 업데이트 로직
+  }
+  
+  async deleteSubscription(id: string, soft: boolean = true) {
+    // 소프트/하드 삭제 로직
+  }
+}
+```
+
+## 🔐 보안 정책
+
+### 인증 및 권한
+- **Authentication**: Supabase Auth (Magic Link, OAuth)
+- **Authorization**: RLS 기반 행 단위 접근 제어
+- **Session**: JWT 토큰 기반 세션 관리
+
+### 데이터 보호
+- **Encryption**: Database 레벨 암호화 (Supabase 기본)
+- **Privacy**: 사용자 데이터 격리 (RLS)
+- **Backup**: 자동 백업 (Supabase 관리)
+
+## 📱 확장 가능한 프론트엔드 아키텍처
+
+### Component Architecture (React → Next.js 호환)
+
+#### 현재 React 구조 (Next.js 호환성 고려)
+```typescript
+// src/components/ui/Button.tsx
+'use client'; // Next.js 클라이언트 컴포넌트 대비
+
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean; // 확장: 로딩 상태
+}
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'primary', size = 'md', loading = false, children, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          'font-pretendard antialiased font-medium rounded-lg',
+          'transition-colors duration-200',
+          'focus:outline-none focus:ring-2 focus:ring-blue-500',
+          'disabled:opacity-50 disabled:cursor-not-allowed',
+          // variant 스타일...
+          className
+        )}
+        disabled={loading || props.disabled}
+        {...props}
+      >
+        {loading ? (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            로딩중...
+          </div>
+        ) : children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+```
+
+#### Next.js 확장 구조
+```typescript
+// Next.js App Router 구조
+app/
+├── globals.css
+├── layout.tsx              # 루트 레이아웃
+├── page.tsx               # 홈페이지
+├── loading.tsx            # 로딩 UI
+├── error.tsx              # 에러 UI
+├── not-found.tsx          # 404 페이지
+├── (auth)/                # 라우트 그룹 (인증)
+│   ├── layout.tsx
+│   ├── signin/
+│   │   └── page.tsx
+│   └── signup/
+│       └── page.tsx
+├── dashboard/             # 대시보드
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── loading.tsx
+│   └── subscriptions/
+│       ├── page.tsx
+│       ├── [id]/
+│       │   ├── page.tsx
+│       │   └── edit/
+│       │       └── page.tsx
+│       └── new/
+│           └── page.tsx
+├── api/                   # API Routes
+│   ├── auth/
+│   ├── subscriptions/
+│   └── analytics/
+└── components/            # 재사용 컴포넌트 (현재와 동일)
+    ├── ui/
+    ├── features/
+    └── layout/
+```
+
+### State Management Evolution
+
+#### Current: React Context + Zustand
+```typescript
+// stores/useSubscriptionStore.ts (React + Next.js 호환)
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface SubscriptionStore {
+  subscriptions: Subscription[];
+  loading: boolean;
+  error: string | null;
+  fetchSubscriptions: () => Promise<void>;
+  addSubscription: (data: CreateSubscriptionData) => Promise<void>;
+  updateSubscription: (id: string, data: UpdateSubscriptionData) => Promise<void>;
+  deleteSubscription: (id: string) => Promise<void>;
+}
+
+export const useSubscriptionStore = create<SubscriptionStore>()(
+  persist(
+    (set, get) => ({
+      subscriptions: [],
+      loading: false,
+      error: null,
+      
+      fetchSubscriptions: async () => {
+        set({ loading: true, error: null });
+        try {
+          // React: direct Supabase call
+          // Next.js: API route call
+          const data = await subscriptionService.getSubscriptions();
+          set({ subscriptions: data, loading: false });
+        } catch (error) {
+          set({ error: error.message, loading: false });
+        }
+      },
+      
+      // ... 기타 메서드
+    }),
+    {
+      name: 'subscription-storage',
+      partialize: (state) => ({ 
+        subscriptions: state.subscriptions 
+      })
+    }
+  )
+);
+```
+
+#### Next.js Server Components Integration
+```typescript
+// app/dashboard/subscriptions/page.tsx (Next.js Server Component)
+import { Suspense } from 'react';
+import { SubscriptionList } from '@/components/features/subscriptions/SubscriptionList';
+import { SubscriptionSkeleton } from '@/components/ui/SubscriptionSkeleton';
+
+// 서버 컴포넌트에서 데이터 pre-fetch
+async function getSubscriptions() {
+  // 서버에서 직접 Supabase 호출 (캐싱 가능)
+  const supabase = createServerComponentClient();
+  const { data } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('is_active', true);
+  
+  return data;
+}
+
+export default async function SubscriptionsPage() {
+  const initialSubscriptions = await getSubscriptions();
+  
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="font-pretendard text-3xl font-bold mb-8">
+        구독 관리
+      </h1>
+      
+      <Suspense fallback={<SubscriptionSkeleton />}>
+        <SubscriptionList initialData={initialSubscriptions} />
+      </Suspense>
+    </div>
+  );
+}
+
+// 메타데이터 (SEO 최적화)
+export const metadata = {
+  title: '구독 관리 - Moonwave',
+  description: '모든 구독 서비스를 한 곳에서 체계적으로 관리하세요',
+  openGraph: {
+    title: '구독 관리 - Moonwave',
+    description: '스마트한 구독 관리 시스템',
+    url: 'https://moonwave.kr/dashboard/subscriptions'
+  }
+};
+```
+
+### Performance Optimization Strategy
+
+#### React (Current)
+```typescript
+// React 최적화 패턴
+const SubscriptionCard = React.memo(({ subscription }: Props) => {
+  const handleEdit = useCallback(() => {
+    // 편집 로직
+  }, [subscription.id]);
+  
+  return (
+    <div className="@container">
+      {/* 컴포넌트 내용 */}
+    </div>
+  );
+});
+```
+
+#### Next.js (Future)
+```typescript
+// Next.js 최적화 패턴
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+// 동적 임포트 (코드 스플리팅)
+const SubscriptionForm = dynamic(
+  () => import('@/components/features/subscriptions/SubscriptionForm'),
+  { 
+    loading: () => <FormSkeleton />,
+    ssr: false // 클라이언트에서만 로드
+  }
+);
+
+// 이미지 최적화
+export const SubscriptionIcon = ({ src, alt }: Props) => (
+  <Image
+    src={src}
+    alt={alt}
+    width={48}
+    height={48}
+    className="rounded-lg"
+    priority={false}
+    placeholder="blur"
+    blurDataURL="data:image/jpeg;base64,..."
+  />
+);
+
+// 페이지 레벨 캐싱
+export const revalidate = 3600; // 1시간 캐시
+```
+
+## 🚀 확장 가능한 배포 전략
+
+### Current Deployment (React + GitHub Pages)
+```yaml
+# .github/workflows/react-deploy.yml
+name: React App Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - run: npm ci
+    - run: npm run type-check
+    - run: npm run build
+    
+    - uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        cname: moonwave.kr
+```
+
+### Future Deployment (Next.js + Vercel)
+```yaml
+# .github/workflows/nextjs-deploy.yml (백업 배포)
+name: Next.js Deploy to Vercel
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - run: npm ci
+    - run: npm run build
+    - run: npm run test # 추가된 테스트
+    
+    - uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        vercel-args: '--prod'
+```
+
+### Migration Deployment Strategy
+```typescript
+// 점진적 마이그레이션 배포 전략
+
+// Phase 1: React (MVP) - GitHub Pages
+Domain: moonwave.kr
+Hosting: GitHub Pages
+CDN: Cloudflare (선택)
+SSL: GitHub Pages 자동
+
+// Phase 2: Parallel Deployment
+React App: moonwave.kr (현재 사용자 유지)
+Next.js App: beta.moonwave.kr (베타 테스트)
+
+// Phase 3: Full Migration
+React App: legacy.moonwave.kr (폴백)
+Next.js App: moonwave.kr (메인 서비스)
+
+// Phase 4: Legacy Deprecation
+Next.js App: moonwave.kr (완전 이전)
+```
+
+### Infrastructure Comparison
+
+| 기능 | GitHub Pages | Vercel | 비고 |
+|------|-------------|--------|------|
+| **배포 속도** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | Vercel 더 빠름 |
+| **무료 한도** | 무제한 | 월 100GB | GitHub 유리 |
+| **커스텀 도메인** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 둘 다 지원 |
+| **SSL 인증서** | 자동 | 자동 | 둘 다 자동 |
+| **성능 최적화** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | Vercel Edge 우수 |
+| **Next.js 최적화** | ❌ | ⭐⭐⭐⭐⭐ | Vercel 전용 최적화 |
+| **Serverless Functions** | ❌ | ⭐⭐⭐⭐⭐ | Next.js API Routes |
+| **Analytics** | 외부 연동 | 내장 | Vercel 편리 |
+
+### Environment Configuration
+
+#### React Environment
+```typescript
+// .env.example (React)
+VITE_SUPABASE_URL=https://project.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+VITE_SITE_URL=https://moonwave.kr
+VITE_ENVIRONMENT=production
+```
+
+#### Next.js Environment
+```typescript
+// .env.example (Next.js)
+# Public (클라이언트에서 접근 가능)
+NEXT_PUBLIC_SUPABASE_URL=https://project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+NEXT_PUBLIC_SITE_URL=https://moonwave.kr
+
+# Private (서버에서만 접근 가능)
+SUPABASE_SERVICE_ROLE_KEY=eyJ... # 서버 전용 키
+NEXTAUTH_SECRET=your-secret-here
+NEXTAUTH_URL=https://moonwave.kr
+
+# Analytics & Monitoring
+VERCEL_ANALYTICS_ID=your-analytics-id
+SENTRY_DSN=your-sentry-dsn
+```
+
+### Performance Monitoring Evolution
+
+#### Current (React)
+```typescript
+// 기본 성능 모니터링
+export const usePerformanceMonitoring = () => {
+  useEffect(() => {
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        if (entry.entryType === 'largest-contentful-paint') {
+          console.log('LCP:', entry.startTime);
+        }
+      });
+    });
+    observer.observe({ entryTypes: ['largest-contentful-paint'] });
+    return () => observer.disconnect();
+  }, []);
+};
+```
+
+#### Future (Next.js + Vercel)
+```typescript
+// app/lib/analytics.ts (Next.js)
+import { track } from '@vercel/analytics';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
+// 사용자 행동 추적
+export const trackEvent = (name: string, properties?: object) => {
+  track(name, properties);
+};
+
+// 성능 지표 자동 수집
+export function Analytics() {
+  return (
+    <>
+      <SpeedInsights />
+      {/* Core Web Vitals 자동 수집 */}
+    </>
+  );
+}
+
+// 사용법 in layout.tsx
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ko">
+      <body className="font-pretendard">
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
+}
+```
+
+## 📊 모니터링 및 분석
+
+### 성능 모니터링
+- **Core Web Vitals**: LCP, FID, CLS
+- **Bundle Size**: Webpack Bundle Analyzer
+- **Loading Time**: Performance API
+
+### 사용자 분석
+- **User Behavior**: 사용 패턴 분석
+- **Feature Usage**: 기능별 사용률
+- **Error Tracking**: 에러 로그 수집
+
+## 🔧 확장 가능한 개발 도구 및 워크플로우
+
+### Development Tools Evolution
+
+#### Current Tools (React Phase)
+```json
+{
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.45.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "typescript": "^5.0.0",
+    "vite": "^4.4.0"
+  }
+}
+```
+
+#### Next.js Tools (Future)
+```json
+{
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@next/eslint-config-next": "^14.0.0",
+    "eslint": "^8.45.0",
+    "eslint-config-next": "^14.0.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "typescript": "^5.0.0",
+    
+    // 추가 도구
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jest": "^29.0.0",
+    "jest-environment-jsdom": "^29.0.0",
+    "@playwright/test": "^1.40.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0"
+  }
+}
+```
+
+### Testing Strategy (Next.js 확장 시)
+
+#### Unit Testing
+```typescript
+// __tests__/components/SubscriptionCard.test.tsx
+import { render, screen } from '@testing-library/react';
+import { SubscriptionCard } from '@/components/features/subscriptions/SubscriptionCard';
+
+const mockSubscription = {
+  id: '1',
+  name: 'Netflix Premium',
+  price: 17000,
+  currency: 'KRW',
+  billing_cycle: 'monthly',
+  next_billing_date: '2025-08-15'
+};
+
+describe('SubscriptionCard', () => {
+  it('renders subscription information correctly', () => {
+    render(<SubscriptionCard subscription={mockSubscription} />);
+    
+    expect(screen.getByText('Netflix Premium')).toBeInTheDocument();
+    expect(screen.getByText('₩17,000')).toBeInTheDocument();
+  });
+  
+  it('displays next billing date in Korean format', () => {
+    render(<SubscriptionCard subscription={mockSubscription} />);
+    
+    expect(screen.getByText(/2025년 8월 15일/)).toBeInTheDocument();
+  });
+});
+```
+
+#### E2E Testing (Playwright)
+```typescript
+// e2e/subscription-management.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('Subscription Management', () => {
+  test.beforeEach(async ({ page }) => {
+    // 테스트 사용자로 로그인
+    await page.goto('/auth/signin');
+    await page.fill('[data-testid=email]', 'test@moonwave.kr');
+    await page.click('[data-testid=signin-button]');
+    await page.waitForURL('/dashboard');
+  });
+
+  test('should add new subscription', async ({ page }) => {
+    await page.goto('/dashboard/subscriptions');
+    await page.click('[data-testid=add-subscription]');
+    
+    await page.fill('[data-testid=subscription-name]', 'Spotify Premium');
+    await page.fill('[data-testid=subscription-price]', '10900');
+    await page.selectOption('[data-testid=billing-cycle]', 'monthly');
+    
+    await page.click('[data-testid=save-subscription]');
+    
+    await expect(page.locator('text=Spotify Premium')).toBeVisible();
+  });
+});
+```
+
+### Code Quality & CI/CD Enhancement
+
+#### Pre-commit Hooks
+```json
+// package.json
+{
+  "scripts": {
+    "prepare": "husky install",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "test:coverage": "jest --coverage"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,md}": [
+      "prettier --write"
+    ]
+  }
+}
+
+// .husky/pre-commit
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run type-check
+npm run lint
+npm run test
+npx lint-staged
+```
+
+#### Enhanced CI/CD Pipeline
+```yaml
+# .github/workflows/nextjs-ci.yml
+name: Next.js CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - run: npm ci
+    
+    # 코드 품질 검사
+    - name: Type Check
+      run: npm run type-check
+    
+    - name: Lint Check
+      run: npm run lint
+    
+    - name: Unit Tests
+      run: npm run test:coverage
+    
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v3
+    
+    # E2E 테스트 (Next.js 확장 시)
+    - name: Install Playwright
+      run: npx playwright install
+    
+    - name: E2E Tests
+      run: npm run test:e2e
+    
+    # 빌드 테스트
+    - name: Build Check
+      run: npm run build
+    
+    # 성능 테스트 (Lighthouse CI)
+    - name: Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v10
+      with:
+        configPath: './lighthouserc.json'
+        uploadArtifacts: true
+
+  deploy:
+    needs: quality-check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - run: npm ci
+    - run: npm run build
+    
+    # Vercel 배포 (Next.js)
+    - uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        vercel-args: '--prod'
+```
+
+### Development Environment Setup
+
+#### VS Code / Cursor Settings
+```json
+// .vscode/settings.json
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "'([^']*)'"],
+    ["clsx\\(([^)]*)\\)", "'([^']*)'"]
+  ],
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  }
+}
+
+// .vscode/extensions.json
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "streetsidesoftware.code-spell-checker",
+    "ms-playwright.playwright"
+  ]
+}
+```
+
+## 📋 Migration Timeline & Checklist
+
+### Phase 1: React MVP (Month 1-2)
+- [ ] GitHub Repository 설정
+- [ ] React + Vite + Supabase 기본 구조
+- [ ] Core 기능 개발 (CRUD)
+- [ ] GitHub Pages 배포
+- [ ] Next.js 호환성 고려한 컴포넌트 설계
+
+### Phase 2: Enhancement & Preparation (Month 3-4)
+- [ ] 성능 최적화
+- [ ] 테스트 코드 작성
+- [ ] Next.js 마이그레이션 계획 수립
+- [ ] 베타 환경 구축 (beta.moonwave.kr)
+
+### Phase 3: Next.js Migration (Month 5-6)
+- [ ] Next.js 프로젝트 설정
+- [ ] 컴포넌트 마이그레이션
+- [ ] API Routes 구현
+- [ ] SSR/SSG 적용
+- [ ] Vercel 배포 설정
+
+### Phase 4: Full Transition (Month 7-8)
+- [ ] 사용자 데이터 마이그레이션
+- [ ] 도메인 전환 (moonwave.kr → Next.js)
+- [ ] 성능 모니터링 및 최적화
+- [ ] 레거시 시스템 제거
+
+### 기술 결정 매트릭스
+
+| 고려사항 | React (현재) | Next.js (미래) | 추천 시점 |
+|----------|-------------|---------------|----------|
+| **개발 속도** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | MVP 단계 |
+| **SEO 요구사항** | ⭐⭐ | ⭐⭐⭐⭐⭐ | 마케팅 확장 시 |
+| **팀 크기** | 1-2명 | 3명+ | 팀 확장 시 |
+| **트래픽 규모** | ~1K MAU | 10K+ MAU | 사용자 증가 시 |
+| **기능 복잡도** | Simple CRUD | Complex Business Logic | 기능 확장 시 |
+| **운영 복잡도** | 단순 | 중간 | 운영팀 구성 시 |
+
+**💡 권장 전략**: React로 빠른 MVP 출시 → 시장 검증 후 Next.js로 확장
+```
+
+**체크리스트**:
+- [ ] 시스템 아키텍처 다이어그램 작성
+- [ ] 데이터베이스 ERD 설계
+- [ ] API 엔드포인트 정의
+- [ ] 보안 정책 수립
+- [ ] 배포 전략 계획
+
+---
+
+### 🎨 **TIER 2: 설계 문서 (Phase 1 진행 중 작성)**
+
+#### 2.1 UI/UX 디자인 시스템 문서
+```markdown
+# Moonwave UI/UX 디자인 시스템 v1.0
+
+## 🎨 디자인 철학
+- **Utility-First**: Tailwind CSS 기반 컴포넌트 설계
+- **Korean Typography**: Pretendard 폰트 한글 최적화
+- **Container Responsive**: 컨테이너 기반 반응형 디자인
+- **Accessibility First**: 접근성 우선 설계
+
+## 🌊 브랜드 아이덴티티
+- **Primary Color**: Blue (#3b82f6) - 신뢰감, 안정성
+- **Secondary Color**: Purple (#8b5cf6) - 혁신, 창의성
+- **Success**: Green (#10b981) - 성공, 성장
+- **Warning**: Yellow (#f59e0b) - 주의, 알림
+- **Error**: Red (#ef4444) - 위험, 오류
+
+## 📱 컴포넌트 가이드라인
+
+### 카드 (Card)
+```tsx
+// 기본 구독 카드
+<Card className="@container p-6">
+  <div className="@lg:flex-row flex flex-col @lg:items-center">
+    <!-- 구독 정보 -->
+  </div>
+</Card>
+```
+
+### 버튼 (Button)
+- **Primary**: 주요 액션 (구독 추가, 저장)
+- **Secondary**: 보조 액션 (취소, 편집)
+- **Destructive**: 위험 액션 (삭제)
+
+### 타이포그래피
+- **제목**: font-bold, tracking-korean-tight
+- **본문**: font-normal, tracking-korean-normal
+- **캡션**: font-medium, text-sm
+
+## 📐 레이아웃 시스템
+
+### 그리드 (Grid)
+```css
+/* 반응형 그리드 */
+.subscription-grid {
+  @apply grid gap-6;
+  @apply grid-cols-1;
+  @apply @lg:grid-cols-2;
+  @apply @2xl:grid-cols-3;
+}
+```
+
+### 간격 (Spacing)
+- **Component Gap**: 1.5rem (24px)
+- **Section Gap**: 3rem (48px)
+- **Page Padding**: 1.5rem mobile, 3rem desktop
+
+## 🎯 사용자 경험 (UX)
+
+### 정보 아키텍처
+```
+Home Dashboard
+├── 구독 현황 요약
+├── 최근 결제 내역
+├── 다가오는 결제 알림
+└── 빠른 액션 (구독 추가)
+
+구독 관리
+├── 전체 구독 목록
+├── 카테고리별 필터
+├── 검색 및 정렬
+└── 구독 상세 정보
+
+분석 및 리포트
+├── 월간 지출 분석
+├── 카테고리별 통계
+├── 절약 제안
+└── 연간 리포트
+```
+
+### 사용자 플로우
+1. **첫 방문**: 온보딩 → 첫 구독 등록
+2. **일상 사용**: 대시보드 확인 → 구독 관리
+3. **정기 관리**: 월말 리뷰 → 불필요 구독 정리
+```
+
+**체크리스트**:
+- [ ] 디자인 토큰 정의
+- [ ] 컴포넌트 라이브러리 설계
+- [ ] 사용자 플로우 매핑
+- [ ] 정보 아키텍처 구성
+
+---
+
+#### 2.2 API 명세서 (API Specification)
+```markdown
+# Moonwave API 명세서 v1.0
+
+## 📡 API 개요
+- **Base URL**: Supabase Client SDK 사용
+- **Authentication**: Bearer Token (JWT)
+- **Data Format**: JSON
+- **Error Handling**: HTTP Status Code + Error Message
+
+## 🔐 인증 (Authentication)
+
+### 로그인
+```typescript
+// Magic Link 로그인
+const { error } = await supabase.auth.signInWithOtp({
+  email: 'user@example.com'
+});
+
+// OAuth 로그인 (Google, GitHub)
+const { error } = await supabase.auth.signInWithOAuth({
+  provider: 'google'
+});
+```
+
+### 로그아웃
+```typescript
+const { error } = await supabase.auth.signOut();
+```
+
+## 👤 사용자 프로필 (Profiles)
+
+### 프로필 조회
+```typescript
+GET /profiles
+const { data, error } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('id', user.id)
+  .single();
+```
+
+### 프로필 업데이트
+```typescript
+PATCH /profiles
+const { data, error } = await supabase
+  .from('profiles')
+  .update({ name: '새 이름' })
+  .eq('id', user.id);
+```
+
+## 💳 구독 관리 (Subscriptions)
+
+### 구독 목록 조회
+```typescript
+GET /subscriptions
+const { data, error } = await supabase
+  .from('subscriptions')
+  .select(`
+    *,
+    payment_history (amount, payment_date, status)
+  `)
+  .eq('user_id', user.id)
+  .eq('is_active', true)
+  .order('created_at', { ascending: false });
+
+Response: Subscription[]
+```
+
+### 구독 생성
+```typescript
+POST /subscriptions
+const { data, error } = await supabase
+  .from('subscriptions')
+  .insert({
+    name: 'Netflix Premium',
+    description: '4K 스트리밍 서비스',
+    price: 17000,
+    currency: 'KRW',
+    billing_cycle: 'monthly',
+    next_billing_date: '2025-08-15',
+    category: 'streaming'
+  })
+  .select();
+
+Request Body: {
+  name: string;
+  description?: string;
+  price: number;
+  currency: 'KRW' | 'USD';
+  billing_cycle: 'weekly' | 'monthly' | 'yearly';
+  next_billing_date: string; // YYYY-MM-DD
+  category: 'streaming' | 'software' | 'gaming' | 'news' | 'others';
+  icon_url?: string;
+  website_url?: string;
+}
+
+Response: Subscription
+```
+
+### 구독 수정
+```typescript
+PATCH /subscriptions/:id
+const { data, error } = await supabase
+  .from('subscriptions')
+  .update({
+    price: 19000,
+    next_billing_date: '2025-09-15'
+  })
+  .eq('id', subscriptionId)
+  .eq('user_id', user.id);
+```
+
+### 구독 삭제 (소프트 삭제)
+```typescript
+DELETE /subscriptions/:id
+const { data, error } = await supabase
+  .from('subscriptions')
+  .update({ is_active: false })
+  .eq('id', subscriptionId)
+  .eq('user_id', user.id);
+```
+
+## 📊 결제 이력 (Payment History)
+
+### 결제 이력 조회
+```typescript
+GET /payment_history
+const { data, error } = await supabase
+  .from('payment_history')
+  .select(`
+    *,
+    subscriptions (name, category)
+  `)
+  .eq('subscriptions.user_id', user.id)
+  .order('payment_date', { ascending: false })
+  .limit(50);
+```
+
+### 결제 이력 추가
+```typescript
+POST /payment_history
+const { data, error } = await supabase
+  .from('payment_history')
+  .insert({
+    subscription_id: 'uuid',
+    amount: 17000,
+    currency: 'KRW',
+    payment_date: '2025-07-26',
+    status: 'completed'
+  });
+```
+
+## 🔄 실시간 구독 (Realtime Subscriptions)
+
+### 구독 데이터 실시간 동기화
+```typescript
+// 실시간 구독 설정
+const subscription = supabase
+  .channel('subscriptions_realtime')
+  .on('postgres_changes', 
+    { 
+      event: '*', 
+      schema: 'public', 
+      table: 'subscriptions',
+      filter: `user_id=eq.${user.id}`
+    },
+    (payload) => {
+      console.log('실시간 데이터 변경:', payload);
+      // UI 업데이트 로직
+    }
+  )
+  .subscribe();
+
+// 구독 해제
+subscription.unsubscribe();
+```
+
+## ❌ 에러 처리 (Error Handling)
+
+### 일반적인 에러 코드
+```typescript
+interface SupabaseError {
+  message: string;
+  code?: string;
+  details?: string;
+  hint?: string;
+}
+
+// 주요 에러 케이스
+const ERROR_CODES = {
+  'PGRST116': '데이터를 찾을 수 없습니다',
+  '23505': '이미 존재하는 데이터입니다',
+  '42501': '접근 권한이 없습니다',
+  'auth/user-not-found': '사용자를 찾을 수 없습니다'
+};
+```
+
+### 에러 처리 패턴
+```typescript
+try {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .insert(subscriptionData);
+    
+  if (error) throw error;
+  return data;
+} catch (error) {
+  const errorMessage = getErrorMessage(error);
+  toast.error(errorMessage);
+  throw error;
+}
+```
+```
+
+**체크리스트**:
+- [ ] API 엔드포인트 정의
+- [ ] 요청/응답 스키마 작성
+- [ ] 에러 처리 방식 정의
+- [ ] 실시간 구독 방식 설계
+
+---
+
+### 📋 **TIER 3: 운영 문서 (Phase 2-3 중 작성)**
+
+#### 3.1 배포 및 인프라 문서
+```markdown
+# Moonwave 배포 및 인프라 관리 가이드
+
+## 🚀 배포 전략
+
+### GitHub Actions 워크플로우
+```yaml
+# 배포 조건
+Trigger: main 브랜치 Push
+Environment: Production Only
+Build Time: ~3분
+Deployment Time: ~2분
+Total Time: ~5분
+```
+
+### 배포 단계
+1. **Code Quality Check**: TypeScript, ESLint
+2. **Build**: Vite 빌드 프로세스
+3. **Test**: 환경 변수 검증, Supabase 연결 테스트
+4. **Deploy**: GitHub Pages 자동 배포
+5. **Verify**: 배포 후 Health Check
+
+### 롤백 전략
+- **자동 롤백**: 배포 실패 시 이전 버전으로 자동 복구
+- **수동 롤백**: GitHub Pages 이전 배포 선택
+
+## 🔐 환경 변수 관리
+
+### GitHub Secrets
+```bash
+VITE_SUPABASE_URL=https://project.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+VITE_SITE_URL=https://project.moonwave.kr
+CUSTOM_DOMAIN=project.moonwave.kr
+```
+
+### 환경별 설정
+- **Production**: GitHub Secrets 기반
+- **Development**: GitHub Codespaces 환경
+
+## 📊 모니터링
+
+### 성능 모니터링
+- **페이지 로드 시간**: < 3초
+- **LCP (Largest Contentful Paint)**: < 2.5초
+- **번들 크기**: < 500KB
+
+### 가용성 모니터링
+- **Uptime**: 99.9% 목표
+- **Error Rate**: < 1%
+- **Response Time**: < 1초
+```
+
+**체크리스트**:
+- [ ] 배포 파이프라인 설계
+- [ ] 환경 변수 관리 방식 정의
+- [ ] 모니터링 지표 설정
+- [ ] 백업 및 복구 계획
+
+---
+
+#### 3.2 보안 정책 문서
+```markdown
+# Moonwave 보안 정책 및 가이드라인
+
+## 🔐 데이터 보안
+
+### RLS (Row Level Security)
+```sql
+-- 모든 테이블에 RLS 적용
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payment_history ENABLE ROW LEVEL SECURITY;
+
+-- 사용자별 데이터 격리
+CREATE POLICY "Users can only access own data" 
+ON subscriptions FOR ALL 
+USING (auth.uid() = user_id);
+```
+
+### 데이터 분류
+- **Public**: 없음
+- **Internal**: 사용자 프로필 (이름, 이메일)
+- **Confidential**: 구독 정보, 결제 내역
+- **Restricted**: 인증 토큰, 세션 정보
+
+## 🛡 애플리케이션 보안
+
+### 입력 검증
+- **클라이언트**: TypeScript 타입 검증
+- **서버**: Supabase RLS + Database 제약조건
+- **XSS 방지**: React의 기본 이스케이핑
+
+### 인증 보안
+- **토큰**: JWT 기반, 자동 갱신
+- **세션**: 7일 자동 만료
+- **로그아웃**: 토큰 무효화
+
+## 🔍 보안 감사
+
+### 정기 점검 항목
+- [ ] RLS 정책 검토
+- [ ] 환경 변수 보안 확인
+- [ ] 의존성 취약점 스캔
+- [ ] 접근 로그 분석
+```
+
+**체크리스트**:
+- [ ] 데이터 보안 정책 수립
+- [ ] 접근 제어 방식 정의
+- [ ] 보안 감사 절차 마련
+- [ ] 인시던트 대응 계획
+
+---
+
+### 🤝 **TIER 4: 협업 문서 (Phase 1-2 중 작성)**
+
+#### 4.1 개발 가이드 문서
+```markdown
+# Moonwave 개발 가이드 및 컨벤션
+
+## 💻 개발 환경 설정
+
+### 필수 도구
+- **Editor**: Cursor AI (GitHub 직접 연동)
+- **Node.js**: v20 이상
+- **Package Manager**: npm
+- **Browser**: Chrome (개발자 도구)
+
+### 프로젝트 설정
+```bash
+# Repository 클론
+git clone https://github.com/username/moonwave-subscription-manager
+cd moonwave-subscription-manager
+
+# 의존성 설치
+npm ci
+
+# 환경 변수 설정
+cp .env.example .env.local
+# GitHub Codespaces에서 환경 변수 설정
+
+# 타입 체크
+npm run type-check
+
+# 빌드 테스트
+npm run build
+```
+
+## 📝 코딩 컨벤션
+
+### 파일 명명 규칙
+```typescript
+// 컴포넌트: PascalCase
+SubscriptionCard.tsx
+UserProfile.tsx
+
+// 훅: camelCase with 'use' prefix
+useSubscriptions.ts
+useUserProfile.ts
+
+// 유틸리티: camelCase
+formatCurrency.ts
+dateHelpers.ts
+
+// 타입: camelCase
+subscriptionTypes.ts
+commonTypes.ts
+```
+
+### 컴포넌트 작성 표준
+```typescript
+// 1. React와 타입 import
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { Database } from '@/types/supabase';
+
+// 2. 타입 정의
+interface ComponentProps {
+  // Props 정의
+}
+
+// 3. 컴포넌트 구현
+export const Component: React.FC<ComponentProps> = ({
+  // Props destructuring
+}) => {
+  // 4. 로직 구현
+  
+  // 5. 렌더링 (Pretendard 폰트 필수)
+  return (
+    <div className="font-pretendard antialiased">
+      {/* 컴포넌트 내용 */}
+    </div>
+  );
+};
+```
+
+### CSS 클래스 우선순위
+1. **Layout**: `flex`, `grid`, `@container`
+2. **Spacing**: `p-4`, `m-6`, `gap-4`
+3. **Typography**: `font-pretendard`, `text-lg`, `font-semibold`
+4. **Colors**: `bg-white`, `text-gray-900`
+5. **Effects**: `shadow-lg`, `hover:shadow-xl`
+6. **Responsive**: `@lg:flex-row`, `@md:p-6`
+
+## 🔄 Git 워크플로우
+
+### 브랜치 전략
+```bash
+main        # 프로덕션 배포
+develop     # 개발 통합
+feature/*   # 기능 개발
+hotfix/*    # 긴급 수정
+```
+
+### 커밋 메시지 형식
+```bash
+# 형식: type(scope): description
+
+feat(subscription): 구독 카드 컴포넌트 추가
+fix(auth): 로그인 에러 처리 개선
+docs(readme): 설치 가이드 업데이트
+style(button): Pretendard 폰트 적용
+refactor(hooks): useSubscriptions 훅 최적화
+test(api): Supabase 연결 테스트 추가
+```
+
+### Pull Request 가이드
+```markdown
+## 변경 사항
+- [ ] 새로운 기능 추가
+- [ ] 버그 수정
+- [ ] 문서 업데이트
+- [ ] 리팩토링
+
+## 체크리스트
+- [ ] TypeScript 컴파일 통과
+- [ ] ESLint 검사 통과
+- [ ] 실제 데이터 연동 확인
+- [ ] 반응형 레이아웃 확인
+- [ ] Pretendard 폰트 적용 확인
+
+## 테스트
+- [ ] 기능 테스트 완료
+- [ ] 회귀 테스트 완료
+- [ ] 크로스 브라우저 테스트 완료
+```
+```
+
+**체크리스트**:
+- [ ] 개발 환경 가이드 작성
+- [ ] 코딩 컨벤션 정의
+- [ ] Git 워크플로우 수립
+- [ ] 코드 리뷰 프로세스 정의
+
+---
+
+#### 4.2 이슈 관리 및 프로젝트 계획 문서
+```markdown
+# Moonwave 이슈 관리 및 프로젝트 계획
+
+## 📋 이슈 분류 체계
+
+### 이슈 타입
+- **Epic**: 대규모 기능 개발 (구독 관리 시스템)
+- **Story**: 사용자 스토리 (구독 등록 기능)
+- **Task**: 개발 작업 (API 연동)
+- **Bug**: 버그 수정 (데이터 로딩 실패)
+- **Spike**: 기술 조사 (성능 최적화 방안)
+
+### 우선순위
+- **P0 (Critical)**: 시스템 장애, 데이터 손실
+- **P1 (High)**: 핵심 기능 장애
+- **P2 (Medium)**: 일반 기능 개선
+- **P3 (Low)**: 편의성 개선
+
+### 상태 관리
+```
+Backlog → In Progress → Review → Testing → Done
+```
+
+## 📊 스프린트 계획
+
+### Sprint 1 (2주): 프로젝트 기반 구축
+- [ ] GitHub Repository 설정
+- [ ] Supabase 프로젝트 생성
+- [ ] 기본 UI 컴포넌트 개발
+- [ ] 배포 파이프라인 구축
+
+### Sprint 2 (2주): 핵심 기능 개발
+- [ ] 구독 CRUD 기능
+- [ ] 대시보드 페이지
+- [ ] 사용자 인증 구현
+- [ ] 실시간 데이터 동기화
+
+### Sprint 3 (2주): 기능 완성 및 최적화
+- [ ] 결제 알림 시스템
+- [ ] 통계 및 분석 기능
+- [ ] 성능 최적화
+- [ ] 사용자 테스트
+
+## 🎯 Definition of Done
+
+### 기능 개발 완료 기준
+- [ ] 요구사항 충족
+- [ ] 코드 리뷰 완료
+- [ ] TypeScript 타입 안전성 확보
+- [ ] 실제 데이터 연동 확인
+- [ ] 반응형 레이아웃 적용
+- [ ] 접근성 검증
+- [ ] 배포 환경 테스트 완료
+
+### 버그 수정 완료 기준
+- [ ] 근본 원인 분석 완료
+- [ ] 수정 사항 구현
+- [ ] 회귀 테스트 통과
+- [ ] 관련 문서 업데이트
+```
+
+**체크리스트**:
+- [ ] 이슈 트래킹 시스템 설정
+- [ ] 스프린트 계획 수립
+- [ ] Definition of Done 정의
+- [ ] 프로젝트 로드맵 작성
+
+---
+
+## 📊 문서 작성 우선순위 매트릭스
+
+| 문서 | 중요도 | 긴급도 | Phase 1 이전 | 작성 시간 |
+|------|--------|--------|-------------|----------|
+| **PRD** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 필수 | 4-6시간 |
+| **기술 아키텍처** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 필수 | 3-4시간 |
+| **UI/UX 디자인 시스템** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 권장 | 2-3시간 |
+| **API 명세서** | ⭐⭐⭐⭐ | ⭐⭐⭐ | 권장 | 2-3시간 |
+| **개발 가이드** | ⭐⭐⭐ | ⭐⭐⭐⭐ | 권장 | 1-2시간 |
+| **배포 문서** | ⭐⭐⭐ | ⭐⭐ | 선택 | 1-2시간 |
+| **보안 정책** | ⭐⭐⭐⭐ | ⭐⭐ | 선택 | 1-2시간 |
+| **이슈 관리** | ⭐⭐ | ⭐⭐⭐ | 선택 | 1시간 |
+
+## 🎯 Phase 1 시작 전 최소 요구사항
+
+### 🔴 **반드시 작성해야 할 문서 (MUST)**
+1. **PRD (Product Requirements Document)** - 제품 비전과 요구사항 명확화
+2. **기술 아키텍처 문서** - 기술 스택과 시스템 설계 확정
+
+### 🟡 **권장 작성 문서 (SHOULD)**
+3. **UI/UX 디자인 시스템** - 일관된 사용자 경험 설계
+4. **API 명세서** - 데이터 흐름과 인터페이스 정의
+5. **개발 가이드** - 팀 협업과 코드 품질 확보
+
+### 🟢 **선택 작성 문서 (COULD)**
+6. **배포 및 인프라 문서** - 운영 계획 수립
+7. **보안 정책 문서** - 데이터 보호 방안 마련
+8. **이슈 관리 문서** - 프로젝트 진행 관리
+
+---
+
+**💡 문서 작성 가이드라인**
+
+1. **실제 흐름 중심**: "가짜 흐름이 아닌, 실제 흐름으로 설계"하는 Moonwave 철학 반영
+2. **구체적 명시**: localhost 금지, Mock 데이터 금지 등 제약사항 명확히 기술
+3. **실행 가능성**: AI Agent나 개발자가 바로 실행할 수 있을 정도로 구체적 작성
+4. **지속적 업데이트**: 프로젝트 진행에 따라 문서 지속적 개선
+5. **버전 관리**: 문서 변경사항을 Git으로 추적 관리
+
+이 문서들을 기반으로 Phase 1 프로젝트 초기화를 시작하면, 명확한 방향성과 일관된 개발 흐름을 확보할 수 있습니다.
