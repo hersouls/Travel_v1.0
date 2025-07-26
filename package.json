@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "performance": "npm run build && npm run start",
-    "clean": "rm -rf .next out"
+    "clean": "rm -rf .next out",
+    "vercel-build": "npm run type-check && npm run lint && npm run build"
   },
   "dependencies": {
     "@google/maps": "^1.1.3",
