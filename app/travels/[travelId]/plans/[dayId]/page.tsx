@@ -27,7 +27,9 @@ export default function DayPlanDetailPage({ params }: DayPlanDetailPageProps) {
 }
 
 export async function generateStaticParams() {
-  return []
+  // Static export compatibility - provide a placeholder
+  // Actual routes will be handled dynamically at runtime
+  return [{ travelId: 'placeholder', dayId: 'placeholder' }]
 }
 
 export async function generateMetadata({ params: _params }: DayPlanDetailPageProps) {
