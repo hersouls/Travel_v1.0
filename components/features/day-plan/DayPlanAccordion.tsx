@@ -118,9 +118,15 @@ export default function DayPlanAccordion({
 
           {/* 토글 버튼 */}
           <div className="flex items-center gap-2">
+            <Link href={`/map?travelId=${travelId}&dayId=${day.id}`}>
+              <Button variant="default" size="sm" className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                지도
+              </Button>
+            </Link>
             <Link href={`/travels/${travelId}/plans/${day.id}`}>
               <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
+                <Calendar className="w-3 h-3" />
                 상세
               </Button>
             </Link>

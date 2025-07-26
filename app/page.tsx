@@ -162,12 +162,23 @@ export default function HomePage() {
             무료로 여행 계획을 세우고 친구들과 공유해보세요
           </p>
           
-          <Button asChild size="lg">
-            <Link href={user ? "/travels/new" : "/signin"}>
-              <Plus className="w-5 h-5 mr-2" />
-              {user ? "새 여행 만들기" : "지금 시작하기"}
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg">
+              <Link href={user ? "/travels/new" : "/signin"}>
+                <Plus className="w-5 h-5 mr-2" />
+                {user ? "새 여행 만들기" : "지금 시작하기"}
+              </Link>
+            </Button>
+            
+            {user && (
+              <Button asChild variant="outline" size="lg">
+                <Link href="/map">
+                  <MapPin className="w-5 h-5 mr-2" />
+                  지도에서 보기
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

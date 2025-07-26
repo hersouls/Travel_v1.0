@@ -85,12 +85,18 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
           </div>
         </div>
         <div className="flex gap-2">
+          <Link href={`/map?travelId=${travelId}`}>
+            <Button variant="default" size="default" className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              지도 보기
+            </Button>
+          </Link>
           <Button variant="outline" size="default" className="flex items-center gap-2">
             <Share2 className="w-4 h-4" />
             공유
           </Button>
           <Link href={`/travels/${travelId}/edit`}>
-            <Button variant="default" size="default" className="flex items-center gap-2">
+            <Button variant="outline" size="default" className="flex items-center gap-2">
               <Edit className="w-4 h-4" />
               수정
             </Button>
