@@ -345,12 +345,12 @@ CREATE OR REPLACE FUNCTION public.generate_travel_days()
 RETURNS TRIGGER AS $$
 DECLARE
   day_count INTEGER;
-  current_date DATE;
+  travel_date DATE;
   day_num INTEGER;
 BEGIN
   -- 여행 기간 계산
   day_count := NEW.end_date - NEW.start_date + 1;
-  current_date := NEW.start_date;
+  travel_date := NEW.start_date;
   
   -- 각 일자별로 travel_days 레코드 생성
   FOR day_num IN 1..day_count LOOP
@@ -362,10 +362,10 @@ BEGIN
     ) VALUES (
       NEW.id, 
       day_num, 
-      current_date, 
+      travel_date, 
       'Day ' || day_num
     );
-    current_date := current_date + 1;
+    travel_date := travel_date + 1;
   END LOOP;
   
   RETURN NEW;
