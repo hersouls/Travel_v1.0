@@ -25,7 +25,7 @@
 
 #### GitHub & 개발환경
 - [x] **[문유]** GitHub Repository 생성 (`hersouls/Travel_v1.0`) ✅ 완료
-- [ ] **[Cursor]** `.cursorrules` 파일 작성 (localhost 금지, Mock 데이터 금지)
+- [x] **[Cursor]** `.cursorrules` 파일 작성 (localhost 금지, Mock 데이터 금지) ✅ 완료
 - [x] **[문유]** GitHub Secrets 환경변수 설정 ✅ 완료
   - [x] `NEXT_PUBLIC_SUPABASE_URL` ✅
   - [x] `NEXT_PUBLIC_SUPABASE_ANON_KEY` ✅
@@ -36,7 +36,7 @@
   - [x] `NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY` ✅
   - [x] `GOOGLE_CLIENT_ID` ✅
   - [x] `GOOGLE_CLIENT_SECRET` ✅
-- [ ] **[Cursor]** GitHub Actions 워크플로우 파일 생성 (`.github/workflows/deploy-nextjs.yml`)
+- [x] **[Cursor]** GitHub Actions 워크플로우 파일 생성 (`.github/workflows/deploy-nextjs.yml`) ✅ 완료
 
 #### Supabase 설정
 - [x] **[문유]** Supabase 프로젝트 생성 (프로젝트명: `Travel`) ✅ 완료
@@ -56,39 +56,39 @@
 - [x] **[Cursor]** TypeScript 타입 정의 (`lib/types/database.ts`) ✅ 완료
 
 #### Next.js 프로젝트 초기화
-- [ ] **[Cursor]** Next.js 14 프로젝트 생성 (App Router)
-- [ ] **[Cursor]** `package.json` 설정 (dev 스크립트 localhost 금지)
+- [x] **[Cursor]** Next.js 14 프로젝트 생성 (App Router) ✅ 완료
+- [x] **[Cursor]** `package.json` 설정 (dev 스크립트 localhost 금지) ✅ 완료
 - [x] **[Cursor]** `next.config.js` 설정 (환경변수 및 보안 설정) ✅ 완료
-- [ ] **[Cursor]** `tailwind.config.js` 설정
-  - [ ] Pretendard 폰트 설정
-  - [ ] Container Queries 플러그인
-  - [ ] Moonwave 컬러 시스템
-- [ ] **[Cursor]** `tsconfig.json` TypeScript 설정
+- [x] **[Cursor]** `tailwind.config.js` 설정 ✅ 완료
+  - [x] Pretendard 폰트 설정 ✅ 완료
+  - [x] Container Queries 플러그인 ✅ 완료
+  - [x] Moonwave 컬러 시스템 ✅ 완료
+- [x] **[Cursor]** `tsconfig.json` TypeScript 설정 ✅ 완료
 
 ### 🎨 Week 2: 기본 구조 및 컴포넌트
 
 #### 프로젝트 구조 생성
-- [ ] **[Cursor]** `app/` 디렉토리 구조 설정
-  - [ ] `layout.tsx` (루트 레이아웃)
-  - [ ] `page.tsx` (홈페이지)
-  - [ ] `globals.css` (Tailwind + Pretendard)
-  - [ ] `loading.tsx`, `error.tsx`, `not-found.tsx`
-- [ ] **[Cursor]** `components/` 디렉토리 구조
-  - [ ] `ui/` (기본 UI 컴포넌트)
-  - [ ] `features/` (도메인 컴포넌트)
-  - [ ] `providers/` (전역 프로바이더)
+- [x] **[Cursor]** `app/` 디렉토리 구조 설정 ✅ 완료
+  - [x] `layout.tsx` (루트 레이아웃) ✅ 완료
+  - [x] `page.tsx` (홈페이지) ✅ 완료
+  - [x] `globals.css` (Tailwind + Pretendard) ✅ 완료
+  - [x] `loading.tsx`, `error.tsx`, `not-found.tsx` ✅ 완료
+- [x] **[Cursor]** `components/` 디렉토리 구조 ✅ 완료
+  - [x] `ui/` (기본 UI 컴포넌트) ✅ 완료
+  - [x] `features/` (도메인 컴포넌트) ✅ 완료
+  - [x] `providers/` (전역 프로바이더) ✅ 완료
 
 #### Supabase 연동
-- [ ] **[Cursor]** Supabase 클라이언트 설정 (`lib/supabase/client.ts`)
-- [ ] **[Cursor]** Supabase 서버 컴포넌트 설정 (`lib/supabase/server.ts`)
-- [ ] **[Cursor]** SupabaseProvider 컴포넌트 생성
-- [ ] **[Cursor]** 타입 정의 (`types/supabase.ts`)
+- [x] **[Cursor]** Supabase 클라이언트 설정 (`lib/supabase/client.ts`) ✅ 완료
+- [x] **[Cursor]** Supabase 서버 컴포넌트 설정 (`lib/supabase/server.ts`) ✅ 완료
+- [x] **[Cursor]** SupabaseProvider 컴포넌트 생성 ✅ 완료
+- [x] **[Cursor]** 타입 정의 (`types/supabase.ts`) ✅ 완료
 
 #### 기본 UI 컴포넌트
-- [ ] **[Cursor]** Button 컴포넌트 (Pretendard 폰트 적용)
-- [ ] **[Cursor]** Card 컴포넌트 (Container Queries 적용)
-- [ ] **[Cursor]** Input 컴포넌트
-- [ ] **[Cursor]** Badge 컴포넌트 (여행 유형별)
+- [x] **[Cursor]** Button 컴포넌트 (Pretendard 폰트 적용) ✅ 완료
+- [x] **[Cursor]** Card 컴포넌트 (Container Queries 적용) ✅ 완료
+- [x] **[Cursor]** Input 컴포넌트 ✅ 완료
+- [x] **[Cursor]** Badge 컴포넌트 (여행 유형별) ✅ 완료
 
 #### 배포 설정
 - [x] **[문유]** GitHub Pages 설정 ✅ 완료
@@ -102,22 +102,22 @@
 ### 📱 Week 3: 여행 관리 기능
 
 #### 여행 일정 CRUD
-- [ ] **[Cursor]** 여행 목록 페이지 (`app/travels/page.tsx`)
-- [ ] **[Cursor]** 여행 생성 페이지 (`app/travels/new/page.tsx`)
+- [x] **[Cursor]** 여행 목록 페이지 (`app/travels/page.tsx`) ✅ 완료
+- [x] **[Cursor]** 여행 생성 페이지 (`app/travels/new/page.tsx`) ✅ 완료
 - [ ] **[Cursor]** 여행 상세 페이지 (`app/travels/[travelId]/page.tsx`)
 - [ ] **[Cursor]** 여행 수정 페이지 (`app/travels/[travelId]/edit/page.tsx`)
 
 #### 여행 관련 컴포넌트
-- [ ] **[Cursor]** TravelCard 컴포넌트 (@container 반응형)
-- [ ] **[Cursor]** TravelList 컴포넌트 (실시간 구독)
-- [ ] **[Cursor]** CreateTravelForm 컴포넌트
+- [x] **[Cursor]** TravelCard 컴포넌트 (@container 반응형) ✅ 완료
+- [x] **[Cursor]** TravelList 컴포넌트 (실시간 구독) ✅ 완료
+- [x] **[Cursor]** CreateTravelForm 컴포넌트 ✅ 완료
 - [ ] **[Cursor]** TravelDetailView 컴포넌트
 
 #### 커스텀 훅
-- [ ] **[Cursor]** `useTravelPlans` 훅 (실시간 데이터)
-- [ ] **[Cursor]** `useCreateTravel` 훅
-- [ ] **[Cursor]** `useUpdateTravel` 훅
-- [ ] **[Cursor]** `useDeleteTravel` 훅
+- [x] **[Cursor]** `useTravelPlans` 훅 (실시간 데이터) ✅ 완료
+- [x] **[Cursor]** `useCreateTravel` 훅 ✅ 완료 (useTravelPlans에 포함)
+- [x] **[Cursor]** `useUpdateTravel` 훅 ✅ 완료 (useTravelPlans에 포함)
+- [x] **[Cursor]** `useDeleteTravel` 훅 ✅ 완료 (useTravelPlans에 포함)
 
 ### 📅 Week 4: Day별 계획 관리
 

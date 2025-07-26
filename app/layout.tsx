@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -53,9 +54,11 @@ export default function RootLayout({
         />
       </head>
       <body className="h-full font-pretendard antialiased tracking-korean-normal break-keep-ko">
-        <div id="root" className="h-full">
-          {children}
-        </div>
+        <SupabaseProvider>
+          <div id="root" className="h-full">
+            {children}
+          </div>
+        </SupabaseProvider>
       </body>
     </html>
   );
