@@ -154,15 +154,26 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">일정별 계획</h2>
-          <Button 
-            variant="outline" 
-            size="md" 
-            className="flex items-center gap-2"
-            onClick={() => {/* 새 계획 추가 모달 열기 */}}
-          >
-            <Plus className="w-4 h-4" />
-            계획 추가
-          </Button>
+          <div className="flex gap-2">
+            <Link href={`/travels/${travelId}/plans`}>
+              <Button 
+                variant="outline" 
+                size="md" 
+                className="flex items-center gap-2"
+              >
+                전체 보기
+              </Button>
+            </Link>
+            <Button 
+              variant="primary" 
+              size="md" 
+              className="flex items-center gap-2"
+              onClick={() => {/* 새 계획 추가 모달 열기 */}}
+            >
+              <Plus className="w-4 h-4" />
+              계획 추가
+            </Button>
+          </div>
         </div>
 
         {travel.travel_days && travel.travel_days.length > 0 ? (
