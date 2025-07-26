@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import {
-  TravelPlan,
-  CreateTravelPlanForm,
-} from '@/lib/types/database';
+import { TravelPlan, CreateTravelPlanForm } from '@/lib/types/database';
 
 interface UseCreateTravelReturn {
   createTravel: (data: CreateTravelPlanForm) => Promise<TravelPlan>;

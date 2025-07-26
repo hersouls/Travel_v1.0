@@ -4,7 +4,7 @@ import type { Database } from '@/lib/types/database';
 
 export const createServerSupabaseClient = () => {
   const cookieStore = cookies();
-  
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
@@ -30,7 +30,7 @@ export const createServerSupabaseClient = () => {
 
 export const createRouteHandlerSupabaseClient = () => {
   const cookieStore = cookies();
-  
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
