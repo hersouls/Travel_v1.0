@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client';
 import {
   TravelPlan,
   CreateTravelPlanForm,
-  Database,
 } from '@/lib/types/database';
 
 interface UseCreateTravelReturn {

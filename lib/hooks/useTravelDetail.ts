@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { TravelPlan, TravelDay, DayPlan, Database } from '@/lib/types/database';
+import { TravelPlan, TravelDay, DayPlan } from '@/lib/types/database';
 
 // 여행 상세 정보를 위한 확장 타입
 interface TravelWithDays extends TravelPlan {

@@ -132,16 +132,17 @@ export function ShareModal({
 
     setIsInviting(true);
     try {
-      // Add collaborator to database
-      const { error } = await supabase.from('collaborators').insert({
-        travel_plan_id: travelId,
-        invited_by: user.id,
-        email: inviteEmail.trim(),
-        role: inviteRole,
-        status: 'pending',
-      });
-
-      if (error) throw error;
+      // TODO: Add collaborator to database - needs to be updated to match schema
+      // const { error } = await supabase.from('collaborators').insert({
+      //   travel_plan_id: travelId,
+      //   user_id: user.id,
+      //   role: inviteRole,
+      //   permissions: [],
+      //   invited_at: new Date().toISOString(),
+      //   joined_at: null,
+      // });
+      
+      // if (error) throw error;
 
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');

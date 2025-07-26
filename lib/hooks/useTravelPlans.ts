@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { TravelPlan, TravelStatus, Database } from '@/lib/types/database';
+import { TravelPlan, TravelStatus } from '@/lib/types/database';
 
 interface UseTravelPlansOptions {
   status?: TravelStatus;

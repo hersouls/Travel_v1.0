@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import {
   Calendar,
   MapPin,
@@ -17,50 +16,26 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
+import { 
+  TravelPlan as BaseTravelPlan,
+  TravelDay as BaseTravelDay,
+  DayPlan as BaseDayPlan,
+  Collaborator
+} from '@/lib/types/database';
 
-interface TravelPlan {
-  id: string;
-  title: string;
-  description: string | null;
-  destination: string;
-  start_date: string;
-  end_date: string;
-  budget: number | null;
-  travel_type: string;
-  status: string;
-  created_at: string;
+interface TravelPlan extends BaseTravelPlan {
   profiles: {
-    full_name: string | null;
+    name: string | null;
     avatar_url: string | null;
   } | null;
   travel_days: TravelDay[];
 }
 
-interface TravelDay {
-  id: string;
-  day_number: number;
-  date: string;
-  title: string | null;
-  day_plans: DayPlan[];
+interface TravelDay extends BaseTravelDay {
+  day_plans: BaseDayPlan[];
 }
 
-interface DayPlan {
-  id: string;
-  time: string | null;
-  activity: string;
-  location: string | null;
-  notes: string | null;
-  estimated_cost: number | null;
-  latitude: number | null;
-  longitude: number | null;
-}
 
-interface Collaborator {
-  id: string;
-  email: string;
-  role: 'viewer' | 'editor';
-  status: 'pending' | 'accepted';
-}
 
 interface SharedTravelViewProps {
   travel: TravelPlan;
@@ -79,7 +54,7 @@ export function SharedTravelView({
     (day) => day.day_number === selectedDay
   );
   const acceptedCollaborators = collaborators.filter(
-    (c) => c.status === 'accepted'
+    (c) => c.joined_at !== null
   );
 
   const handleShare = async () => {
@@ -109,31 +84,7 @@ export function SharedTravelView({
     // TODO: Implement like functionality with backend
   };
 
-  const getTravelTypeColor = (type: string) => {
-    const typeColors: { [key: string]: string } = {
-      beach: 'bg-cyan-100 text-cyan-800',
-      mountain: 'bg-emerald-100 text-emerald-800',
-      city: 'bg-indigo-100 text-indigo-800',
-      culture: 'bg-purple-100 text-purple-800',
-      food: 'bg-amber-100 text-amber-800',
-      shopping: 'bg-pink-100 text-pink-800',
-      adventure: 'bg-orange-100 text-orange-800',
-    };
-    return typeColors[type] || 'bg-gray-100 text-gray-800';
-  };
 
-  const getTravelTypeLabel = (type: string) => {
-    const typeLabels: { [key: string]: string } = {
-      beach: '해변',
-      mountain: '산/자연',
-      city: '도시',
-      culture: '문화',
-      food: '음식',
-      shopping: '쇼핑',
-      adventure: '모험',
-    };
-    return typeLabels[type] || type;
-  };
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4">
@@ -141,13 +92,10 @@ export function SharedTravelView({
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-start justify-between">
           <div className="flex-1">
-            <div className="mb-2 flex items-center gap-3">
+            <div className="mb-2">
               <h1 className="text-3xl font-bold text-gray-900 tracking-korean-normal">
                 {travel.title}
               </h1>
-              <Badge className={getTravelTypeColor(travel.travel_type)}>
-                {getTravelTypeLabel(travel.travel_type)}
-              </Badge>
             </div>
 
             {travel.description && (
@@ -204,7 +152,7 @@ export function SharedTravelView({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400" />
             <span className="text-sm text-gray-600">
-              {travel.profiles?.full_name || '여행자'}님이 계획함
+                              {travel.profiles?.name || '여행자'}님이 계획함
             </span>
           </div>
 
@@ -283,29 +231,29 @@ export function SharedTravelView({
               {currentDay.day_plans.length > 0 ? (
                 <div className="space-y-4">
                   {currentDay.day_plans
-                    .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+                    .sort((a, b) => (a.planned_time || '').localeCompare(b.planned_time || ''))
                     .map((plan) => (
                       <div
                         key={plan.id}
                         className="flex gap-4 rounded-lg bg-gray-50 p-4"
                       >
                         <div className="w-16 flex-shrink-0">
-                          {plan.time && (
+                          {plan.planned_time && (
                             <div className="text-sm font-medium text-gray-700">
-                              {plan.time}
+                              {plan.planned_time}
                             </div>
                           )}
                         </div>
 
                         <div className="flex-1">
                           <h4 className="mb-2 font-medium text-gray-900 tracking-korean-normal">
-                            {plan.activity}
+                            {plan.place_name}
                           </h4>
 
-                          {plan.location && (
+                          {plan.place_address && (
                             <div className="mb-2 flex items-center gap-1 text-sm text-gray-600">
                               <MapPin className="h-4 w-4" />
-                              {plan.location}
+                              {plan.place_address}
                             </div>
                           )}
 
@@ -315,10 +263,10 @@ export function SharedTravelView({
                             </p>
                           )}
 
-                          {plan.estimated_cost && (
+                          {plan.budget && (
                             <div className="text-sm text-gray-500">
                               예상 비용:{' '}
-                              {plan.estimated_cost.toLocaleString('ko-KR')}원
+                              {plan.budget.toLocaleString('ko-KR')}원
                             </div>
                           )}
                         </div>

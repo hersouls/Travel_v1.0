@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: SharedTravelPageProps): Promise<Metadata> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createServerSupabaseClient();
 
   try {
     const { data: travel } = await supabase
@@ -75,7 +75,7 @@ async function getSharedTravel(travelId: string) {
         `
         *,
         profiles:user_id (
-          full_name,
+          name,
           avatar_url
         ),
         travel_days (
