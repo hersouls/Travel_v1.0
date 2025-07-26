@@ -13,15 +13,6 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 tracking-korean-normal">
-            Moonwave Travel
-          </h1>
-          <p className="text-gray-600 break-keep-ko">
-            당신의 특별한 여행을 계획해보세요
-          </p>
-        </div>
-
         <Card className="p-8">
           <div className="mb-6">
             <h2 className="mb-2 text-2xl font-semibold text-gray-900 tracking-korean-normal">
