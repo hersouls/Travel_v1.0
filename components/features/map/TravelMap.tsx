@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { MapPin, Route, Navigation, EyeOff } from 'lucide-react'
 import { loadGoogleMapsAPI, isGoogleMapsLoaded } from '@/lib/google-maps/loader'
 import { useTravelDays } from '@/lib/hooks/useTravelDays'
 import { useTravelPlans } from '@/hooks/useTravelPlans'
@@ -42,7 +43,8 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
   const { data: travelDays } = useTravelDays(travelId || '')
   const { travelPlans } = useTravelPlans()
 
-
+  const allPlans = useMemo(() => {
+    return travelId
       ? travelDays?.flatMap(day => 
           dayId 
             ? day.id === dayId ? day.day_plans || [] : []
@@ -51,7 +53,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       : travelPlans?.flatMap(travel => 
           travel.travel_days?.flatMap(day => day.day_plans || []) || []
         ) || []
-
+  }, [travelId, travelDays, dayId, travelPlans])
 
   // 지도 초기화
   const initializeMap = useCallback(async () => {
@@ -101,7 +103,9 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       if (allPlans.length > 0) {
         const bounds = new google.maps.LatLngBounds()
         allPlans.forEach(plan => {
-
+          if (hasLatLng(plan)) {
+            bounds.extend(new google.maps.LatLng(plan.latitude, plan.longitude))
+          }
         })
         map.fitBounds(bounds)
       }
@@ -120,14 +124,14 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     if (!mapInstanceRef.current || !directionsServiceRef.current || !directionsRendererRef.current) return
 
     if (showDirections) {
-
+      directionsRendererRef.current.setDirections(null)
       setShowDirections(false)
       return
     }
 
     // 시간이 설정된 계획들만 경로 계산
     const timedPlans = allPlans
-
+      .filter(plan => hasLatLng(plan) && plan.planned_time)
       .sort((a, b) => a.planned_time!.localeCompare(b.planned_time!))
 
     if (timedPlans.length < 2) {
@@ -136,7 +140,17 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     }
 
     const origin = {
-
+      lat: timedPlans[0].latitude!,
+      lng: timedPlans[0].longitude!
+    }
+    const destination = {
+      lat: timedPlans[timedPlans.length - 1].latitude!,
+      lng: timedPlans[timedPlans.length - 1].longitude!
+    }
+    const waypoints = timedPlans.slice(1, -1).map(plan => ({
+      location: {
+        lat: plan.latitude!,
+        lng: plan.longitude!
       },
       stopover: true
     }))
