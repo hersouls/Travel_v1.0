@@ -25,6 +25,8 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
   - [x] `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` ✅
   - [x] `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` ✅
   - [x] `NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY` ✅
   - [x] `GOOGLE_CLIENT_ID` ✅
   - [x] `GOOGLE_CLIENT_SECRET` ✅
 - [ ] GitHub Actions 워크플로우 파일 생성 (`.github/workflows/deploy-nextjs.yml`)
