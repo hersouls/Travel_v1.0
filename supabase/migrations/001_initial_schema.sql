@@ -403,16 +403,8 @@ CREATE TRIGGER generate_travel_days_trigger
 -- 10. 기본 데이터 삽입
 -- ===============================================
 
--- 기본 plan_type 열거형 데이터 (참고용)
-INSERT INTO public.categories (id, user_id, name, color, icon, is_default) 
-VALUES 
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '관광', '#3b82f6', 'camera', true),
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '음식', '#10b981', 'utensils', true),
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '숙박', '#8b5cf6', 'bed', true),
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '교통', '#f59e0b', 'car', true),
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '쇼핑', '#ef4444', 'shopping-bag', true),
-  (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', '엔터테인먼트', '#ec4899', 'music', true)
-ON CONFLICT DO NOTHING;
+-- Note: Default categories will be created automatically when users sign up
+-- through the application logic, not during migration to avoid foreign key issues
 
 -- ===============================================
 -- 마이그레이션 완료
