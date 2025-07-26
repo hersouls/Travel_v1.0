@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
-import type { Database } from '@/lib/types/database';
+import type { Database, DayPlan } from '@/lib/types/database';
 
 type TravelPlan = Database['public']['Tables']['travel_plans']['Row'];
 type TravelPlanWithDays = TravelPlan & {
@@ -9,12 +9,7 @@ type TravelPlanWithDays = TravelPlan & {
     day_number: number;
     date: string;
     title: string | null;
-    day_plans: {
-      id: string;
-      place_name: string;
-      plan_type: string;
-      planned_time: string | null;
-    }[];
+    day_plans: DayPlan[];
   }[];
 };
 
@@ -55,10 +50,7 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
             date,
             title,
             day_plans (
-              id,
-              place_name,
-              plan_type,
-              planned_time
+              *
             )
           )
         `)

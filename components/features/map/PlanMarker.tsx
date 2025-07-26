@@ -85,8 +85,7 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
 
     const config = getPlanMarkerConfig(plan.plan_type)
     const position = {
-      lat: plan.latitude,
-      lng: plan.longitude
+
     }
 
     // 마커 생성
@@ -143,7 +142,6 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
       marker.setMap(null)
       infoWindow.close()
     }
-  }, [map, plan, onClick, isSelected, getPlanMarkerConfig, createMarkerIcon])
 
   // 선택 상태 변경 시 아이콘 업데이트
   useEffect(() => {
@@ -151,7 +149,7 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
       const config = getPlanMarkerConfig(plan.plan_type)
       markerRef.current.setIcon(createMarkerIcon(config, isSelected || false))
     }
-  }, [isSelected, plan.plan_type, getPlanMarkerConfig, createMarkerIcon])
+
 
   return null // 이 컴포넌트는 DOM 렌더링하지 않음
 }

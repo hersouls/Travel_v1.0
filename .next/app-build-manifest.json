@@ -57,6 +57,7 @@
       "static/chunks/972-84eb065441ed6a15.js",
       "static/chunks/381-b6f79a108181b759.js",
       "static/chunks/app/page-d9675d43411f3ef6.js"
+
     ],
     "/travels/new/page": [
       "static/chunks/webpack-68d128f78d0676ff.js",
@@ -66,7 +67,7 @@
       "static/chunks/452-4cabe870abd4841a.js",
       "static/chunks/972-84eb065441ed6a15.js",
       "static/chunks/381-b6f79a108181b759.js",
-      "static/chunks/app/travels/new/page-f42fd59e32e7f172.js"
+
     ],
     "/travels/page": [
       "static/chunks/webpack-68d128f78d0676ff.js",
@@ -76,7 +77,7 @@
       "static/chunks/452-4cabe870abd4841a.js",
       "static/chunks/972-84eb065441ed6a15.js",
       "static/chunks/381-b6f79a108181b759.js",
-      "static/chunks/app/travels/page-a97ddb76f7a31f35.js"
+
     ],
     "/travels/[travelId]/plans/[dayId]/page": [
       "static/chunks/webpack-68d128f78d0676ff.js",

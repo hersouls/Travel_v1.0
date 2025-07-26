@@ -6,7 +6,7 @@ import { useTravelDays } from '@/lib/hooks/useTravelDays'
 import { useTravelPlans } from '@/hooks/useTravelPlans'
 import PlanMarker from './PlanMarker'
 import { DayPlan } from '@/lib/types/database'
-import { MapPin, Route, Navigation, EyeOff } from 'lucide-react'
+
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -42,9 +42,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
   const { data: travelDays } = useTravelDays(travelId || '')
   const { travelPlans } = useTravelPlans()
 
-  // 모든 계획 데이터 수집 (memoized)
-  const allPlans = useMemo(() => {
-    const plans = travelId 
+
       ? travelDays?.flatMap(day => 
           dayId 
             ? day.id === dayId ? day.day_plans || [] : []
@@ -53,10 +51,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       : travelPlans?.flatMap(travel => 
           travel.travel_days?.flatMap(day => day.day_plans || []) || []
         ) || []
-    
-    // Filter to only include plans with latitude and longitude
-    return plans.filter(hasLatLng)
-  }, [travelId, dayId, travelDays, travelPlans])
+
 
   // 지도 초기화
   const initializeMap = useCallback(async () => {
@@ -106,10 +101,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       if (allPlans.length > 0) {
         const bounds = new google.maps.LatLngBounds()
         allPlans.forEach(plan => {
-          bounds.extend({
-            lat: plan.latitude,
-            lng: plan.longitude
-          })
+
         })
         map.fitBounds(bounds)
       }
@@ -128,14 +120,14 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     if (!mapInstanceRef.current || !directionsServiceRef.current || !directionsRendererRef.current) return
 
     if (showDirections) {
-      directionsRendererRef.current.setDirections(null as any)
+
       setShowDirections(false)
       return
     }
 
     // 시간이 설정된 계획들만 경로 계산
     const timedPlans = allPlans
-      .filter(plan => plan.planned_time)
+
       .sort((a, b) => a.planned_time!.localeCompare(b.planned_time!))
 
     if (timedPlans.length < 2) {
@@ -144,17 +136,7 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     }
 
     const origin = {
-      lat: timedPlans[0].latitude,
-      lng: timedPlans[0].longitude
-    }
-    const destination = {
-      lat: timedPlans[timedPlans.length - 1].latitude,
-      lng: timedPlans[timedPlans.length - 1].longitude
-    }
-    const waypoints = timedPlans.slice(1, -1).map(plan => ({
-      location: {
-        lat: plan.latitude,
-        lng: plan.longitude
+
       },
       stopover: true
     }))
