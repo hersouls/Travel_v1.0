@@ -7,125 +7,125 @@ export interface TravelListSkeletonProps {
 }
 
 const TravelCardSkeleton = () => (
-  <div className="@container/skeleton-card bg-white rounded-xl border border-gray-200 shadow-soft p-4 @md/skeleton-card:p-6 animate-pulse">
+  <div className="shadow-soft animate-pulse rounded-xl border border-gray-200 bg-white p-4 @container/skeleton-card @md/skeleton-card:p-6">
     {/* 헤더 영역 */}
-    <div className="flex @lg/skeleton-card:flex-row flex-col @lg/skeleton-card:items-start @lg/skeleton-card:justify-between mb-4">
-      <div className="flex-1 min-w-0 @lg/skeleton-card:mb-0 mb-3">
+    <div className="mb-4 flex flex-col @lg/skeleton-card:flex-row @lg/skeleton-card:items-start @lg/skeleton-card:justify-between">
+      <div className="mb-3 min-w-0 flex-1 @lg/skeleton-card:mb-0">
         {/* 제목 */}
-        <div className="h-6 @md/skeleton-card:h-7 bg-gray-200 rounded-lg w-3/4 mb-3" />
-        
+        <div className="mb-3 h-6 w-3/4 rounded-lg bg-gray-200 @md/skeleton-card:h-7" />
+
         {/* 목적지 */}
-        <div className="flex items-center mb-2">
-          <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-          <div className="h-4 bg-gray-200 rounded w-32" />
+        <div className="mb-2 flex items-center">
+          <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+          <div className="h-4 w-32 rounded bg-gray-200" />
         </div>
-        
+
         {/* 설명 (큰 화면에서만 표시) */}
-        <div className="@lg/skeleton-card:block hidden space-y-2">
-          <div className="h-3 bg-gray-200 rounded w-full" />
-          <div className="h-3 bg-gray-200 rounded w-2/3" />
+        <div className="hidden space-y-2 @lg/skeleton-card:block">
+          <div className="h-3 w-full rounded bg-gray-200" />
+          <div className="h-3 w-2/3 rounded bg-gray-200" />
         </div>
       </div>
-      
+
       {/* 상태 배지 */}
-      <div className="@lg/skeleton-card:ml-4 flex-shrink-0">
-        <div className="h-6 bg-gray-200 rounded-full w-16" />
+      <div className="flex-shrink-0 @lg/skeleton-card:ml-4">
+        <div className="h-6 w-16 rounded-full bg-gray-200" />
       </div>
     </div>
 
     {/* 날짜 정보 */}
-    <div className="@container/skeleton-dates flex @md/skeleton-dates:flex-row flex-col @md/skeleton-dates:items-center @md/skeleton-dates:gap-6 gap-3 mb-4">
+    <div className="mb-4 flex flex-col gap-3 @container/skeleton-dates @md/skeleton-dates:flex-row @md/skeleton-dates:items-center @md/skeleton-dates:gap-6">
       <div className="flex items-center">
-        <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-        <div className="h-4 bg-gray-200 rounded w-40" />
+        <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+        <div className="h-4 w-40 rounded bg-gray-200" />
       </div>
-      
+
       <div className="flex items-center">
-        <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-        <div className="h-4 bg-gray-200 rounded w-16" />
+        <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+        <div className="h-4 w-16 rounded bg-gray-200" />
       </div>
     </div>
 
     {/* 통계 정보 */}
-    <div className="@container/skeleton-stats flex @md/skeleton-stats:flex-row flex-col @md/skeleton-stats:items-center @md/skeleton-stats:justify-between gap-3">
-      <div className="flex @sm/skeleton-stats:flex-row flex-col @sm/skeleton-stats:gap-4 gap-2">
+    <div className="flex flex-col gap-3 @container/skeleton-stats @md/skeleton-stats:flex-row @md/skeleton-stats:items-center @md/skeleton-stats:justify-between">
+      <div className="flex flex-col gap-2 @sm/skeleton-stats:flex-row @sm/skeleton-stats:gap-4">
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-          <div className="h-4 bg-gray-200 rounded w-12" />
+          <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+          <div className="h-4 w-12 rounded bg-gray-200" />
         </div>
-        
+
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-          <div className="h-4 bg-gray-200 rounded w-14" />
+          <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+          <div className="h-4 w-14 rounded bg-gray-200" />
         </div>
-        
+
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-gray-200 rounded mr-2" />
-          <div className="h-4 bg-gray-200 rounded w-12" />
+          <div className="mr-2 h-4 w-4 rounded bg-gray-200" />
+          <div className="h-4 w-12 rounded bg-gray-200" />
         </div>
       </div>
-      
+
       {/* 공개 상태 배지 */}
-      <div className="@md/skeleton-stats:ml-4 flex-shrink-0">
-        <div className="h-5 bg-gray-200 rounded w-10" />
+      <div className="flex-shrink-0 @md/skeleton-stats:ml-4">
+        <div className="h-5 w-10 rounded bg-gray-200" />
       </div>
     </div>
 
     {/* 호버 액션 (큰 화면에서만) */}
-    <div className="@lg/skeleton-card:block hidden mt-4 pt-4 border-t border-gray-100">
+    <div className="mt-4 hidden border-t border-gray-100 pt-4 @lg/skeleton-card:block">
       <div className="flex gap-2">
-        <div className="h-8 bg-gray-200 rounded flex-1" />
-        <div className="h-8 bg-gray-200 rounded flex-1" />
+        <div className="h-8 flex-1 rounded bg-gray-200" />
+        <div className="h-8 flex-1 rounded bg-gray-200" />
       </div>
     </div>
   </div>
 );
 
-export const TravelListSkeleton = React.forwardRef<HTMLDivElement, TravelListSkeletonProps>(
-  ({ count = 6, className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          '@container/skeleton-list',
-          className
-        )}
-        {...props}
-      >
-        {/* 그리드 레이아웃 - Container Queries 적용 */}
-        <div className="grid @6xl/skeleton-list:grid-cols-3 @3xl/skeleton-list:grid-cols-2 grid-cols-1 gap-6">
-          {Array.from({ length: count }).map((_, index) => (
-            <TravelCardSkeleton key={index} />
-          ))}
-        </div>
+export const TravelListSkeleton = React.forwardRef<
+  HTMLDivElement,
+  TravelListSkeletonProps
+>(({ count = 6, className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn('@container/skeleton-list', className)}
+      {...props}
+    >
+      {/* 그리드 레이아웃 - Container Queries 적용 */}
+      <div className="grid grid-cols-1 gap-6 @3xl/skeleton-list:grid-cols-2 @6xl/skeleton-list:grid-cols-3">
+        {Array.from({ length: count }).map((_, index) => (
+          <TravelCardSkeleton key={index} />
+        ))}
+      </div>
 
-        {/* 추가 로딩 인디케이터 */}
-        <div className="flex justify-center mt-8">
-          <div className="flex items-center space-x-2 text-gray-500">
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-moonwave-primary rounded-full animate-spin" />
-            <span className={cn(
+      {/* 추가 로딩 인디케이터 */}
+      <div className="mt-8 flex justify-center">
+        <div className="flex items-center space-x-2 text-gray-500">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-moonwave-primary" />
+          <span
+            className={cn(
               'font-pretendard text-sm',
               'tracking-korean-normal break-keep-ko'
-            )}>
-              여행 계획을 불러오는 중...
-            </span>
-          </div>
+            )}
+          >
+            여행 계획을 불러오는 중...
+          </span>
         </div>
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
 
 TravelListSkeleton.displayName = 'TravelListSkeleton';
 
 // 개별 통계 카드 스켈레톤
 export const StatsCardSkeleton = () => (
-  <div className="bg-white rounded-xl p-6 shadow-soft border border-gray-200 animate-pulse">
+  <div className="shadow-soft animate-pulse rounded-xl border border-gray-200 bg-white p-6">
     <div className="flex items-center">
-      <div className="w-12 h-12 bg-gray-200 rounded-lg" />
+      <div className="h-12 w-12 rounded-lg bg-gray-200" />
       <div className="ml-4 flex-1">
-        <div className="h-4 bg-gray-200 rounded w-16 mb-2" />
-        <div className="h-8 bg-gray-200 rounded w-12" />
+        <div className="mb-2 h-4 w-16 rounded bg-gray-200" />
+        <div className="h-8 w-12 rounded bg-gray-200" />
       </div>
     </div>
   </div>
@@ -134,7 +134,7 @@ export const StatsCardSkeleton = () => (
 // 전체 통계 섹션 스켈레톤
 export const StatsListSkeleton = () => (
   <div className="@container/stats-skeleton">
-    <div className="grid @2xl/stats-skeleton:grid-cols-4 @lg/stats-skeleton:grid-cols-3 @md/stats-skeleton:grid-cols-2 grid-cols-1 gap-6 mb-8">
+    <div className="mb-8 grid grid-cols-1 gap-6 @md/stats-skeleton:grid-cols-2 @lg/stats-skeleton:grid-cols-3 @2xl/stats-skeleton:grid-cols-4">
       {Array.from({ length: 4 }).map((_, index) => (
         <StatsCardSkeleton key={index} />
       ))}
@@ -144,20 +144,20 @@ export const StatsListSkeleton = () => (
 
 // 컴팩트 카드 스켈레톤 (작은 화면용)
 export const CompactTravelCardSkeleton = () => (
-  <div className="bg-white rounded-lg border border-gray-200 p-4 animate-pulse">
-    <div className="flex items-center justify-between mb-3">
-      <div className="h-5 bg-gray-200 rounded w-2/3" />
-      <div className="h-4 bg-gray-200 rounded-full w-12" />
+  <div className="animate-pulse rounded-lg border border-gray-200 bg-white p-4">
+    <div className="mb-3 flex items-center justify-between">
+      <div className="h-5 w-2/3 rounded bg-gray-200" />
+      <div className="h-4 w-12 rounded-full bg-gray-200" />
     </div>
-    
-    <div className="flex items-center mb-2">
-      <div className="w-3 h-3 bg-gray-200 rounded mr-2" />
-      <div className="h-3 bg-gray-200 rounded w-24" />
+
+    <div className="mb-2 flex items-center">
+      <div className="mr-2 h-3 w-3 rounded bg-gray-200" />
+      <div className="h-3 w-24 rounded bg-gray-200" />
     </div>
-    
+
     <div className="flex items-center justify-between">
-      <div className="h-3 bg-gray-200 rounded w-20" />
-      <div className="h-3 bg-gray-200 rounded w-16" />
+      <div className="h-3 w-20 rounded bg-gray-200" />
+      <div className="h-3 w-16 rounded bg-gray-200" />
     </div>
   </div>
 );
@@ -172,10 +172,10 @@ export const MobileTravelListSkeleton = ({ count = 4 }: { count?: number }) => (
 );
 
 // 다양한 스켈레톤 레이아웃을 위한 컴포넌트
-export const ResponsiveTravelSkeleton = ({ 
+export const ResponsiveTravelSkeleton = ({
   variant = 'grid',
-  count = 6 
-}: { 
+  count = 6,
+}: {
   variant?: 'grid' | 'list' | 'compact';
   count?: number;
 }) => {
@@ -184,7 +184,7 @@ export const ResponsiveTravelSkeleton = ({
       return <MobileTravelListSkeleton count={count} />;
     case 'compact':
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: count }).map((_, index) => (
             <CompactTravelCardSkeleton key={index} />
           ))}
