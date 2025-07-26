@@ -56,10 +56,7 @@ export default function MapPageClient() {
       {/* 지도 컨테이너 */}
       <div className="flex-1 relative">
         <Suspense fallback={<TravelMapSkeleton />}>
-          <TravelMap 
-            travelId={travelId} 
-            dayId={dayId}
-          />
+          <TravelMap />
         </Suspense>
       </div>
     </div>
