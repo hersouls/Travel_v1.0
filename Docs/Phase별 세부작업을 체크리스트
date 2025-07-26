@@ -42,14 +42,18 @@
 - [x] **[문유]** Supabase 프로젝트 생성 (프로젝트명: `Travel`) ✅ 완료
 - [x] **[문유]** Supabase Authentication 설정 ✅ 완료
   - [x] Authentication > Providers > Google 설정 ✅ 완료
-- [ ] **[Cursor]** 데이터베이스 스키마 생성 (`supabase/migrations/001_initial_schema.sql`)
-  - [ ] `profiles` 테이블
-  - [ ] `travel_plans` 테이블  
-  - [ ] `travel_days` 테이블
-  - [ ] `day_plans` 테이블
-  - [ ] `payment_history` 테이블
-- [ ] **[Cursor]** RLS (Row Level Security) 정책 설정
-- [ ] **[Cursor]** 테스트 데이터 삽입 (`supabase/seed.sql`)
+- [x] **[Cursor]** 데이터베이스 스키마 생성 (`supabase/migrations/001_initial_schema.sql`) ✅ 완료
+  - [x] `profiles` 테이블 ✅ 완료
+  - [x] `travel_plans` 테이블 ✅ 완료
+  - [x] `travel_days` 테이블 ✅ 완료
+  - [x] `day_plans` 테이블 ✅ 완료
+  - [x] `payment_history` 테이블 ✅ 완료
+  - [x] `notifications` 테이블 ✅ 완료
+  - [x] `categories` 테이블 ✅ 완료
+  - [x] `collaborators` 테이블 ✅ 완료
+- [x] **[Cursor]** RLS (Row Level Security) 정책 설정 ✅ 완료
+- [x] **[Cursor]** 테스트 데이터 삽입 (`supabase/seed/test_data.sql`) ✅ 완료
+- [x] **[Cursor]** TypeScript 타입 정의 (`lib/types/database.ts`) ✅ 완료
 
 #### Next.js 프로젝트 초기화
 - [ ] **[Cursor]** Next.js 14 프로젝트 생성 (App Router)
