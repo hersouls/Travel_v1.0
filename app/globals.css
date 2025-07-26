@@ -2,148 +2,167 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Pretendard 폰트 최적화 */
+/* Pretendard 폰트 로드 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
 @layer base {
-  html {
-    font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
-    -webkit-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
   }
 
-  /* 한글 텍스트 최적화 */
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    font-feature-settings: 'kern' 1, 'ss01' 1, 'ss02' 1;
-    text-rendering: optimizeLegibility;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-  }
-
-  /* 스크롤바 스타일링 */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-
-  /* 다크모드 지원 */
-  @media (prefers-color-scheme: dark) {
-    ::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
+    @apply bg-background text-foreground font-pretendard antialiased;
   }
 }
 
-/* 커스텀 컴포넌트 스타일 */
-@layer components {
-  /* 카드 기본 스타일 */
-  .card {
-    @apply bg-white rounded-lg border border-gray-200 shadow-sm;
-  }
+/* 한글 최적화 기본 스타일 */
+html {
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'system-ui', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .card-hover {
-    @apply transition-all duration-200 hover:shadow-md hover:border-gray-300;
-  }
+body {
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'system-ui', sans-serif;
+  letter-spacing: -0.01em; /* 한글 기본 자간 */
+  word-break: keep-all; /* 한글 줄바꿈 최적화 */
+  overflow-wrap: break-word;
+}
 
-  /* 버튼 기본 스타일 */
-  .btn {
-    @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+/* 한글 텍스트 개선 */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  line-height: 1.4;
+}
 
-  .btn-primary {
-    @apply bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500;
-  }
+p {
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+}
 
-  .btn-secondary {
-    @apply bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500;
-  }
+/* 숫자 표시 최적화 */
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
 
-  .btn-outline {
-    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
-  }
+/* 여행 관련 커스텀 스타일 */
+.travel-card {
+  @apply @container bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200;
+}
 
-  /* 입력 필드 기본 스타일 */
-  .input {
-    @apply block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 transition-colors duration-200 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
-  }
+.travel-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
 
-  /* 애니메이션 유틸리티 */
-  .animate-fade-in {
-    @apply animate-fade-in;
-  }
+.travel-badge-planning {
+  @apply bg-blue-100 text-blue-800;
+}
 
-  .animate-slide-up {
-    @apply animate-slide-up;
-  }
+.travel-badge-ongoing {
+  @apply bg-green-100 text-green-800;
+}
 
-  .animate-slide-down {
-    @apply animate-slide-down;
+.travel-badge-completed {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.travel-badge-cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+/* 로딩 애니메이션 */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
   }
 }
 
-/* 유틸리티 클래스 */
-@layer utilities {
-  /* 한글 타이포그래피 */
-  .text-korean-tight {
-    letter-spacing: -0.025em;
-  }
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
 
-  .text-korean-normal {
-    letter-spacing: 0em;
-  }
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-  .text-korean-wide {
-    letter-spacing: 0.025em;
-  }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
 
-  /* 숫자 표시 최적화 */
-  .text-numeric {
-    font-variant-numeric: tabular-nums;
-  }
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
 
-  /* 줄바꿈 최적화 */
-  .break-keep-ko {
-    word-break: keep-all;
-    overflow-wrap: break-word;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
 
-  /* 모바일 터치 최적화 */
-  .touch-manipulation {
-    touch-action: manipulation;
-  }
+/* 포커스 스타일 개선 */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+}
 
-  /* Safe Area 대응 (모바일) */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .safe-left {
-    padding-left: env(safe-area-inset-left);
-  }
-
-  .safe-right {
-    padding-right: env(safe-area-inset-right);
+/* 모바일 터치 개선 */
+@media (hover: none) {
+  .hover\:shadow-lg:hover {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
 }
