@@ -1,0 +1,344 @@
+## 요약
+Moonwave Travel 프로젝트의 데이터베이스 구조를 분석하여 ERD(Entity Relationship Diagram) 문서를 생성합니다. Supabase PostgreSQL 기반의 여행 플래닝 시스템 데이터 모델을 시각화하고 관계를 정의합니다.
+
+## 분석
+프로젝트 문서 분석 결과:
+- **핵심 엔티티**: 사용자(profiles), 여행일정(travel_plans), 일자별계획(travel_days), 세부계획(day_plans), 결제이력(payment_history)
+- **보안 정책**: RLS(Row Level Security) 기반 사용자별 데이터 격리
+- **관계 설계**: 계층적 1:N 관계 구조 (사용자→여행→일자→계획)
+- **확장 고려사항**: 협업, 알림, 카테고리 등 향후 확장 테이블 포함
+
+## 실행
+
+# Moonwave Travel ERD (Entity Relationship Diagram) v1.0
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - Supabase 기반 여행 플래닝 데이터베이스
+
+## 📊 ERD 다이어그램
+
+```mermaid
+erDiagram
+    %% 사용자 관련
+    auth_users ||--|| profiles : "has"
+    profiles ||--o{ travel_plans : "creates"
+    profiles ||--o{ notifications : "receives"
+    profiles ||--o{ categories : "owns"
+    
+    %% 여행 계획 관련
+    travel_plans ||--o{ travel_days : "contains"
+    travel_plans ||--o{ collaborators : "shares_with"
+    travel_days ||--o{ day_plans : "includes"
+    
+    %% 결제 및 이력
+    travel_plans ||--o{ payment_history : "tracks"
+    day_plans ||--o{ payment_history : "records"
+    
+    %% 엔티티 정의
+    auth_users {
+        uuid id PK
+        string email UK
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    profiles {
+        uuid id PK,FK
+        string email UK
+        string name
+        string avatar_url
+        integer subscription_count
+        decimal total_monthly_cost
+        jsonb preferences
+        string timezone
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    travel_plans {
+        uuid id PK
+        uuid user_id FK
+        string title
+        string destination
+        date start_date
+        date end_date
+        string description
+        string cover_image_url
+        boolean is_public
+        string status
+        string[] collaborators
+        jsonb metadata
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    travel_days {
+        uuid id PK
+        uuid travel_plan_id FK
+        integer day_number
+        date date
+        string title
+        string theme
+        timestamp created_at
+    }
+    
+    day_plans {
+        uuid id PK
+        uuid travel_day_id FK
+        string place_name
+        string place_address
+        string google_place_id
+        decimal latitude
+        decimal longitude
+        time planned_time
+        integer duration_minutes
+        string plan_type
+        text notes
+        string[] image_urls
+        string youtube_url
+        decimal budget
+        integer order_index
+        jsonb metadata
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    payment_history {
+        uuid id PK
+        uuid travel_plan_id FK
+        uuid day_plan_id FK
+        decimal amount
+        string currency
+        date payment_date
+        string status
+        string payment_method
+        string receipt_url
+        timestamp created_at
+    }
+    
+    notifications {
+        uuid id PK
+        uuid user_id FK
+        string type
+        string title
+        text message
+        boolean is_read
+        timestamp scheduled_at
+        timestamp sent_at
+        jsonb metadata
+        timestamp created_at
+    }
+    
+    categories {
+        uuid id PK
+        uuid user_id FK
+        string name
+        string color
+        string icon
+        boolean is_default
+        timestamp created_at
+    }
+    
+    collaborators {
+        uuid id PK
+        uuid travel_plan_id FK
+        uuid user_id FK
+        string role
+        string permissions[]
+        timestamp invited_at
+        timestamp joined_at
+    }
+```
+
+## 🗂 테이블 상세 정의
+
+### 1. 사용자 관련 테이블
+
+#### `auth.users` (Supabase Auth 내장)
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK | 사용자 고유 ID |
+| email | TEXT | UNIQUE, NOT NULL | 이메일 주소 |
+| created_at | TIMESTAMP | NOT NULL | 생성일시 |
+| updated_at | TIMESTAMP | NOT NULL | 수정일시 |
+
+#### `public.profiles`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, FK → auth.users.id | 사용자 ID |
+| email | TEXT | UNIQUE, NOT NULL | 이메일 |
+| name | TEXT | | 사용자 이름 |
+| avatar_url | TEXT | | 프로필 이미지 URL |
+| subscription_count | INTEGER | DEFAULT 0 | 구독 수 |
+| total_monthly_cost | DECIMAL(10,2) | DEFAULT 0 | 월 총비용 |
+| preferences | JSONB | | 사용자 설정 |
+| timezone | TEXT | | 시간대 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 수정일시 |
+
+### 2. 여행 계획 테이블
+
+#### `public.travel_plans`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | 여행 ID |
+| user_id | UUID | FK → profiles.id, NOT NULL | 생성자 ID |
+| title | TEXT | NOT NULL | 여행 제목 |
+| destination | TEXT | NOT NULL | 목적지 |
+| start_date | DATE | NOT NULL | 시작일 |
+| end_date | DATE | NOT NULL | 종료일 |
+| description | TEXT | | 설명 |
+| cover_image_url | TEXT | | 대표 이미지 |
+| is_public | BOOLEAN | DEFAULT FALSE | 공개 여부 |
+| status | TEXT | DEFAULT 'planning' | 상태 |
+| collaborators | TEXT[] | | 협업자 ID 목록 |
+| metadata | JSONB | | 추가 메타데이터 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 수정일시 |
+
+#### `public.travel_days`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | Day ID |
+| travel_plan_id | UUID | FK → travel_plans.id, NOT NULL | 여행 ID |
+| day_number | INTEGER | NOT NULL | Day 번호 |
+| date | DATE | NOT NULL | 날짜 |
+| title | TEXT | | Day 제목 |
+| theme | TEXT | | Day 테마 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+
+**제약조건**: `UNIQUE(travel_plan_id, day_number)`
+
+#### `public.day_plans`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | 계획 ID |
+| travel_day_id | UUID | FK → travel_days.id, NOT NULL | Day ID |
+| place_name | TEXT | NOT NULL | 장소명 |
+| place_address | TEXT | | 주소 |
+| google_place_id | TEXT | | Google Place ID |
+| latitude | DECIMAL(10,8) | | 위도 |
+| longitude | DECIMAL(11,8) | | 경도 |
+| planned_time | TIME | | 예정 시간 |
+| duration_minutes | INTEGER | | 소요 시간(분) |
+| plan_type | TEXT | DEFAULT 'sightseeing' | 계획 유형 |
+| notes | TEXT | | 메모 |
+| image_urls | TEXT[] | | 이미지 URL 목록 |
+| youtube_url | TEXT | | 유튜브 링크 |
+| budget | DECIMAL(10,2) | | 예산 |
+| order_index | INTEGER | DEFAULT 0 | 순서 |
+| metadata | JSONB | | 추가 메타데이터 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 수정일시 |
+
+### 3. 결제 및 이력 테이블
+
+#### `public.payment_history`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | 결제 ID |
+| travel_plan_id | UUID | FK → travel_plans.id | 여행 ID |
+| day_plan_id | UUID | FK → day_plans.id | 계획 ID |
+| amount | DECIMAL(10,2) | NOT NULL | 금액 |
+| currency | TEXT | NOT NULL | 통화 |
+| payment_date | DATE | NOT NULL | 결제일 |
+| status | TEXT | DEFAULT 'completed' | 상태 |
+| payment_method | TEXT | | 결제 방법 |
+| receipt_url | TEXT | | 영수증 URL |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+
+### 4. 확장 기능 테이블
+
+#### `public.notifications`
+| 컬럼명 | 타입 | 제약조건 | 설명 |
+|--------|------|----------|------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | 알림 ID |
+| user_id | UUID | FK → profiles.id, NOT NULL | 사용자 ID |
+| type | TEXT | NOT NULL | 알림 유형 |
+| title | TEXT | NOT NULL | 제목 |
+| message | TEXT | | 메시지 |
+| is_read | BOOLEAN | DEFAULT FALSE | 읽음 여부 |
+| scheduled_at | TIMESTAMP | | 예약 시간 |
+| sent_at | TIMESTAMP | | 발송 시간 |
+| metadata | JSONB | | 추가 데이터 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 생성일시 |
+
+## 🔐 RLS (Row Level Security) 정책
+
+```sql
+-- 사용자별 데이터 격리
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE travel_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE travel_days ENABLE ROW LEVEL SECURITY;
+ALTER TABLE day_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payment_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+-- 정책 예시
+CREATE POLICY "Users can manage own travel plans" 
+ON travel_plans FOR ALL 
+USING (auth.uid() = user_id OR auth.uid() = ANY(collaborators));
+
+CREATE POLICY "Public travels are readable" 
+ON travel_plans FOR SELECT 
+USING (is_public = true);
+
+CREATE POLICY "Users can manage own notifications" 
+ON notifications FOR ALL 
+USING (auth.uid() = user_id);
+```
+
+## 🔄 트리거 및 함수
+
+```sql
+-- 사용자 통계 자동 업데이트
+CREATE OR REPLACE FUNCTION update_user_travel_stats()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE profiles SET 
+    subscription_count = (
+      SELECT COUNT(*) FROM travel_plans 
+      WHERE user_id = COALESCE(NEW.user_id, OLD.user_id)
+    ),
+    updated_at = NOW()
+  WHERE id = COALESCE(NEW.user_id, OLD.user_id);
+  
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_travel_stats_trigger
+  AFTER INSERT OR UPDATE OR DELETE ON travel_plans
+  FOR EACH ROW EXECUTE FUNCTION update_user_travel_stats();
+
+-- updated_at 자동 업데이트
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_travel_plans_updated_at 
+  BEFORE UPDATE ON travel_plans
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+```
+
+## 📑 인덱스 설계
+
+```sql
+-- 성능 최적화 인덱스
+CREATE INDEX idx_travel_plans_user_id ON travel_plans(user_id);
+CREATE INDEX idx_travel_plans_status ON travel_plans(status);
+CREATE INDEX idx_travel_days_travel_plan_id ON travel_days(travel_plan_id);
+CREATE INDEX idx_day_plans_travel_day_id ON day_plans(travel_day_id);
+CREATE INDEX idx_day_plans_google_place_id ON day_plans(google_place_id);
+CREATE INDEX idx_notifications_user_id_is_read ON notifications(user_id, is_read);
+```
+
+---
+
+**Moonwave Travel ERD v1.0**  
+*데이터베이스 설계: Supabase PostgreSQL + RLS + Realtime*  
+*확장성과 보안을 고려한 계층적 데이터 모델*
