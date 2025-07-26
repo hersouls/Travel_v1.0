@@ -1,0 +1,1008 @@
+## 요약
+Moonwave Travel의 모든 프로젝트 문서를 통합 분석하여, Supabase Client SDK 기반의 데이터 접근 패턴과 Google Maps API 연동을 포함한 완전한 API 명세서를 생성합니다.
+
+## 분석
+
+### 📡 API 아키텍처 특징
+- **Supabase Client SDK**: REST API 대신 직접 DB 접근
+- **실시간 구독**: WebSocket 기반 실시간 동기화
+- **Row Level Security**: 사용자별 데이터 격리
+- **Google APIs**: Maps & Places 통합
+
+### 🔐 핵심 보안 정책
+- JWT 기반 인증
+- RLS 정책으로 데이터 보호
+- 환경 변수로 API 키 관리
+
+## 실행
+
+# Moonwave Travel API 명세서 v1.0
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - Supabase 실시간 DB 기반 API
+
+## 📋 목차
+1. [API 개요](#1-api-개요)
+2. [인증 및 권한](#2-인증-및-권한)
+3. [데이터 모델](#3-데이터-모델)
+4. [Supabase 쿼리 API](#4-supabase-쿼리-api)
+5. [실시간 구독 API](#5-실시간-구독-api)
+6. [외부 API 연동](#6-외부-api-연동)
+7. [에러 처리](#7-에러-처리)
+8. [사용 예제](#8-사용-예제)
+
+---
+
+## 1. API 개요
+
+### 1.1 기본 정보
+
+```typescript
+const API_CONFIG = {
+  // Supabase 엔드포인트
+  supabase: {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    protocol: "HTTPS",
+    sdk: "@supabase/supabase-js"
+  },
+  
+  // Google APIs
+  google: {
+    mapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    placesApiKey: process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY,
+    libraries: ["places", "geometry", "drawing"]
+  },
+  
+  // 제한사항
+  limits: {
+    maxFileSize: "5MB",
+    requestsPerMinute: 100,
+    realtimeChannels: 10
+  }
+};
+```
+
+### 1.2 API 접근 방식
+
+```typescript
+// ❌ 전통적인 REST API (사용하지 않음)
+// GET /api/travels
+// POST /api/travels
+// PUT /api/travels/:id
+
+// ✅ Supabase Client SDK (Moonwave 표준)
+const { data, error } = await supabase
+  .from('travel_plans')
+  .select('*')
+  .eq('user_id', userId);
+```
+
+---
+
+## 2. 인증 및 권한
+
+### 2.1 인증 방식
+
+#### Magic Link 인증
+```typescript
+// 이메일로 매직 링크 전송
+const { error } = await supabase.auth.signInWithOtp({
+  email: 'user@example.com',
+  options: {
+    emailRedirectTo: 'https://travel.moonwave.kr/auth/callback'
+  }
+});
+
+// Response
+{
+  error: null | {
+    message: string,
+    status: number
+  }
+}
+```
+
+#### OAuth 인증
+```typescript
+// Google OAuth
+const { data, error } = await supabase.auth.signInWithOAuth({
+  provider: 'google',
+  options: {
+    redirectTo: 'https://travel.moonwave.kr/auth/callback',
+    scopes: 'profile email'
+  }
+});
+
+// GitHub OAuth
+const { data, error } = await supabase.auth.signInWithOAuth({
+  provider: 'github',
+  options: {
+    redirectTo: 'https://travel.moonwave.kr/auth/callback'
+  }
+});
+```
+
+#### 세션 관리
+```typescript
+// 현재 세션 가져오기
+const { data: { session }, error } = await supabase.auth.getSession();
+
+// 세션 갱신
+const { data, error } = await supabase.auth.refreshSession();
+
+// 로그아웃
+const { error } = await supabase.auth.signOut();
+```
+
+### 2.2 권한 관리 (RLS)
+
+```sql
+-- 사용자별 여행 계획 접근 권한
+CREATE POLICY "travel_plans_policy" ON travel_plans
+  FOR ALL USING (
+    auth.uid() = user_id 
+    OR 
+    auth.uid() = ANY(collaborators)
+  );
+
+-- 공개 여행은 읽기만 가능
+CREATE POLICY "public_travel_read" ON travel_plans
+  FOR SELECT USING (
+    is_public = true
+  );
+```
+
+---
+
+## 3. 데이터 모델
+
+### 3.1 핵심 엔티티
+
+```typescript
+// 사용자 프로필
+interface UserProfile {
+  id: string;                    // UUID (auth.users.id)
+  email: string;
+  name?: string;
+  avatar_url?: string;
+  preferences?: {
+    language: string;
+    timezone: string;
+    notifications: boolean;
+  };
+  travel_stats?: {
+    total_trips: number;
+    total_plans: number;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+// 여행 일정
+interface TravelPlan {
+  id: string;                    // UUID
+  user_id: string;               // FK → user_profiles.id
+  title: string;
+  destination: string;
+  start_date: string;            // YYYY-MM-DD
+  end_date: string;
+  description?: string;
+  cover_image_url?: string;
+  is_public: boolean;
+  status: 'planning' | 'ongoing' | 'completed' | 'cancelled';
+  collaborators: string[];       // User IDs
+  metadata?: {
+    tags?: string[];
+    budget?: number;
+    currency?: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+// Day별 일정
+interface TravelDay {
+  id: string;                    // UUID
+  travel_plan_id: string;        // FK → travel_plans.id
+  day_number: number;            // 1, 2, 3...
+  date: string;                  // YYYY-MM-DD
+  title?: string;
+  theme?: string;
+  created_at: string;
+}
+
+// 세부 계획
+interface DayPlan {
+  id: string;                    // UUID
+  travel_day_id: string;         // FK → travel_days.id
+  place_name: string;
+  place_address?: string;
+  google_place_id?: string;
+  location?: {
+    lat: number;
+    lng: number;
+  };
+  planned_time?: string;         // HH:MM
+  duration_minutes?: number;
+  plan_type: 'sightseeing' | 'dining' | 'shopping' | 'transportation' | 'accommodation' | 'other';
+  notes?: string;
+  image_urls: string[];
+  youtube_url?: string;
+  budget?: number;
+  order_index: number;
+  metadata?: {
+    rating?: number;
+    tags?: string[];
+  };
+  created_at: string;
+  updated_at: string;
+}
+```
+
+---
+
+## 4. Supabase 쿼리 API
+
+### 4.1 여행 계획 (Travel Plans)
+
+#### 여행 목록 조회
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('travel_plans')
+  .select(`
+    *,
+    user_profiles!user_id (
+      name,
+      avatar_url
+    )
+  `)
+  .eq('user_id', userId)
+  .order('created_at', { ascending: false })
+  .limit(20);
+
+// Response Type
+type TravelPlansResponse = {
+  data: Array<TravelPlan & {
+    user_profiles: Pick<UserProfile, 'name' | 'avatar_url'>;
+  }> | null;
+  error: PostgrestError | null;
+}
+```
+
+#### 여행 상세 조회
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('travel_plans')
+  .select(`
+    *,
+    travel_days (
+      *,
+      day_plans (
+        *
+      )
+    )
+  `)
+  .eq('id', travelId)
+  .single();
+
+// Response Type
+type TravelDetailResponse = {
+  data: TravelPlan & {
+    travel_days: Array<TravelDay & {
+      day_plans: DayPlan[];
+    }>;
+  } | null;
+  error: PostgrestError | null;
+}
+```
+
+#### 여행 생성
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('travel_plans')
+  .insert({
+    user_id: userId,
+    title: '제주도 여행',
+    destination: '제주도',
+    start_date: '2025-08-15',
+    end_date: '2025-08-20',
+    description: '여름 휴가 제주도 여행',
+    is_public: false,
+    status: 'planning'
+  })
+  .select()
+  .single();
+
+// Request Body Type
+type CreateTravelRequest = {
+  title: string;
+  destination: string;
+  start_date: string;
+  end_date: string;
+  description?: string;
+  cover_image_url?: string;
+  is_public?: boolean;
+}
+```
+
+#### 여행 수정
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('travel_plans')
+  .update({
+    title: '수정된 제목',
+    description: '수정된 설명',
+    updated_at: new Date().toISOString()
+  })
+  .eq('id', travelId)
+  .eq('user_id', userId) // 소유자 확인
+  .select()
+  .single();
+
+// Request Body Type
+type UpdateTravelRequest = Partial<CreateTravelRequest>;
+```
+
+#### 여행 삭제
+```typescript
+// 쿼리 (Cascade 삭제)
+const { error } = await supabase
+  .from('travel_plans')
+  .delete()
+  .eq('id', travelId)
+  .eq('user_id', userId);
+```
+
+### 4.2 Day별 계획 (Day Plans)
+
+#### Day별 계획 조회
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('travel_days')
+  .select(`
+    *,
+    day_plans (
+      *
+    )
+  `)
+  .eq('travel_plan_id', travelPlanId)
+  .order('day_number', { ascending: true });
+
+// Response Type
+type TravelDaysResponse = {
+  data: Array<TravelDay & {
+    day_plans: DayPlan[];
+  }> | null;
+  error: PostgrestError | null;
+}
+```
+
+#### 계획 추가
+```typescript
+// 쿼리
+const { data, error } = await supabase
+  .from('day_plans')
+  .insert({
+    travel_day_id: dayId,
+    place_name: '성산일출봉',
+    place_address: '제주특별자치도 서귀포시 성산읍',
+    google_place_id: 'ChIJN1t_tDeuEmsRUsoyG83frY4',
+    location: { lat: 33.458427, lng: 126.942478 },
+    planned_time: '09:00',
+    duration_minutes: 120,
+    plan_type: 'sightseeing',
+    notes: '일출 보기',
+    order_index: 1
+  })
+  .select()
+  .single();
+
+// Request Body Type
+type CreateDayPlanRequest = {
+  travel_day_id: string;
+  place_name: string;
+  place_address?: string;
+  google_place_id?: string;
+  location?: { lat: number; lng: number };
+  planned_time?: string;
+  duration_minutes?: number;
+  plan_type: DayPlan['plan_type'];
+  notes?: string;
+  image_urls?: string[];
+  youtube_url?: string;
+  budget?: number;
+  order_index: number;
+}
+```
+
+#### 계획 순서 변경
+```typescript
+// 쿼리 (Batch Update)
+const updates = plans.map((plan, index) => ({
+  id: plan.id,
+  order_index: index
+}));
+
+const { error } = await supabase
+  .from('day_plans')
+  .upsert(updates);
+```
+
+### 4.3 이미지 업로드
+
+#### 이미지 업로드
+```typescript
+// Storage API
+const file = event.target.files[0];
+const fileName = `${userId}/${travelId}/${Date.now()}_${file.name}`;
+
+const { data, error } = await supabase.storage
+  .from('travel-images')
+  .upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false
+  });
+
+// Response
+{
+  data: {
+    path: string;
+    id: string;
+    fullPath: string;
+  };
+  error: StorageError | null;
+}
+
+// 공개 URL 가져오기
+const { data: { publicUrl } } = supabase.storage
+  .from('travel-images')
+  .getPublicUrl(fileName);
+```
+
+---
+
+## 5. 실시간 구독 API
+
+### 5.1 실시간 여행 업데이트
+
+```typescript
+// 개인 여행 업데이트 구독
+const subscription = supabase
+  .channel('personal-travels')
+  .on('postgres_changes', {
+    event: '*', // INSERT, UPDATE, DELETE
+    schema: 'public',
+    table: 'travel_plans',
+    filter: `user_id=eq.${userId}`
+  }, (payload) => {
+    console.log('Travel updated:', payload);
+    // payload.eventType: 'INSERT' | 'UPDATE' | 'DELETE'
+    // payload.new: 새로운 데이터
+    // payload.old: 이전 데이터
+  })
+  .subscribe();
+
+// 구독 해제
+subscription.unsubscribe();
+```
+
+### 5.2 협업 실시간 동기화
+
+```typescript
+// 특정 여행의 모든 변경사항 구독
+const travelChannel = supabase
+  .channel(`travel:${travelId}`)
+  .on('postgres_changes', {
+    event: '*',
+    schema: 'public',
+    table: 'day_plans',
+    filter: `travel_day_id=in.(
+      SELECT id FROM travel_days 
+      WHERE travel_plan_id='${travelId}'
+    )`
+  }, handlePlanUpdate)
+  .on('presence', { event: 'sync' }, () => {
+    const state = travelChannel.presenceState();
+    console.log('Active users:', state);
+  })
+  .subscribe();
+
+// 사용자 presence 추가
+await travelChannel.track({
+  user_id: userId,
+  name: userName,
+  avatar_url: userAvatar,
+  online_at: new Date().toISOString()
+});
+```
+
+### 5.3 실시간 이벤트 타입
+
+```typescript
+// 실시간 페이로드 타입
+interface RealtimePayload<T> {
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  new: T;                        // INSERT, UPDATE 시
+  old: T;                        // UPDATE, DELETE 시
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+}
+
+// 사용 예시
+.on('postgres_changes', { 
+  event: '*', 
+  schema: 'public', 
+  table: 'travel_plans' 
+}, (payload: RealtimePayload<TravelPlan>) => {
+  switch (payload.eventType) {
+    case 'INSERT':
+      addTravelToUI(payload.new);
+      break;
+    case 'UPDATE':
+      updateTravelInUI(payload.new);
+      break;
+    case 'DELETE':
+      removeTravelFromUI(payload.old);
+      break;
+  }
+})
+```
+
+---
+
+## 6. 외부 API 연동
+
+### 6.1 Google Maps API
+
+#### 지도 초기화
+```typescript
+// Google Maps 로드
+const loader = new Loader({
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  version: "weekly",
+  libraries: ["places", "geometry"]
+});
+
+const google = await loader.load();
+const map = new google.maps.Map(mapElement, {
+  center: { lat: 33.4501, lng: 126.5707 }, // 제주도
+  zoom: 10,
+  mapTypeId: 'roadmap',
+  language: 'ko',
+  region: 'KR'
+});
+```
+
+#### 마커 추가
+```typescript
+// 계획별 마커 생성
+dayPlans.forEach((plan) => {
+  if (plan.location) {
+    const marker = new google.maps.Marker({
+      position: { 
+        lat: plan.location.lat, 
+        lng: plan.location.lng 
+      },
+      map: map,
+      title: plan.place_name,
+      icon: getMarkerIcon(plan.plan_type)
+    });
+    
+    // 정보창
+    const infoWindow = new google.maps.InfoWindow({
+      content: `
+        <div class="font-pretendard">
+          <h3 class="font-semibold">${plan.place_name}</h3>
+          <p class="text-sm">${plan.planned_time || ''}</p>
+          <p class="text-sm text-gray-600">${plan.notes || ''}</p>
+        </div>
+      `
+    });
+    
+    marker.addListener('click', () => {
+      infoWindow.open(map, marker);
+    });
+  }
+});
+```
+
+### 6.2 Google Places API
+
+#### 장소 자동완성
+```typescript
+// Places Autocomplete
+const autocomplete = new google.maps.places.Autocomplete(inputElement, {
+  types: ['establishment', 'geocode'],
+  componentRestrictions: { country: 'kr' },
+  fields: ['place_id', 'name', 'formatted_address', 'geometry', 'rating', 'opening_hours']
+});
+
+autocomplete.addListener('place_changed', () => {
+  const place = autocomplete.getPlace();
+  
+  if (place.place_id) {
+    // Supabase에 저장할 데이터
+    const placeData = {
+      google_place_id: place.place_id,
+      place_name: place.name,
+      place_address: place.formatted_address,
+      location: {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      },
+      metadata: {
+        rating: place.rating,
+        opening_hours: place.opening_hours?.weekday_text
+      }
+    };
+  }
+});
+```
+
+#### 장소 상세 정보
+```typescript
+// Place Details
+const service = new google.maps.places.PlacesService(map);
+
+service.getDetails({
+  placeId: googlePlaceId,
+  fields: ['name', 'rating', 'formatted_phone_number', 'opening_hours', 'website', 'photos']
+}, (place, status) => {
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    // 장소 정보 활용
+    const details = {
+      name: place.name,
+      rating: place.rating,
+      phone: place.formatted_phone_number,
+      website: place.website,
+      hours: place.opening_hours?.weekday_text,
+      photos: place.photos?.map(photo => photo.getUrl({ maxWidth: 400 }))
+    };
+  }
+});
+```
+
+---
+
+## 7. 에러 처리
+
+### 7.1 Supabase 에러 코드
+
+```typescript
+// 공통 에러 타입
+interface SupabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
+// 주요 에러 코드
+const ERROR_CODES = {
+  // PostgreSQL 에러
+  '23505': '이미 존재하는 데이터입니다',
+  '23503': '참조하는 데이터가 없습니다',
+  '23502': '필수 필드가 누락되었습니다',
+  '42501': '권한이 없습니다',
+  'PGRST116': '요청한 데이터를 찾을 수 없습니다',
+  
+  // Auth 에러
+  'invalid_credentials': '잘못된 인증 정보입니다',
+  'user_not_found': '사용자를 찾을 수 없습니다',
+  'email_not_confirmed': '이메일 인증이 필요합니다',
+  
+  // Storage 에러
+  'object_not_found': '파일을 찾을 수 없습니다',
+  'payload_too_large': '파일 크기가 너무 큽니다 (최대 5MB)',
+  'invalid_mime_type': '지원하지 않는 파일 형식입니다'
+};
+```
+
+### 7.2 에러 처리 패턴
+
+```typescript
+// 통합 에러 핸들러
+export const handleSupabaseError = (error: SupabaseError): string => {
+  console.error('Supabase Error:', error);
+  
+  // 한글 에러 메시지 매핑
+  if (error.code && ERROR_CODES[error.code]) {
+    return ERROR_CODES[error.code];
+  }
+  
+  // 기본 에러 메시지
+  return error.message || '알 수 없는 오류가 발생했습니다';
+};
+
+// 사용 예시
+try {
+  const { data, error } = await supabase
+    .from('travel_plans')
+    .insert(travelData)
+    .select()
+    .single();
+    
+  if (error) throw error;
+  
+  return { success: true, data };
+} catch (error) {
+  const errorMessage = handleSupabaseError(error);
+  toast.error(errorMessage);
+  return { success: false, error: errorMessage };
+}
+```
+
+### 7.3 네트워크 에러 처리
+
+```typescript
+// 재시도 로직
+export const retryableQuery = async <T>(
+  queryFn: () => Promise<{ data: T; error: any }>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<{ data: T; error: any }> => {
+  let lastError;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const result = await queryFn();
+      if (!result.error) return result;
+      
+      lastError = result.error;
+      
+      // 재시도 불가능한 에러
+      if (result.error.code === '42501') break;
+      
+      // 지수 백오프
+      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  
+  return { data: null, error: lastError };
+};
+```
+
+---
+
+## 8. 사용 예제
+
+### 8.1 완전한 여행 생성 플로우
+
+```typescript
+// hooks/useCreateTravel.ts
+export const useCreateTravel = () => {
+  const { supabase, user } = useSupabase();
+  const [loading, setLoading] = useState(false);
+  
+  const createTravel = async (travelData: CreateTravelRequest) => {
+    setLoading(true);
+    
+    try {
+      // 1. 여행 계획 생성
+      const { data: travel, error: travelError } = await supabase
+        .from('travel_plans')
+        .insert({
+          ...travelData,
+          user_id: user.id,
+          status: 'planning'
+        })
+        .select()
+        .single();
+        
+      if (travelError) throw travelError;
+      
+      // 2. Day별 일정 자동 생성
+      const days = [];
+      const startDate = new Date(travel.start_date);
+      const endDate = new Date(travel.end_date);
+      const dayCount = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+      
+      for (let i = 0; i < dayCount; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        
+        days.push({
+          travel_plan_id: travel.id,
+          day_number: i + 1,
+          date: currentDate.toISOString().split('T')[0],
+          title: `Day ${i + 1}`
+        });
+      }
+      
+      const { error: daysError } = await supabase
+        .from('travel_days')
+        .insert(days);
+        
+      if (daysError) throw daysError;
+      
+      // 3. 실시간 업데이트 트리거
+      // (구독 중인 컴포넌트에서 자동으로 반영됨)
+      
+      return { success: true, data: travel };
+      
+    } catch (error) {
+      const errorMessage = handleSupabaseError(error);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return { createTravel, loading };
+};
+```
+
+### 8.2 실시간 협업 예제
+
+```typescript
+// components/CollaborativeEditor.tsx
+export const CollaborativeEditor = ({ travelId }: Props) => {
+  const [plans, setPlans] = useState<DayPlan[]>([]);
+  const [activeUsers, setActiveUsers] = useState<any[]>([]);
+  const { supabase, user } = useSupabase();
+  
+  useEffect(() => {
+    // 1. 초기 데이터 로드
+    loadPlans();
+    
+    // 2. 실시간 구독 설정
+    const channel = supabase
+      .channel(`travel:${travelId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'day_plans'
+      }, (payload) => {
+        // 실시간 업데이트 처리
+        if (payload.eventType === 'INSERT') {
+          setPlans(prev => [...prev, payload.new as DayPlan]);
+        } else if (payload.eventType === 'UPDATE') {
+          setPlans(prev => prev.map(p => 
+            p.id === payload.new.id ? payload.new as DayPlan : p
+          ));
+        } else if (payload.eventType === 'DELETE') {
+          setPlans(prev => prev.filter(p => p.id !== payload.old.id));
+        }
+      })
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState();
+        setActiveUsers(Object.values(state).flat());
+      })
+      .subscribe();
+    
+    // 3. 사용자 presence 등록
+    channel.track({
+      user_id: user.id,
+      name: user.name,
+      cursor: null
+    });
+    
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [travelId]);
+  
+  return (
+    <div>
+      {/* 활성 사용자 표시 */}
+      <div className="flex gap-2 mb-4">
+        {activeUsers.map(user => (
+          <div key={user.user_id} className="flex items-center gap-2">
+            <img src={user.avatar_url} className="w-8 h-8 rounded-full" />
+            <span className="text-sm">{user.name}</span>
+          </div>
+        ))}
+      </div>
+      
+      {/* 계획 목록 */}
+      <div className="space-y-4">
+        {plans.map(plan => (
+          <DayPlanCard key={plan.id} plan={plan} />
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+### 8.3 이미지 업로드 플로우
+
+```typescript
+// hooks/useImageUpload.ts
+export const useImageUpload = () => {
+  const { supabase, user } = useSupabase();
+  const [uploading, setUploading] = useState(false);
+  
+  const uploadImage = async (
+    file: File,
+    travelId: string
+  ): Promise<{ url: string } | { error: string }> => {
+    setUploading(true);
+    
+    try {
+      // 1. 파일 검증
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('파일 크기는 5MB 이하여야 합니다');
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        throw new Error('이미지 파일만 업로드 가능합니다');
+      }
+      
+      // 2. 파일명 생성
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${travelId}/${Date.now()}.${fileExt}`;
+      
+      // 3. 업로드
+      const { error: uploadError } = await supabase.storage
+        .from('travel-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+        
+      if (uploadError) throw uploadError;
+      
+      // 4. 공개 URL 생성
+      const { data: { publicUrl } } = supabase.storage
+        .from('travel-images')
+        .getPublicUrl(fileName);
+      
+      return { url: publicUrl };
+      
+    } catch (error) {
+      return { error: error.message };
+    } finally {
+      setUploading(false);
+    }
+  };
+  
+  return { uploadImage, uploading };
+};
+```
+
+---
+
+## 📋 API 빠른 참조
+
+### 인증
+- `supabase.auth.signInWithOtp()` - 매직 링크 로그인
+- `supabase.auth.signInWithOAuth()` - OAuth 로그인
+- `supabase.auth.getSession()` - 세션 확인
+- `supabase.auth.signOut()` - 로그아웃
+
+### 데이터 조회
+- `.select()` - 데이터 조회
+- `.eq()` - 동등 필터
+- `.order()` - 정렬
+- `.limit()` - 개수 제한
+- `.single()` - 단일 결과
+
+### 데이터 조작
+- `.insert()` - 생성
+- `.update()` - 수정
+- `.delete()` - 삭제
+- `.upsert()` - 생성 또는 수정
+
+### 실시간
+- `.channel()` - 채널 생성
+- `.on('postgres_changes')` - DB 변경 구독
+- `.on('presence')` - 사용자 상태
+- `.subscribe()` - 구독 시작
+- `.unsubscribe()` - 구독 해제
+
+---
+
+**Moonwave Travel API 명세서 v1.0**  
+*"가짜 흐름이 아닌, 실제 흐름으로 설계한다"*  
+*Supabase Client SDK + Google APIs + 실시간 동기화*
+
+이 API 명세서는 Moonwave Travel의 모든 데이터 접근 패턴과 외부 API 연동 방법을 포함하고 있으며, 실제 구현에 바로 사용할 수 있는 코드 예제를 제공합니다.
