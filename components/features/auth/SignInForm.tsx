@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -17,7 +16,6 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [authMessage, setAuthMessage] = useState<AuthError | null>(null)
-  const router = useRouter()
   const supabase = createClientComponentClient()
 
   const handleMagicLink = async (e: React.FormEvent) => {
@@ -54,7 +52,7 @@ export function SignInForm() {
           type: 'success'
         })
       }
-    } catch (error) {
+    } catch {
       setAuthMessage({
         message: '네트워크 오류가 발생했습니다. 다시 시도해주세요.',
         type: 'error'
@@ -84,7 +82,7 @@ export function SignInForm() {
         setIsGoogleLoading(false)
       }
       // If successful, user will be redirected, so we don't need to set loading to false
-    } catch (error) {
+    } catch {
       setAuthMessage({
         message: '네트워크 오류가 발생했습니다. 다시 시도해주세요.',
         type: 'error'

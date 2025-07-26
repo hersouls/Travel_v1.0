@@ -125,11 +125,6 @@ export function ImageGallery({
     }
   }, [])
 
-  const getGridColumns = () => {
-    const cols = Math.min(maxColumns, images.length)
-    return `grid-cols-${cols}`
-  }
-
   if (images.length === 0) {
     return (
       <div className={`text-center py-12 text-gray-500 ${className}`}>

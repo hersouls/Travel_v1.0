@@ -83,7 +83,7 @@ export function SharedTravelView({ travel, collaborators }: SharedTravelViewProp
           text: travel.description || `${travel.destination}으로의 특별한 여행`,
           url: window.location.href,
         })
-      } catch (error) {
+      } catch {
         console.log('Share cancelled or failed')
       }
     } else {
@@ -272,7 +272,7 @@ export function SharedTravelView({ travel, collaborators }: SharedTravelViewProp
                 <div className="space-y-4">
                   {currentDay.day_plans
                     .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
-                    .map((plan, index) => (
+                    .map((plan) => (
                       <div key={plan.id} className="flex gap-4 p-4 bg-gray-50 rounded-lg">
                         <div className="flex-shrink-0 w-16">
                           {plan.time && (

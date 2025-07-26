@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import Image from 'next/image'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
 import { Upload, X, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react'
@@ -247,9 +248,11 @@ export function ImageUpload({
       ) : (
         <div className="relative">
           <div className="relative rounded-lg overflow-hidden bg-gray-100">
-            <img
+            <Image
               src={uploadState.preview}
               alt="업로드 미리보기"
+              width={400}
+              height={192}
               className="w-full h-48 object-cover"
             />
             
