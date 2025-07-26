@@ -23,7 +23,7 @@ interface UseTravelPlansReturn {
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
-  createTravelPlan: (data: Partial<TravelPlan>) => Promise<TravelPlan | null>;
+  createTravelPlan: (data: Partial<TravelPlan> & Pick<TravelPlan, 'title' | 'destination' | 'start_date' | 'end_date' | 'status' | 'is_public' | 'collaborators'>) => Promise<TravelPlan | null>;
   updateTravelPlan: (id: string, data: Partial<TravelPlan>) => Promise<boolean>;
   deleteTravelPlan: (id: string) => Promise<boolean>;
 }
@@ -85,7 +85,7 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
   }, [user, supabase]);
 
   // 여행 계획 생성
-  const createTravelPlan = useCallback(async (data: Partial<TravelPlan>): Promise<TravelPlan | null> => {
+  const createTravelPlan = useCallback(async (data: Partial<TravelPlan> & Pick<TravelPlan, 'title' | 'destination' | 'start_date' | 'end_date' | 'status' | 'is_public' | 'collaborators'>): Promise<TravelPlan | null> => {
     if (!user) throw new Error('로그인이 필요합니다');
 
     try {
@@ -94,6 +94,8 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
         .insert({
           ...data,
           user_id: user.id,
+          metadata: data.metadata || {},
+          cover_image_url: data.cover_image_url || null,
         })
         .select()
         .single();

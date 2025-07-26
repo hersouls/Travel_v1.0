@@ -1,9 +1,7 @@
-'use client';
-
 import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { TravelDetailView } from '@/components/features/travel/TravelDetailView';
-import { TravelDetailSkeleton } from '@/components/features/travel/TravelDetailSkeleton';
+import TravelDetailView from '@/components/features/travel/TravelDetailView';
+import TravelDetailSkeleton from '@/components/features/travel/TravelDetailSkeleton';
 
 interface TravelDetailPageProps {
   params: {

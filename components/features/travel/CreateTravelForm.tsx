@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { useTravelPlans } from '@/hooks/useTravelPlans';
-import { MapPin, Calendar, Users, Upload, X, Plus } from 'lucide-react';
+import { MapPin, Calendar, Users, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FormData {
@@ -117,7 +117,7 @@ export const CreateTravelForm = React.forwardRef<HTMLFormElement, CreateTravelFo
           end_date: formData.end_date,
           description: formData.description.trim() || null,
           is_public: formData.is_public,
-          collaborators: formData.collaborators.length > 0 ? formData.collaborators : null,
+          collaborators: formData.collaborators.length > 0 ? formData.collaborators : [],
           status: 'planning'
         });
 
@@ -220,7 +220,6 @@ export const CreateTravelForm = React.forwardRef<HTMLFormElement, CreateTravelFo
                 value={formData.title}
                 onChange={handleInputChange('title')}
                 placeholder="예: 제주도 힐링 여행"
-                error={!!errors.title}
                 className="w-full"
               />
               {errors.title && (
@@ -248,7 +247,6 @@ export const CreateTravelForm = React.forwardRef<HTMLFormElement, CreateTravelFo
                   value={formData.destination}
                   onChange={handleInputChange('destination')}
                   placeholder="예: 제주도, 서울, 부산"
-                  error={!!errors.destination}
                   className="w-full pl-10"
                 />
               </div>
@@ -286,7 +284,6 @@ export const CreateTravelForm = React.forwardRef<HTMLFormElement, CreateTravelFo
                   value={formData.start_date}
                   onChange={handleInputChange('start_date')}
                   min={today}
-                  error={!!errors.start_date}
                   className="w-full"
                 />
                 {errors.start_date && (
@@ -312,7 +309,6 @@ export const CreateTravelForm = React.forwardRef<HTMLFormElement, CreateTravelFo
                   value={formData.end_date}
                   onChange={handleInputChange('end_date')}
                   min={formData.start_date || today}
-                  error={!!errors.end_date}
                   className="w-full"
                 />
                 {errors.end_date && (

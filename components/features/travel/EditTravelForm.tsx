@@ -184,8 +184,6 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
                  value={formData.title}
                  onChange={(e) => handleInputChange('title', e.target.value)}
                  placeholder="예: 제주도 힐링 여행"
-                 error={!!errors.title}
-                 helperText={errors.title}
                />
             </div>
 
@@ -201,7 +199,6 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
                  onChange={(e) => handleInputChange('destination', e.target.value)}
                  placeholder="예: 제주도, 서울, 부산"
                  error={!!errors.destination}
-                 helperText={errors.destination}
                />
             </div>
 
@@ -217,7 +214,6 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
                    value={formData.start_date}
                    onChange={(e) => handleInputChange('start_date', e.target.value)}
                    error={!!errors.start_date}
-                   helperText={errors.start_date}
                  />
               </div>
               <div>
@@ -230,7 +226,6 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
                    value={formData.end_date}
                    onChange={(e) => handleInputChange('end_date', e.target.value)}
                    error={!!errors.end_date}
-                   helperText={errors.end_date}
                  />
               </div>
             </div>
