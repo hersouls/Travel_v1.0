@@ -17,54 +17,26 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
+import { TravelPlan, TravelDay, DayPlan, Collaborator, Profile } from '@/lib/types/database';
 
-interface TravelPlan {
-  id: string;
-  title: string;
-  description: string | null;
-  destination: string;
-  start_date: string;
-  end_date: string;
-  budget: number | null;
-  travel_type: string;
-  status: string;
-  created_at: string;
+interface ExtendedTravelPlan extends TravelPlan {
   profiles: {
     full_name: string | null;
     avatar_url: string | null;
   } | null;
-  travel_days: TravelDay[];
+  travel_days: (TravelDay & {
+    day_plans: DayPlan[];
+  })[];
 }
 
-interface TravelDay {
-  id: string;
-  day_number: number;
-  date: string;
-  title: string | null;
-  day_plans: DayPlan[];
-}
-
-interface DayPlan {
-  id: string;
-  time: string | null;
-  activity: string;
-  location: string | null;
-  notes: string | null;
-  estimated_cost: number | null;
-  latitude: number | null;
-  longitude: number | null;
-}
-
-interface Collaborator {
-  id: string;
+interface ExtendedCollaborator extends Collaborator {
   email: string;
-  role: 'viewer' | 'editor';
   status: 'pending' | 'accepted';
 }
 
 interface SharedTravelViewProps {
-  travel: TravelPlan;
-  collaborators: Collaborator[];
+  travel: ExtendedTravelPlan;
+  collaborators: ExtendedCollaborator[];
 }
 
 export function SharedTravelView({
@@ -145,9 +117,6 @@ export function SharedTravelView({
               <h1 className="text-3xl font-bold text-gray-900 tracking-korean-normal">
                 {travel.title}
               </h1>
-              <Badge className={getTravelTypeColor(travel.travel_type)}>
-                {getTravelTypeLabel(travel.travel_type)}
-              </Badge>
             </div>
 
             {travel.description && (
@@ -283,29 +252,29 @@ export function SharedTravelView({
               {currentDay.day_plans.length > 0 ? (
                 <div className="space-y-4">
                   {currentDay.day_plans
-                    .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+                    .sort((a, b) => (a.planned_time || '').localeCompare(b.planned_time || ''))
                     .map((plan) => (
                       <div
                         key={plan.id}
                         className="flex gap-4 rounded-lg bg-gray-50 p-4"
                       >
                         <div className="w-16 flex-shrink-0">
-                          {plan.time && (
+                          {plan.planned_time && (
                             <div className="text-sm font-medium text-gray-700">
-                              {plan.time}
+                              {plan.planned_time}
                             </div>
                           )}
                         </div>
 
                         <div className="flex-1">
                           <h4 className="mb-2 font-medium text-gray-900 tracking-korean-normal">
-                            {plan.activity}
+                            {plan.place_name}
                           </h4>
 
-                          {plan.location && (
+                          {plan.place_address && (
                             <div className="mb-2 flex items-center gap-1 text-sm text-gray-600">
                               <MapPin className="h-4 w-4" />
-                              {plan.location}
+                              {plan.place_address}
                             </div>
                           )}
 
@@ -315,10 +284,10 @@ export function SharedTravelView({
                             </p>
                           )}
 
-                          {plan.estimated_cost && (
+                          {plan.budget && (
                             <div className="text-sm text-gray-500">
                               예상 비용:{' '}
-                              {plan.estimated_cost.toLocaleString('ko-KR')}원
+                              {plan.budget.toLocaleString('ko-KR')}원
                             </div>
                           )}
                         </div>

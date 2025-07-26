@@ -132,29 +132,24 @@ export function ShareModal({
 
     setIsInviting(true);
     try {
-      // Add collaborator to database
-      const { error } = await supabase.from('collaborators').insert({
-        travel_plan_id: travelId,
-        invited_by: user.id,
-        email: inviteEmail.trim(),
-        role: inviteRole,
-        status: 'pending',
-      });
-
-      if (error) throw error;
-
+      // TODO: Implement proper invitation system
+      // For now, this is a placeholder that doesn't actually add to database
+      // since the collaborators table expects user_id, not email
+      console.log('Invitation email should be sent to:', inviteEmail.trim());
+      console.log('Role:', inviteRole);
+      
+      // Simulate successful invitation for UI purposes
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');
-
-      // TODO: Send invitation email
-      console.log('Invitation email should be sent to:', inviteEmail.trim());
+      
+      alert('초대 기능은 현재 개발 중입니다.');
     } catch (error) {
       console.error('Invite collaborator error:', error);
       alert('협력자 초대 중 오류가 발생했습니다.');
     } finally {
       setIsInviting(false);
     }
-  }, [user, supabase, travelId, inviteEmail, inviteRole, onCollaboratorAdd]);
+  }, [user, travelId, inviteEmail, inviteRole, onCollaboratorAdd]);
 
   const handleRemoveCollaborator = useCallback(
     async (collaboratorId: string) => {
