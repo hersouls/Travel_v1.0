@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -65,7 +65,7 @@ export function ShareModal({
   const [removingCollaborators, setRemovingCollaborators] = useState<
     Set<string>
   >(new Set());
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   useEffect(() => {
     if (isOpen) {

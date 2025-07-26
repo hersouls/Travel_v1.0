@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { TravelPlan, UpdateTravelPlan, Database } from '@/lib/types/database';
 
 interface UseUpdateTravelReturn {
@@ -17,7 +17,7 @@ export function useUpdateTravel(): UseUpdateTravelReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
   const updateTravel = async (
     travelId: string,

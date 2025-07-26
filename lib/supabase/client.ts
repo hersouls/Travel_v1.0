@@ -1,4 +1,4 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import type { Database } from '@/lib/types/database';
 
 export const createClient = () => {
@@ -8,10 +8,7 @@ export const createClient = () => {
   const supabaseKey =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
-  return createClientComponentClient<Database>({
-    supabaseUrl,
-    supabaseKey,
-  });
+  return createBrowserClient<Database>(supabaseUrl, supabaseKey);
 };
 
 // 브라우저에서 사용할 기본 클라이언트

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
@@ -49,7 +49,7 @@ export function ImageUpload({
     preview: null,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const resetUploadState = useCallback(() => {
     setUploadState({

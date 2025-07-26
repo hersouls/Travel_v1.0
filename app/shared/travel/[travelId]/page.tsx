@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { SharedTravelView } from '@/components/features/sharing/SharedTravelView';
 
 interface SharedTravelPageProps {
@@ -66,7 +65,7 @@ export async function generateMetadata({
 }
 
 async function getSharedTravel(travelId: string) {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createServerSupabaseClient();
 
   try {
     // Get travel plan

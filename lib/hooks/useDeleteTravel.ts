@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/lib/types/database';
 
 interface UseDeleteTravelReturn {
@@ -14,7 +14,7 @@ export function useDeleteTravel(): UseDeleteTravelReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
   const deleteTravel = async (travelId: string): Promise<void> => {
     try {
