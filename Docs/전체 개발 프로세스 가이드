@@ -1,0 +1,1206 @@
+# Moonwave 전체 개발 프로세스 가이드
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - GitHub 직접 연동 + Supabase 실시간 DB 기반 개발 프로세스
+
+## 🚀 개발 프로세스 개요
+
+### Phase 1: 프로젝트 초기화 (Foundation)
+**목표**: GitHub Repository + Supabase 프로젝트 생성 및 연동
+
+### Phase 2: 인프라 구축 (Infrastructure) 
+**목표**: 배포 자동화 + 도메인 설정 + 환경 구성
+
+### Phase 3: 데이터 설계 (Database)
+**목표**: Supabase DB 스키마 생성 + 실제 데이터 삽입
+
+### Phase 4: 프론트엔드 개발 (Frontend)
+**목표**: React + TypeScript + Tailwind 기반 UI 개발
+
+### Phase 5: 통합 테스트 (Integration)
+**목표**: 실제 배포 환경에서 기능 검증
+
+### Phase 6: 최적화 (Optimization)
+**목표**: 성능 개선 + 사용자 경험 향상
+
+---
+
+## Phase 1: 프로젝트 초기화 (Foundation)
+
+### 1.1 GitHub Repository 생성
+```bash
+# Repository 설정
+Repository Name: moonwave-subscription-manager
+Description: 스마트한 구독 관리 시스템 - Moonwave
+Visibility: Public
+Initialize: README.md, .gitignore (Node), MIT License
+
+# 필수 브랜치 전략
+main: 프로덕션 배포 브랜치
+develop: 개발 작업 브랜치
+feature/*: 기능별 작업 브랜치
+```
+
+### 1.2 Cursor AI 직접 연동
+```typescript
+// .cursorrules 파일 생성
+const CURSOR_RULES = `
+# Moonwave 개발 규칙
+
+## 필수 준수사항
+- localhost 개발 환경 사용 금지
+- Mock 데이터 사용 완전 금지
+- Supabase 실제 DB만 사용
+- Pretendard 폰트 필수 적용
+- Container Queries 반응형 처리
+- TypeScript strict 모드 준수
+
+## 코딩 표준
+- 컴포넌트: PascalCase (SubscriptionCard.tsx)
+- 훅: useSubscriptions.ts
+- 유틸리티: formatCurrency.ts
+- 타입: Database['public']['Tables']['subscriptions']['Row']
+
+## 금지 패턴
+- const mockData = []
+- localhost:3000
+- if (isDev) useMockData()
+- hardcoded arrays
+`;
+```
+
+### 1.3 Supabase 프로젝트 생성
+```bash
+# Supabase 프로젝트 설정
+1. https://supabase.com 접속
+2. New Project 생성
+3. 프로젝트명: moonwave-subscription-db
+4. 데이터베이스 비밀번호 설정
+5. 리전: Northeast Asia (ap-northeast-1)
+6. 프로젝트 URL 및 API Key 확인
+```
+
+### 1.4 기본 프로젝트 구조 생성
+```
+moonwave-subscription-manager/
+├── .github/
+│   └── workflows/
+├── src/
+│   ├── components/
+│   │   ├── ui/
+│   │   ├── features/
+│   │   └── layout/
+│   ├── hooks/
+│   ├── contexts/
+│   ├── lib/
+│   ├── types/
+│   └── styles/
+├── supabase/
+│   └── migrations/
+├── public/
+├── .cursorrules
+├── .env.example
+├── package.json
+├── tailwind.config.js
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+## Phase 2: 인프라 구축 (Infrastructure)
+
+### 2.1 GitHub Secrets 환경 변수 설정
+```bash
+# GitHub Repository Settings > Secrets and variables > Actions
+
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SITE_URL=https://project-name.moonwave.kr
+CUSTOM_DOMAIN=project-name.moonwave.kr
+VITE_ENVIRONMENT=production
+```
+
+### 2.2 GitHub Actions 워크플로우 생성
+```yaml
+# .github/workflows/deploy.yml
+name: Moonwave Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+  VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+  VITE_SITE_URL: ${{ secrets.VITE_SITE_URL }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install Dependencies
+      run: npm ci
+    
+    - name: Type Check
+      run: npm run type-check
+    
+    - name: Build
+      run: npm run build
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        cname: ${{ secrets.CUSTOM_DOMAIN }}
+```
+
+### 2.3 패키지 및 설정 파일 생성
+```json
+// package.json
+{
+  "name": "moonwave-subscription-manager",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'localhost 개발 금지. GitHub Codespaces 사용' && exit 1",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "lucide-react": "^0.263.1",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.3.0",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "typescript": "^5.0.0",
+    "vite": "^4.4.0"
+  }
+}
+```
+
+### 2.4 Tailwind CSS + Container Queries 설정
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        pretendard: [
+          'Pretendard Variable', 
+          'Pretendard', 
+          '-apple-system', 
+          'BlinkMacSystemFont', 
+          'system-ui', 
+          'sans-serif'
+        ]
+      },
+      colors: {
+        moonwave: {
+          primary: {
+            50: '#eff6ff',
+            500: '#3b82f6',
+            600: '#2563eb',
+            900: '#1e3a8a'
+          }
+        }
+      }
+    }
+  },
+  plugins: [
+    require('@tailwindcss/container-queries')
+  ]
+}
+```
+
+### 2.5 도메인 설정 (xxx.moonwave.kr)
+```bash
+# DNS 설정 요청
+Record Type: CNAME
+Name: project-name
+Value: username.github.io
+TTL: 3600
+
+# GitHub Pages 설정
+Repository Settings > Pages
+Source: Deploy from a branch
+Branch: gh-pages
+Custom domain: project-name.moonwave.kr
+```
+
+---
+
+## Phase 3: 데이터 설계 (Database)
+
+### 3.1 Supabase DB 스키마 생성
+```sql
+-- supabase/migrations/001_initial_schema.sql
+
+-- 사용자 프로필 테이블
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  avatar_url TEXT,
+  subscription_count INTEGER DEFAULT 0,
+  total_monthly_cost DECIMAL(10,2) DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 구독 서비스 테이블
+CREATE TABLE IF NOT EXISTS public.subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  currency TEXT NOT NULL DEFAULT 'KRW',
+  billing_cycle TEXT NOT NULL DEFAULT 'monthly',
+  next_billing_date DATE NOT NULL,
+  category TEXT DEFAULT 'others',
+  icon_url TEXT,
+  website_url TEXT,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 결제 이력 테이블
+CREATE TABLE IF NOT EXISTS public.payment_history (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  subscription_id UUID REFERENCES public.subscriptions(id) ON DELETE CASCADE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  currency TEXT NOT NULL,
+  payment_date DATE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'completed',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- RLS 정책 설정
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.payment_history ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own profile" ON public.profiles
+  FOR ALL USING (auth.uid() = id);
+
+CREATE POLICY "Users can manage own subscriptions" ON public.subscriptions
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can view own payment history" ON public.payment_history
+  FOR SELECT USING (
+    auth.uid() = (SELECT user_id FROM public.subscriptions WHERE id = subscription_id)
+  );
+```
+
+### 3.2 실제 테스트 데이터 삽입
+```sql
+-- supabase/seed.sql
+-- 실제 데이터 (Mock 데이터 아님)
+
+-- 테스트 사용자 프로필
+INSERT INTO public.profiles (id, email, name) VALUES
+('test-user-uuid', 'test@moonwave.kr', '문유');
+
+-- 실제 구독 데이터
+INSERT INTO public.subscriptions (
+  user_id, name, description, price, currency, 
+  billing_cycle, next_billing_date, category
+) VALUES
+('test-user-uuid', 'Netflix Premium', '4K 스트리밍 서비스', 17000, 'KRW', 'monthly', '2025-08-15', 'streaming'),
+('test-user-uuid', 'Spotify Premium', '무제한 음악 스트리밍', 10900, 'KRW', 'monthly', '2025-08-20', 'streaming'),
+('test-user-uuid', 'ChatGPT Plus', 'AI 어시스턴트 서비스', 20, 'USD', 'monthly', '2025-08-10', 'software'),
+('test-user-uuid', 'Adobe Creative Cloud', '디자인 툴 패키지', 59.99, 'USD', 'monthly', '2025-08-25', 'software'),
+('test-user-uuid', 'Nintendo Switch Online', '게임 온라인 서비스', 4900, 'KRW', 'monthly', '2025-08-12', 'gaming');
+
+-- 결제 이력 데이터
+INSERT INTO public.payment_history (subscription_id, amount, currency, payment_date, status)
+SELECT id, price, currency, DATE(created_at), 'completed'
+FROM public.subscriptions;
+```
+
+### 3.3 Supabase 타입 생성
+```typescript
+// src/types/supabase.ts
+export type Database = {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          name: string | null;
+          avatar_url: string | null;
+          subscription_count: number;
+          total_monthly_cost: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          name?: string | null;
+          avatar_url?: string | null;
+          subscription_count?: number;
+          total_monthly_cost?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          name?: string | null;
+          avatar_url?: string | null;
+          subscription_count?: number;
+          total_monthly_cost?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          description: string | null;
+          price: number;
+          currency: string;
+          billing_cycle: string;
+          next_billing_date: string;
+          category: string;
+          icon_url: string | null;
+          website_url: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          description?: string | null;
+          price: number;
+          currency?: string;
+          billing_cycle?: string;
+          next_billing_date: string;
+          category?: string;
+          icon_url?: string | null;
+          website_url?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          description?: string | null;
+          price?: number;
+          currency?: string;
+          billing_cycle?: string;
+          next_billing_date?: string;
+          category?: string;
+          icon_url?: string | null;
+          website_url?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      payment_history: {
+        Row: {
+          id: string;
+          subscription_id: string;
+          amount: number;
+          currency: string;
+          payment_date: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          subscription_id: string;
+          amount: number;
+          currency: string;
+          payment_date: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          subscription_id?: string;
+          amount?: number;
+          currency?: string;
+          payment_date?: string;
+          status?: string;
+          created_at?: string;
+        };
+      };
+    };
+  };
+};
+```
+
+---
+
+## Phase 4: 프론트엔드 개발 (Frontend)
+
+### 4.1 기본 설정 파일 생성
+```typescript
+// src/lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+import { Database } from '@/types/supabase';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase 환경 변수가 설정되지 않았습니다');
+}
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+```
+
+```typescript
+// src/lib/utils.ts
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// 가격 포맷팅
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'KRW'
+): string => {
+  return new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: currency === 'KRW' ? 'KRW' : 'USD',
+    minimumFractionDigits: currency === 'KRW' ? 0 : 2
+  }).format(amount);
+};
+
+// 날짜 포맷팅
+export const formatDate = (dateString: string): string => {
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(new Date(dateString));
+};
+```
+
+### 4.2 Supabase Context 생성
+```typescript
+// src/contexts/SupabaseContext.tsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
+
+interface SupabaseContextType {
+  user: User | null;
+  loading: boolean;
+  supabase: typeof supabase;
+}
+
+const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
+
+export const SupabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 현재 사용자 확인
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    // 인증 상태 변경 구독
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <SupabaseContext.Provider value={{ user, loading, supabase }}>
+      {children}
+    </SupabaseContext.Provider>
+  );
+};
+
+export const useSupabase = () => {
+  const context = useContext(SupabaseContext);
+  if (context === undefined) {
+    throw new Error('useSupabase는 SupabaseProvider 내에서 사용해야 합니다');
+  }
+  return context;
+};
+```
+
+### 4.3 실제 데이터 훅 생성
+```typescript
+// src/hooks/useSubscriptions.ts
+import { useState, useEffect, useCallback } from 'react';
+import { useSupabase } from '@/contexts/SupabaseContext';
+import { Database } from '@/types/supabase';
+
+type Subscription = Database['public']['Tables']['subscriptions']['Row'];
+
+export const useSubscriptions = () => {
+  const { user, supabase } = useSupabase();
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSubscriptions = useCallback(async () => {
+    if (!user) {
+      setSubscriptions([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSubscriptions(data || []);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '데이터 로딩 실패';
+      setError(errorMessage);
+      console.error('구독 데이터 로딩 실패:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, supabase]);
+
+  // 실시간 구독
+  useEffect(() => {
+    if (!user) return;
+
+    fetchSubscriptions();
+
+    const subscription = supabase
+      .channel('subscriptions_realtime')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'subscriptions',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => fetchSubscriptions()
+      )
+      .subscribe();
+
+    return () => subscription.unsubscribe();
+  }, [fetchSubscriptions, user, supabase]);
+
+  return { subscriptions, loading, error, refetch: fetchSubscriptions };
+};
+```
+
+### 4.4 기본 UI 컴포넌트 생성
+```typescript
+// src/components/ui/Button.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
+    const variants = {
+      primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+      secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900',
+      destructive: 'bg-red-600 hover:bg-red-700 text-white',
+      ghost: 'bg-transparent hover:bg-gray-100 text-gray-700'
+    };
+
+    const sizes = {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg'
+    };
+
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          'font-pretendard antialiased font-medium rounded-lg',
+          'transition-colors duration-200',
+          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+          'disabled:opacity-50 disabled:cursor-not-allowed',
+          variants[variant],
+          sizes[size],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+Button.displayName = 'Button';
+```
+
+```typescript
+// src/components/ui/Card.tsx
+import React from 'react';
+import { cn } from '@/lib/utils';
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'highlighted' | 'error';
+}
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = 'default', ...props }, ref) => {
+    const variants = {
+      default: 'bg-white border-gray-200',
+      highlighted: 'bg-blue-50 border-blue-200',
+      error: 'bg-red-50 border-red-200'
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          '@container rounded-xl border shadow-sm',
+          'transition-all duration-200 hover:shadow-lg',
+          variants[variant],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+Card.displayName = 'Card';
+```
+
+### 4.5 구독 카드 컴포넌트 생성
+```typescript
+// src/components/features/subscriptions/SubscriptionCard.tsx
+import React from 'react';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { cn, formatCurrency, formatDate } from '@/lib/utils';
+import { Database } from '@/types/supabase';
+
+type Subscription = Database['public']['Tables']['subscriptions']['Row'];
+
+interface SubscriptionCardProps {
+  subscription: Subscription;
+  onEdit?: (subscription: Subscription) => void;
+  onDelete?: (id: string) => void;
+  className?: string;
+}
+
+export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
+  subscription,
+  onEdit,
+  onDelete,
+  className
+}) => {
+  return (
+    <Card className={cn('p-6', className)}>
+      <div className="@lg:flex-row flex flex-col @lg:items-center @lg:justify-between">
+        {/* 구독 정보 */}
+        <div className="@lg:flex-1 min-w-0">
+          <h3 className={cn(
+            'font-pretendard antialiased font-semibold',
+            'tracking-korean-normal break-keep-ko',
+            '@lg:text-xl text-lg text-gray-900 @lg:mb-2 mb-1'
+          )}>
+            {subscription.name}
+          </h3>
+          
+          {subscription.description && (
+            <p className={cn(
+              'font-pretendard antialiased text-sm text-gray-600',
+              'tracking-korean-normal break-keep-ko @lg:mb-0 mb-2'
+            )}>
+              {subscription.description}
+            </p>
+          )}
+          
+          <div className="@lg:flex @lg:items-center @lg:gap-4 space-y-1 @lg:space-y-0">
+            <span className={cn(
+              'font-pretendard font-bold text-numeric',
+              '@lg:text-xl text-lg text-blue-600'
+            )}>
+              {formatCurrency(subscription.price, subscription.currency)}
+            </span>
+            
+            <span className="font-pretendard text-sm text-gray-500">
+              {subscription.billing_cycle === 'monthly' ? '월간' : 
+               subscription.billing_cycle === 'yearly' ? '연간' : '주간'}
+            </span>
+          </div>
+        </div>
+        
+        {/* 액션 버튼 */}
+        <div className="@lg:ml-6 @lg:mt-0 mt-4 flex gap-2">
+          {onEdit && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onEdit(subscription)}
+              aria-label={`${subscription.name} 구독 수정`}
+            >
+              수정
+            </Button>
+          )}
+          
+          {onDelete && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(subscription.id)}
+              aria-label={`${subscription.name} 구독 삭제`}
+            >
+              삭제
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      {/* 다음 결제일 */}
+      <div className="@lg:mt-4 mt-3 pt-3 border-t border-gray-100">
+        <p className="font-pretendard text-sm text-gray-500">
+          다음 결제일: <span className="text-gray-900 font-medium">
+            {formatDate(subscription.next_billing_date)}
+          </span>
+        </p>
+      </div>
+    </Card>
+  );
+};
+```
+
+### 4.6 대시보드 페이지 생성
+```typescript
+// src/components/features/dashboard/SubscriptionDashboard.tsx
+import React from 'react';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { SubscriptionCard } from '@/components/features/subscriptions/SubscriptionCard';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
+
+export const SubscriptionDashboard: React.FC = () => {
+  const { subscriptions, loading, error } = useSubscriptions();
+  
+  if (loading) {
+    return (
+      <div className="font-pretendard antialiased p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="font-pretendard antialiased p-6 text-center">
+        <p className="text-red-600 mb-4">데이터 로딩 실패: {error}</p>
+        <Button onClick={() => window.location.reload()}>
+          다시 시도
+        </Button>
+      </div>
+    );
+  }
+  
+  if (subscriptions.length === 0) {
+    return (
+      <div className="font-pretendard antialiased text-center py-12">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          아직 등록된 구독이 없습니다
+        </h2>
+        <p className="text-gray-500 mb-6">
+          첫 번째 구독 서비스를 추가해보세요.
+        </p>
+        <Button>구독 추가</Button>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="@container space-y-6 p-6">
+      {/* 헤더 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className={cn(
+            'font-pretendard antialiased font-bold',
+            'text-2xl text-gray-900 tracking-korean-tight break-keep-ko'
+          )}>
+            내 구독 관리
+          </h1>
+          <p className="font-pretendard text-gray-600 mt-1">
+            총 {subscriptions.length}개의 구독 서비스
+          </p>
+        </div>
+        <Button>구독 추가</Button>
+      </div>
+      
+      {/* 구독 카드 그리드 */}
+      <div className="grid @2xl:grid-cols-3 @lg:grid-cols-2 grid-cols-1 gap-6">
+        {subscriptions.map((subscription) => (
+          <SubscriptionCard 
+            key={subscription.id} 
+            subscription={subscription}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+### 4.7 메인 App 컴포넌트
+```typescript
+// src/App.tsx
+import React from 'react';
+import { SupabaseProvider } from '@/contexts/SupabaseContext';
+import { SubscriptionDashboard } from '@/components/features/dashboard/SubscriptionDashboard';
+import './styles/globals.css';
+
+const App: React.FC = () => {
+  return (
+    <SupabaseProvider>
+      <div className="min-h-screen bg-gray-50">
+        <main>
+          <SubscriptionDashboard />
+        </main>
+      </div>
+    </SupabaseProvider>
+  );
+};
+
+export default App;
+```
+
+### 4.8 CSS 스타일 설정
+```css
+/* src/styles/globals.css */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-pretendard: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  
+  html {
+    font-family: var(--font-pretendard);
+  }
+  
+  body {
+    font-family: var(--font-pretendard);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .tracking-korean-tight {
+    letter-spacing: -0.02em;
+  }
+  
+  .tracking-korean-normal {
+    letter-spacing: -0.01em;
+  }
+  
+  .break-keep-ko {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  
+  .text-numeric {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+}
+```
+
+---
+
+## Phase 5: 통합 테스트 (Integration)
+
+### 5.1 배포 전 체크리스트
+```typescript
+const DEPLOYMENT_CHECKLIST = [
+  // 환경 설정
+  "✅ GitHub Secrets 환경 변수 설정 완료",
+  "✅ Supabase 프로젝트 생성 및 DB 스키마 적용",
+  "✅ 실제 테스트 데이터 삽입 완료",
+  "✅ GitHub Actions 워크플로우 설정",
+  
+  // 코드 품질
+  "✅ TypeScript 타입 체크 통과",
+  "✅ ESLint 검사 통과",
+  "✅ 빌드 에러 없음",
+  "✅ 실제 Supabase 데이터 연동 확인",
+  
+  // 기능 검증
+  "✅ 구독 데이터 로딩 정상 작동",
+  "✅ 반응형 레이아웃 정상 작동",
+  "✅ Pretendard 폰트 적용 확인",
+  "✅ Container Queries 작동 확인",
+  
+  // 배포 검증
+  "✅ GitHub Actions 배포 성공",
+  "✅ xxx.moonwave.kr 도메인 접속 확인",
+  "✅ 실제 배포 환경에서 데이터 로딩 확인"
+] as const;
+```
+
+### 5.2 테스트 시나리오
+```typescript
+// 수동 테스트 시나리오
+const TEST_SCENARIOS = [
+  {
+    name: "1. 페이지 로딩 테스트",
+    steps: [
+      "https://project-name.moonwave.kr 접속",
+      "페이지 로딩 시간 확인 (3초 이내)",
+      "Pretendard 폰트 렌더링 확인",
+      "레이아웃 깨짐 없음 확인"
+    ],
+    expected: "페이지가 정상적으로 로드되고 폰트가 올바르게 적용됨"
+  },
+  
+  {
+    name: "2. 데이터 로딩 테스트",
+    steps: [
+      "구독 데이터 로딩 확인",
+      "로딩 스피너 표시 확인",
+      "실제 Supabase 데이터 표시 확인",
+      "Mock 데이터 사용하지 않음 확인"
+    ],
+    expected: "실제 DB의 구독 데이터가 정상적으로 표시됨"
+  },
+  
+  {
+    name: "3. 반응형 테스트",
+    steps: [
+      "모바일 뷰 (375px) 확인",
+      "태블릿 뷰 (768px) 확인", 
+      "데스크톱 뷰 (1024px) 확인",
+      "Container Queries 작동 확인"
+    ],
+    expected: "모든 화면 크기에서 레이아웃이 적절히 조정됨"
+  },
+  
+  {
+    name: "4. 성능 테스트",
+    steps: [
+      "페이지 로드 시간 측정",
+      "LCP (Largest Contentful Paint) 확인",
+      "번들 크기 확인",
+      "Core Web Vitals 점수 확인"
+    ],
+    expected: "성능 메트릭이 기준치 이내"
+  }
+];
+```
+
+---
+
+## Phase 6: 최적화 (Optimization)
+
+### 6.1 성능 최적화
+```typescript
+// 성능 모니터링 코드 추가
+export const usePerformanceMonitoring = () => {
+  useEffect(() => {
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        if (entry.entryType === 'largest-contentful-paint') {
+          console.log('LCP:', entry.startTime, 'ms');
+        }
+      });
+    });
+
+    observer.observe({ entryTypes: ['largest-contentful-paint'] });
+    return () => observer.disconnect();
+  }, []);
+};
+
+// 이미지 최적화
+const optimizeImages = () => {
+  // WebP 포맷 사용
+  // 적절한 크기 조정
+  // 지연 로딩 적용
+};
+
+// 코드 스플리팅
+const LazySubscriptionForm = React.lazy(() => 
+  import('./components/features/subscriptions/SubscriptionForm')
+);
+```
+
+### 6.2 SEO 및 메타데이터 최적화
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- SEO 메타데이터 -->
+  <title>Moonwave - 스마트한 구독 관리 시스템</title>
+  <meta name="description" content="구독 서비스를 체계적으로 관리하고 불필요한 지출을 줄여보세요. Moonwave로 모든 구독을 한 곳에서 관리하세요." />
+  <meta name="keywords" content="구독관리, 멤버십관리, 월정액, 구독료, Moonwave" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Moonwave - 스마트한 구독 관리 시스템" />
+  <meta property="og:description" content="구독 서비스를 체계적으로 관리하고 불필요한 지출을 줄여보세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://project-name.moonwave.kr" />
+  
+  <!-- 폰트 최적화 -->
+  <link rel="preload" as="style" crossorigin 
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
+```
+
+### 6.3 접근성 개선
+```typescript
+// 접근성 개선 사항
+const ACCESSIBILITY_IMPROVEMENTS = [
+  "키보드 내비게이션 지원",
+  "스크린 리더 호환성",
+  "고대비 모드 지원", 
+  "ARIA 레이블 적절한 사용",
+  "포커스 인디케이터 명확성",
+  "의미론적 HTML 구조"
+];
+
+// 예시: 접근성 개선된 버튼
+<Button
+  aria-label="Netflix Premium 구독 수정"
+  aria-describedby="subscription-help-text"
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleEdit();
+    }
+  }}
+>
+  수정
+</Button>
+```
+
+---
+
+## 🎯 전체 프로세스 체크포인트
+
+### ✅ Phase 1 완료 조건
+- [ ] GitHub Repository 생성 및 Cursor AI 연동
+- [ ] Supabase 프로젝트 생성
+- [ ] 기본 프로젝트 구조 설정
+- [ ] .cursorrules 파일 작성
+
+### ✅ Phase 2 완료 조건  
+- [ ] GitHub Actions 워크플로우 설정
+- [ ] GitHub Secrets 환경 변수 설정
+- [ ] Tailwind CSS + Container Queries 설정
+- [ ] xxx.moonwave.kr 도메인 연결
+
+### ✅ Phase 3 완료 조건
+- [ ] Supabase DB 스키마 생성
+- [ ] RLS 정책 설정
+- [ ] 실제 테스트 데이터 삽입
+- [ ] TypeScript 타입 정의
+
+### ✅ Phase 4 완료 조건
+- [ ] Supabase 클라이언트 설정
+- [ ] Context 및 Hook 생성
+- [ ] UI 컴포넌트 개발
+- [ ] 실제 데이터 기반 페이지 구현
+
+### ✅ Phase 5 완료 조건
+- [ ] GitHub Actions 배포 성공
+- [ ] xxx.moonwave.kr 접속 확인
+- [ ] 실제 데이터 로딩 확인
+- [ ] 반응형 레이아웃 검증
+
+### ✅ Phase 6 완료 조건
+- [ ] 성능 최적화 적용
+- [ ] SEO 메타데이터 설정
+- [ ] 접근성 개선
+- [ ] 최종 품질 검증
+
+---
+
+**🌊 Moonwave 개발 원칙**
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다"
+
+- **NO localhost**: GitHub 직접 연동으로 실제 배포 환경 사용
+- **NO Mock Data**: Supabase 실제 DB만 사용
+- **Real-time Flow**: 실시간 데이터 연동 및 배포 자동화
+- **Performance First**: 성능과 사용자 경험 최우선
+- **Accessibility**: 모든 사용자를 위한 접근성 보장
