@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/lib/types/database';
+
 
 interface UseDeleteTravelReturn {
   deleteTravel: (travelId: string) => Promise<void>;

@@ -132,13 +132,6 @@ export function ShareModal({
 
     setIsInviting(true);
     try {
-      // TODO: Implement proper invitation system
-      // For now, this is a placeholder that doesn't actually add to database
-      // since the collaborators table expects user_id, not email
-      console.log('Invitation email should be sent to:', inviteEmail.trim());
-      console.log('Role:', inviteRole);
-      
-      // Simulate successful invitation for UI purposes
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');
       

@@ -75,7 +75,7 @@ async function getSharedTravel(travelId: string) {
         `
         *,
         profiles:user_id (
-          full_name,
+          name,
           avatar_url
         ),
         travel_days (

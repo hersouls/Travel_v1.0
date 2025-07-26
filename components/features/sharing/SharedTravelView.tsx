@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import {
   Calendar,
   MapPin,
@@ -17,11 +16,8 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
-import { TravelPlan, TravelDay, DayPlan, Collaborator, Profile } from '@/lib/types/database';
-
-interface ExtendedTravelPlan extends TravelPlan {
   profiles: {
-    full_name: string | null;
+    name: string | null;
     avatar_url: string | null;
   } | null;
   travel_days: (TravelDay & {
@@ -29,10 +25,6 @@ interface ExtendedTravelPlan extends TravelPlan {
   })[];
 }
 
-interface ExtendedCollaborator extends Collaborator {
-  email: string;
-  status: 'pending' | 'accepted';
-}
 
 interface SharedTravelViewProps {
   travel: ExtendedTravelPlan;
@@ -51,7 +43,7 @@ export function SharedTravelView({
     (day) => day.day_number === selectedDay
   );
   const acceptedCollaborators = collaborators.filter(
-    (c) => c.status === 'accepted'
+    (c) => c.joined_at !== null
   );
 
   const handleShare = async () => {
@@ -81,31 +73,7 @@ export function SharedTravelView({
     // TODO: Implement like functionality with backend
   };
 
-  const getTravelTypeColor = (type: string) => {
-    const typeColors: { [key: string]: string } = {
-      beach: 'bg-cyan-100 text-cyan-800',
-      mountain: 'bg-emerald-100 text-emerald-800',
-      city: 'bg-indigo-100 text-indigo-800',
-      culture: 'bg-purple-100 text-purple-800',
-      food: 'bg-amber-100 text-amber-800',
-      shopping: 'bg-pink-100 text-pink-800',
-      adventure: 'bg-orange-100 text-orange-800',
-    };
-    return typeColors[type] || 'bg-gray-100 text-gray-800';
-  };
 
-  const getTravelTypeLabel = (type: string) => {
-    const typeLabels: { [key: string]: string } = {
-      beach: '해변',
-      mountain: '산/자연',
-      city: '도시',
-      culture: '문화',
-      food: '음식',
-      shopping: '쇼핑',
-      adventure: '모험',
-    };
-    return typeLabels[type] || type;
-  };
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4">
@@ -113,7 +81,7 @@ export function SharedTravelView({
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-start justify-between">
           <div className="flex-1">
-            <div className="mb-2 flex items-center gap-3">
+            <div className="mb-2">
               <h1 className="text-3xl font-bold text-gray-900 tracking-korean-normal">
                 {travel.title}
               </h1>
@@ -173,7 +141,7 @@ export function SharedTravelView({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400" />
             <span className="text-sm text-gray-600">
-              {travel.profiles?.full_name || '여행자'}님이 계획함
+                              {travel.profiles?.name || '여행자'}님이 계획함
             </span>
           </div>
 
