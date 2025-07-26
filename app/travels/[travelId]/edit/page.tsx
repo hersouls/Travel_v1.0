@@ -1,28 +1,32 @@
-import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
-import EditTravelForm from '@/components/features/travel/EditTravelForm'
-import TravelDetailSkeleton from '@/components/features/travel/TravelDetailSkeleton'
+'use client';
+
+import React, { Suspense } from 'react';
+import { notFound } from 'next/navigation';
+import { EditTravelForm } from '@/components/features/travel/EditTravelForm';
+import { TravelDetailSkeleton } from '@/components/features/travel/TravelDetailSkeleton';
 
 interface EditTravelPageProps {
   params: {
-    travelId: string
-  }
+    travelId: string;
+  };
 }
 
 export default function EditTravelPage({ params }: EditTravelPageProps) {
-  const { travelId } = params
+  const { travelId } = params;
 
   if (!travelId) {
-    notFound()
+    notFound();
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Suspense fallback={<TravelDetailSkeleton />}>
-        <EditTravelForm travelId={travelId} />
-      </Suspense>
+    <div className="min-h-screen bg-gradient-to-br from-moonwave-blue-50 via-white to-moonwave-purple-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Suspense fallback={<TravelDetailSkeleton />}>
+          <EditTravelForm travelId={travelId} />
+        </Suspense>
+      </div>
     </div>
-  )
+  );
 }
 
 export async function generateStaticParams() {
