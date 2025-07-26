@@ -159,7 +159,7 @@ export default function NewTravelPage() {
                   'tracking-korean-normal break-keep-ko'
                 )}>
                   <strong className="text-gray-900">구체적인 제목</strong>으로 여행의 성격을 명확히 표현하세요. 
-                  예: "제주도 힐링 여행", "유럽 배낭여행"
+                  예: &quot;제주도 힐링 여행&quot;, &quot;유럽 배낭여행&quot;
                 </p>
               </li>
               

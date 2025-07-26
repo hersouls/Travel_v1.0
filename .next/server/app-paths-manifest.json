@@ -1,10 +1,10 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/travels/[travelId]/edit/page": "app/travels/[travelId]/edit/page.js",
   "/travels/new/page": "app/travels/new/page.js",
+  "/travels/page": "app/travels/page.js",
   "/travels/[travelId]/page": "app/travels/[travelId]/page.js",
-  "/travels/[travelId]/plans/[dayId]/page": "app/travels/[travelId]/plans/[dayId]/page.js",
+  "/travels/[travelId]/edit/page": "app/travels/[travelId]/edit/page.js",
   "/travels/[travelId]/plans/page": "app/travels/[travelId]/plans/page.js",
-  "/travels/page": "app/travels/page.js"
+  "/travels/[travelId]/plans/[dayId]/page": "app/travels/[travelId]/plans/[dayId]/page.js"
 }

@@ -6,7 +6,7 @@ import { TravelCard } from './TravelCard';
 import { useTravelPlans } from '@/hooks/useTravelPlans';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Filter, Grid, List, MoreHorizontal } from 'lucide-react';
+import { Filter, Grid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Database } from '@/lib/types/database';
 
@@ -37,11 +37,10 @@ type ViewMode = 'grid' | 'list';
 export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
   ({ travelPlans, className, ...props }, ref) => {
     const router = useRouter();
-    const { updateTravelPlan, deleteTravelPlan } = useTravelPlans();
+    const { deleteTravelPlan } = useTravelPlans();
     
     const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
-    const [showActions, setShowActions] = useState(false);
 
     // 상태에 따른 여행 필터링
     const filteredTravels = travelPlans.filter(travel => {
