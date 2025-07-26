@@ -5,8 +5,14 @@ import type { Database } from '@/lib/types/database';
 export const createServerSupabaseClient = () => {
   const cookieStore = cookies();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // 환경 변수 검증
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Server Supabase client: Environment variables not set');
+    throw new Error('Supabase environment variables are not configured');
+  }
 
   return createServerClient<Database>(supabaseUrl, supabaseKey, {
     cookies: {
@@ -31,8 +37,14 @@ export const createServerSupabaseClient = () => {
 export const createRouteHandlerSupabaseClient = () => {
   const cookieStore = cookies();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // 환경 변수 검증
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Route Handler Supabase client: Environment variables not set');
+    throw new Error('Supabase environment variables are not configured');
+  }
 
   return createServerClient<Database>(supabaseUrl, supabaseKey, {
     cookies: {

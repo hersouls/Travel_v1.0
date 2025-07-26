@@ -1,149 +1,208 @@
-# Moonwave Travel - Environment Variables Setup
+# 🔧 Environment Setup Guide
 
-## Overview
+Moonwave Travel 프로젝트의 환경 변수 설정 가이드입니다.
 
-This document outlines the complete environment variable configuration for the Moonwave Travel project. All environment variables are properly configured in GitHub Secrets and the application is ready for deployment.
+## 📋 필수 환경 변수 목록
 
-## ✅ Environment Variables Status
-
-### Required Environment Variables (All Configured)
-
-#### Supabase Configuration
-
-- `NEXT_PUBLIC_SUPABASE_URL` ✅ - Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` ✅ - Supabase anonymous key for client-side access
-
-#### Google Maps API Keys
-
-- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` ✅ - Main Google Maps JavaScript API key
-- `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` ✅ - Google Places API key
-- `NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY` ✅ - New Google Places API key
-- `NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY` ✅ - Google Directions API key
-- `NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY` ✅ - Google Geocoding API key
-
-#### Google OAuth (Optional)
-
-- `GOOGLE_CLIENT_ID` ✅ - Google OAuth client ID
-- `GOOGLE_CLIENT_SECRET` ✅ - Google OAuth client secret
-
-## 🔧 Configuration Files
-
-### 1. Environment Variables Management (`lib/env.ts`)
-
-- ✅ Comprehensive environment variable validation
-- ✅ Type-safe environment variable access
-- ✅ Development/production environment checks
-- ✅ Helpful error messages for missing variables
-
-### 2. GitHub Actions Workflow (`.github/workflows/deploy-nextjs.yml`)
-
-- ✅ All environment variables properly mapped from GitHub Secrets
-- ✅ Build process includes environment variable validation
-- ✅ Automatic deployment to Vercel
-
-### 3. Example Configuration (`.env.example`)
-
-- ✅ Complete documentation of all required environment variables
-- ✅ Clear descriptions for each variable
-- ✅ Organized by category (Supabase, Google APIs, etc.)
-
-## 🚀 Application Components
-
-### Environment Variable Usage
-
-#### Supabase Integration
-
-- `lib/supabase/client.ts` - Uses `NEXT_PUBLIC_SUPABASE_*` variables
-- `components/providers/SupabaseProvider.tsx` - Automatic environment variable pickup
-- All hooks in `lib/hooks/` - Properly configured Supabase clients
-
-#### Google Maps Integration
-
-- `lib/google-maps/loader.ts` - Dynamic Google Maps API loading
-- `lib/google-maps/validate.ts` - Environment variable validation
-- `components/features/map/` - Map components with proper API key usage
-
-## 📋 Validation & Error Handling
-
-### Automatic Validation
-
-```typescript
-// Environment variables are validated on:
-// 1. Build time (server-side)
-// 2. Runtime (development mode)
-// 3. Component initialization
-
-if (missingVars.length > 0) {
-  throw new Error(
-    `Missing required environment variables:\n${missingVars.map((v) => `- ${v}`).join('\n')}`
-  );
-}
-```
-
-### Development Logging
-
-- ✅ Environment status logging in development mode
-- ✅ Clear success/error indicators
-- ✅ Non-sensitive information display
-
-## 🔒 Security
-
-### Public vs Private Variables
-
-- **Public (`NEXT_PUBLIC_*`)**: Exposed to browser, safe for client-side use
-- **Private**: Server-side only, not exposed to browser
-
-### Best Practices Applied
-
-- ✅ No hardcoded API keys in source code
-- ✅ Environment variables properly scoped (public/private)
-- ✅ GitHub Secrets used for sensitive data
-- ✅ Type-safe access patterns
-
-## 🧪 Testing & Verification
-
-### Build Verification
+### 🗄️ Supabase 설정 (필수)
 
 ```bash
-npm run type-check  # ✅ All TypeScript errors resolved
-npm run lint       # ✅ All ESLint warnings/errors resolved
-npm run build      # ✅ Ready for production build
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-### Runtime Checks
-
-- ✅ Environment validation on application start
-- ✅ Google Maps API availability checks
-- ✅ Supabase connection validation
-
-## 📦 Deployment Ready
-
-### GitHub Actions Integration
-
-The deployment workflow automatically:
-
-1. ✅ Pulls environment variables from GitHub Secrets
-2. ✅ Validates all required variables during build
-3. ✅ Builds the application with proper environment configuration
-4. ✅ Deploys to Vercel with all APIs functional
-
-### Local Development Setup
-
-For local development, create `.env.local`:
+### 🗺️ Google Maps API 설정 (필수)
 
 ```bash
-cp .env.example .env.local
-# Fill in your actual API keys and URLs
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=your_google_places_api_key
+NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY=your_google_places_new_api_key
+NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY=your_google_directions_api_key
+NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY=your_google_geocoding_api_key
 ```
 
-## 🎯 Next Steps
+### 🔐 Google OAuth 설정 (선택적)
 
-The environment variable setup is complete and production-ready. The application can now:
+```bash
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
 
-1. ✅ Connect to Supabase database
-2. ✅ Load Google Maps with all required APIs
-3. ✅ Handle user authentication (Google OAuth ready)
-4. ✅ Deploy automatically via GitHub Actions
-5. ✅ Validate configuration at build and runtime
+### 🌐 기타 설정
 
-All environment variables from GitHub Secrets are properly applied and the codebase is ready for production deployment.
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+## 🚀 Step-by-Step 설정 가이드
+
+### 1. Supabase 프로젝트 생성
+
+1. [Supabase](https://supabase.com)에 가입하고 새 프로젝트를 생성합니다.
+2. 프로젝트 대시보드에서 **Settings** → **API**로 이동합니다.
+3. 다음 값들을 복사합니다:
+   - **URL**: `NEXT_PUBLIC_SUPABASE_URL`
+   - **anon/public key**: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### 2. Supabase 데이터베이스 스키마 설정
+
+```sql
+-- SQL Editor에서 다음 명령어 실행
+-- 또는 Migration 파일 적용
+psql -h your-db-host -U postgres -d postgres -f supabase/migrations/001_initial_schema.sql
+```
+
+### 3. Google Cloud Platform 설정
+
+1. [Google Cloud Console](https://console.cloud.google.com/)에 접속합니다.
+2. 새 프로젝트를 생성하거나 기존 프로젝트를 선택합니다.
+3. **APIs & Services** → **Enabled APIs & services**로 이동합니다.
+4. 다음 API들을 활성화합니다:
+   - Maps JavaScript API
+   - Places API
+   - Places API (New)
+   - Directions API
+   - Geocoding API
+
+5. **APIs & Services** → **Credentials**로 이동합니다.
+6. **Create Credentials** → **API Key**를 클릭합니다.
+7. 생성된 API 키를 각 환경 변수에 설정합니다.
+
+### 4. 환경 변수 파일 생성
+
+#### 로컬 개발 환경
+
+`.env.local` 파일을 프로젝트 루트에 생성:
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Google Maps APIs
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIza...
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=AIza...
+NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY=AIza...
+NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY=AIza...
+NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY=AIza...
+
+# Optional: Google OAuth
+GOOGLE_CLIENT_ID=your-client-id.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+
+# Site URL
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+#### GitHub Actions (CI/CD)
+
+Repository Settings → Secrets and variables → Actions에서 설정:
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY
+NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY
+NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY
+NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY
+GOOGLE_CLIENT_ID (optional)
+GOOGLE_CLIENT_SECRET (optional)
+```
+
+#### Vercel 배포
+
+Vercel Dashboard → Project Settings → Environment Variables에서 설정:
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY
+NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY
+NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY
+NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY
+GOOGLE_CLIENT_ID (optional)
+GOOGLE_CLIENT_SECRET (optional)
+NEXT_PUBLIC_SITE_URL
+```
+
+## ✅ 설정 확인
+
+### 환경 변수 검증
+
+```bash
+npm run dev
+```
+
+개발 서버 시작 시 콘솔에서 환경 변수 상태를 확인할 수 있습니다:
+
+```
+🔧 Environment Variables Status:
+✅ Supabase Connection: Ready
+✅ Google Maps: Ready
+✅ Google Places: Ready
+✅ Google OAuth: Configured
+🌍 Environment: development
+🔗 Site URL: http://localhost:3000
+```
+
+### Supabase 연결 테스트
+
+브라우저 개발자 도구 콘솔에서 확인:
+
+```javascript
+// 연결 테스트
+console.log('Testing Supabase connection...');
+```
+
+## 🚨 문제 해결
+
+### 자주 발생하는 오류들
+
+#### 1. `Missing required environment variables`
+
+**원인**: 필수 환경 변수가 설정되지 않음  
+**해결**: `.env.local` 파일에 모든 필수 변수를 설정
+
+#### 2. `Supabase connection test failed`
+
+**원인**: 
+- 잘못된 Supabase URL/Key
+- 네트워크 연결 문제
+- Supabase 프로젝트가 일시 중지됨
+
+**해결**: 
+1. Supabase 대시보드에서 URL과 Key 재확인
+2. 프로젝트가 활성 상태인지 확인
+3. API 키 권한 확인
+
+#### 3. `Google Maps API errors`
+
+**원인**: 
+- API 키가 유효하지 않음
+- 필요한 API가 활성화되지 않음
+- API 사용량 한도 초과
+
+**해결**:
+1. Google Cloud Console에서 API 키 확인
+2. 필요한 모든 API 활성화 확인
+3. 사용량 및 요금 확인
+
+#### 4. `Edge Runtime warnings`
+
+**원인**: middleware에서 Node.js API 사용  
+**해결**: 이미 코드에서 처리되었으며, 정상 작동합니다.
+
+## 📞 추가 도움이 필요한 경우
+
+1. **Supabase 문서**: https://supabase.com/docs
+2. **Google Maps API 문서**: https://developers.google.com/maps/documentation
+3. **Next.js 환경 변수 가이드**: https://nextjs.org/docs/basic-features/environment-variables
+
+## 🔒 보안 주의사항
+
+1. **절대 커밋하지 마세요**: `.env.local` 파일을 Git에 커밋하지 마세요
+2. **API 키 제한**: Google API 키에 적절한 제한사항을 설정하세요
+3. **정기적 회전**: API 키를 정기적으로 교체하세요
+4. **최소 권한**: 필요한 최소한의 권한만 부여하세요
