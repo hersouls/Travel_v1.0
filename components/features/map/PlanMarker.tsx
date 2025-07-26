@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { DayPlan } from '@/lib/types/database'
 
 interface PlanMarkerProps {
@@ -62,7 +62,7 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
   }
 
   // SVG 마커 아이콘 생성
-  const createMarkerIcon = (config: ReturnType<typeof getPlanMarkerConfig>, selected: boolean) => {
+  const createMarkerIcon = useCallback((config: ReturnType<typeof getPlanMarkerConfig>, selected: boolean) => {
     const size = selected ? 50 : 40
     const strokeWidth = selected ? 3 : 2
     const color = config.color
@@ -78,15 +78,15 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
       scaledSize: new google.maps.Size(size, size),
       anchor: new google.maps.Point(size / 2, size / 2),
     }
-  }
+  }, [])
 
   useEffect(() => {
-    if (!map || !plan.place_latitude || !plan.place_longitude) return
+    if (!map || !plan.latitude || !plan.longitude) return
 
     const config = getPlanMarkerConfig(plan.plan_type)
     const position = {
-      lat: parseFloat(plan.place_latitude),
-      lng: parseFloat(plan.place_longitude)
+      lat: parseFloat(plan.latitude.toString()),
+      lng: parseFloat(plan.longitude.toString())
     }
 
     // 마커 생성
@@ -143,7 +143,7 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
       marker.setMap(null)
       infoWindow.close()
     }
-  }, [map, plan, onClick, isSelected])
+  }, [map, plan, onClick, isSelected, createMarkerIcon])
 
   // 선택 상태 변경 시 아이콘 업데이트
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function PlanMarker({ plan, map, onClick, isSelected }: PlanMarke
       const config = getPlanMarkerConfig(plan.plan_type)
       markerRef.current.setIcon(createMarkerIcon(config, isSelected || false))
     }
-  }, [isSelected, plan.plan_type])
+  }, [isSelected, plan.plan_type, createMarkerIcon])
 
   return null // 이 컴포넌트는 DOM 렌더링하지 않음
 }
