@@ -19,7 +19,7 @@ interface TravelMapProps {
 }
 
 // Type guard to check if a plan has latitude and longitude
-function hasLatLng(plan: any): plan is DayPlan & { latitude: number; longitude: number } {
+function hasLatLng(plan: DayPlan): plan is DayPlan & { latitude: number; longitude: number } {
   return plan && 
          typeof plan.latitude === 'number' && 
          typeof plan.longitude === 'number' &&
