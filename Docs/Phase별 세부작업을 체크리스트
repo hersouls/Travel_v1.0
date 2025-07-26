@@ -17,17 +17,24 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 ### 🗂 Week 1: 프로젝트 설정
 
 #### GitHub & 개발환경
-- [ ] GitHub Repository 생성 (`moonwave-travel-next`)
+- [x] GitHub Repository 생성 (`hersouls/Travel_v1.0`) ✅ 완료
 - [ ] `.cursorrules` 파일 작성 (localhost 금지, Mock 데이터 금지)
-- [ ] GitHub Secrets 환경변수 설정
-  - [ ] `NEXT_PUBLIC_SUPABASE_URL`
-  - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - [ ] `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
-  - [ ] `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`
+- [x] GitHub Secrets 환경변수 설정 ✅ 완료
+  - [x] `NEXT_PUBLIC_SUPABASE_URL` ✅
+  - [x] `NEXT_PUBLIC_SUPABASE_ANON_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY` ✅
+  - [x] `NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY` ✅
+  - [x] `GOOGLE_CLIENT_ID` ✅
+  - [x] `GOOGLE_CLIENT_SECRET` ✅
 - [ ] GitHub Actions 워크플로우 파일 생성 (`.github/workflows/deploy-nextjs.yml`)
 
 #### Supabase 설정
-- [ ] Supabase 프로젝트 생성 (프로젝트명: `moonwave-travel-db`)
+- [x] Supabase 프로젝트 생성 (프로젝트명: `Travel`) ✅ 완료
+- [x] Supabase Authentication 설정 ✅ 완료
+  - [x] Authentication > Providers > Google 설정 ✅ 완료
 - [ ] 데이터베이스 스키마 생성 (`supabase/migrations/001_initial_schema.sql`)
   - [ ] `profiles` 테이블
   - [ ] `travel_plans` 테이블  
@@ -40,7 +47,7 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 #### Next.js 프로젝트 초기화
 - [ ] Next.js 14 프로젝트 생성 (App Router)
 - [ ] `package.json` 설정 (dev 스크립트 localhost 금지)
-- [ ] `next.config.js` 설정 (Static Export)
+- [x] `next.config.js` 설정 (환경변수 및 보안 설정) ✅ 완료
 - [ ] `tailwind.config.js` 설정
   - [ ] Pretendard 폰트 설정
   - [ ] Container Queries 플러그인
@@ -73,8 +80,8 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 - [ ] Badge 컴포넌트 (여행 유형별)
 
 #### 배포 설정
-- [ ] GitHub Pages 설정
-- [ ] 커스텀 도메인 설정 (`travel.moonwave.kr`)
+- [x] GitHub Pages 설정 ✅ 완료
+- [x] 커스텀 도메인 설정 (`http://travel.moonwave.kr/`) ✅ 완료 (DNS Check in Progress)
 - [ ] 첫 배포 테스트
 
 ---
@@ -121,7 +128,10 @@ Moonwave Travel 프로젝트의 Phase별 세부작업을 체크리스트로 정�
 ### 🗺 Week 5: 지도 통합
 
 #### Google Maps 연동
-- [ ] Google Maps 초기화 설정
+- [x] Google Maps API 로더 구현 (`lib/google-maps/loader.ts`) ✅ 완료
+- [x] Google Maps 환경변수 검증 (`lib/google-maps/validate.ts`) ✅ 완료  
+- [x] Google Maps 타입 정의 (`lib/google-maps/types.ts`) ✅ 완료
+- [x] Google Maps 유틸리티 인덱스 (`lib/google-maps/index.ts`) ✅ 완료
 - [ ] 지도 페이지 (`app/map/page.tsx`)
 - [ ] TravelMap 컴포넌트
 - [ ] PlanMarker 컴포넌트
