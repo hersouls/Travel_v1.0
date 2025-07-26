@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { loadGoogleMapsAPI, isGoogleMapsLoaded } from '@/lib/google-maps/loader'
 import { useTravelDays } from '@/lib/hooks/useTravelDays'
 import { useTravelPlans } from '@/hooks/useTravelPlans'
 import PlanMarker from './PlanMarker'
 import { DayPlan } from '@/lib/types/database'
-import { MapPin, Route, Eye, EyeOff, Navigation, Maximize } from 'lucide-react'
+import { MapPin, Route, Navigation, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -15,6 +15,15 @@ interface TravelMapProps {
   travelId?: string
   dayId?: string
   className?: string
+}
+
+// Type guard to check if a plan has latitude and longitude
+function hasLatLng(plan: any): plan is DayPlan & { latitude: number; longitude: number } {
+  return plan && 
+         typeof plan.latitude === 'number' && 
+         typeof plan.longitude === 'number' &&
+         plan.latitude !== null &&
+         plan.longitude !== null
 }
 
 export default function TravelMap({ travelId, dayId, className }: TravelMapProps) {
@@ -27,22 +36,27 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
   const [error, setError] = useState<string | null>(null)
   const [selectedPlan, setSelectedPlan] = useState<DayPlan | null>(null)
   const [showDirections, setShowDirections] = useState(false)
-  const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.9780 }) // 서울 기본 위치
+  const [mapCenter] = useState({ lat: 37.5665, lng: 126.9780 }) // 서울 기본 위치
 
   // 데이터 fetching
   const { data: travelDays } = useTravelDays(travelId || '')
   const { travelPlans } = useTravelPlans()
 
-  // 모든 계획 데이터 수집
-  const allPlans = travelId 
-    ? travelDays?.flatMap(day => 
-        dayId 
-          ? day.id === dayId ? day.day_plans || [] : []
-          : day.day_plans || []
-      ) || []
-    : travelPlans?.flatMap(travel => 
-        travel.travel_days?.flatMap(day => day.day_plans || []) || []
-      ) || []
+  // 모든 계획 데이터 수집 (memoized)
+  const allPlans = useMemo(() => {
+    const plans = travelId 
+      ? travelDays?.flatMap(day => 
+          dayId 
+            ? day.id === dayId ? day.day_plans || [] : []
+            : day.day_plans || []
+        ) || []
+      : travelPlans?.flatMap(travel => 
+          travel.travel_days?.flatMap(day => day.day_plans || []) || []
+        ) || []
+    
+    // Filter to only include plans with latitude and longitude
+    return plans.filter(hasLatLng)
+  }, [travelId, dayId, travelDays, travelPlans])
 
   // 지도 초기화
   const initializeMap = useCallback(async () => {
@@ -78,9 +92,11 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       directionsServiceRef.current = new google.maps.DirectionsService()
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
         suppressMarkers: true, // 우리 커스텀 마커 사용
-        strokeColor: '#3b82f6',
-        strokeWeight: 3,
-        strokeOpacity: 0.8
+        polylineOptions: {
+          strokeColor: '#3b82f6',
+          strokeWeight: 3,
+          strokeOpacity: 0.8
+        }
       })
       directionsRendererRef.current.setMap(map)
 
@@ -90,12 +106,10 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
       if (allPlans.length > 0) {
         const bounds = new google.maps.LatLngBounds()
         allPlans.forEach(plan => {
-          if (plan.place_latitude && plan.place_longitude) {
-            bounds.extend({
-              lat: parseFloat(plan.place_latitude),
-              lng: parseFloat(plan.place_longitude)
-            })
-          }
+          bounds.extend({
+            lat: plan.latitude,
+            lng: plan.longitude
+          })
         })
         map.fitBounds(bounds)
       }
@@ -114,14 +128,14 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     if (!mapInstanceRef.current || !directionsServiceRef.current || !directionsRendererRef.current) return
 
     if (showDirections) {
-      directionsRendererRef.current.setDirections({ routes: [] } as any)
+      directionsRendererRef.current.setDirections(null as any)
       setShowDirections(false)
       return
     }
 
     // 시간이 설정된 계획들만 경로 계산
     const timedPlans = allPlans
-      .filter(plan => plan.planned_time && plan.place_latitude && plan.place_longitude)
+      .filter(plan => plan.planned_time)
       .sort((a, b) => a.planned_time!.localeCompare(b.planned_time!))
 
     if (timedPlans.length < 2) {
@@ -130,17 +144,17 @@ export default function TravelMap({ travelId, dayId, className }: TravelMapProps
     }
 
     const origin = {
-      lat: parseFloat(timedPlans[0].place_latitude!),
-      lng: parseFloat(timedPlans[0].place_longitude!)
+      lat: timedPlans[0].latitude,
+      lng: timedPlans[0].longitude
     }
     const destination = {
-      lat: parseFloat(timedPlans[timedPlans.length - 1].place_latitude!),
-      lng: parseFloat(timedPlans[timedPlans.length - 1].place_longitude!)
+      lat: timedPlans[timedPlans.length - 1].latitude,
+      lng: timedPlans[timedPlans.length - 1].longitude
     }
     const waypoints = timedPlans.slice(1, -1).map(plan => ({
       location: {
-        lat: parseFloat(plan.place_latitude!),
-        lng: parseFloat(plan.place_longitude!)
+        lat: plan.latitude,
+        lng: plan.longitude
       },
       stopover: true
     }))
