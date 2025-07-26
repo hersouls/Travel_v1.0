@@ -16,15 +16,29 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
+import type { TravelPlan, TravelDay, DayPlan } from '@/lib/types/database';
+
+interface ExtendedCollaborator {
+  id: string;
+  email: string;
+  role: 'viewer' | 'editor';
+  status: 'pending' | 'accepted';
+  joined_at?: string | null;
   profiles: {
     name: string | null;
     avatar_url: string | null;
   } | null;
+}
+
+interface ExtendedTravelPlan extends TravelPlan {
   travel_days: (TravelDay & {
     day_plans: DayPlan[];
   })[];
+  profiles?: {
+    name: string | null;
+    avatar_url: string | null;
+  } | null;
 }
-
 
 interface SharedTravelViewProps {
   travel: ExtendedTravelPlan;
