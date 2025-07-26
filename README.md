@@ -9,6 +9,7 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 ## 🎯 완료된 Phase 1 체크리스트
 
 ### ✅ Next.js 프로젝트 초기화
+
 - [x] **Next.js 14 프로젝트 생성** (App Router)
 - [x] **package.json 설정** (dev 스크립트 localhost 금지)
 - [x] **next.config.js 설정** (환경변수 및 보안 설정)
@@ -19,6 +20,7 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 - [x] **tsconfig.json TypeScript 설정**
 
 ### ✅ 프로젝트 구조 생성
+
 - [x] **app/ 디렉토리 구조 설정**
   - [x] `layout.tsx` (루트 레이아웃)
   - [x] `page.tsx` (홈페이지)
@@ -29,18 +31,21 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
   - [x] `providers/` (전역 프로바이더)
 
 ### ✅ Supabase 연동
+
 - [x] **Supabase 클라이언트 설정** (`lib/supabase/client.ts`)
 - [x] **Supabase 서버 컴포넌트 설정** (`lib/supabase/server.ts`)
 - [x] **SupabaseProvider 컴포넌트 생성**
 - [x] **타입 정의** (`lib/types/database.ts`)
 
 ### ✅ 기본 UI 컴포넌트
+
 - [x] **Button 컴포넌트** (Pretendard 폰트 적용)
 - [x] **Card 컴포넌트** (Container Queries 적용)
 - [x] **Input 컴포넌트**
 - [x] **Badge 컴포넌트** (여행 유형별)
 
 ### ✅ 배포 설정
+
 - [x] **GitHub Actions 워크플로우** (`.github/workflows/deploy-nextjs.yml`)
 - [x] **환경 변수 검증 시스템** (`lib/env.ts`)
 - [x] **정적 배포 설정** (GitHub Pages 준비)
@@ -48,21 +53,25 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 ## 🛠 기술 스택
 
 ### Frontend
+
 - **Next.js 14** - App Router, SSG/SSR
 - **TypeScript** - 타입 안전성
 - **Tailwind CSS** - 유틸리티 퍼스트 CSS
 - **Container Queries** - 반응형 컴포넌트
 
 ### Backend & Database
+
 - **Supabase** - PostgreSQL, Auth, Real-time
 - **Row Level Security** - 데이터 보안
 
 ### Maps & Location
+
 - **Google Maps API** - 지도 서비스
 - **Google Places API** - 장소 검색
 - **Google Directions API** - 경로 안내
 
 ### Design & Typography
+
 - **Pretendard 폰트** - 한글 최적화
 - **Moonwave 컬러 시스템** - 브랜드 아이덴티티
 - **Lucide React** - 아이콘 시스템
@@ -77,6 +86,7 @@ cp .env.example .env.local
 ```
 
 필요한 환경 변수:
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -145,16 +155,19 @@ moonwave-travel/
 ## 🎨 디자인 시스템
 
 ### 컬러 팔레트
+
 - **Primary**: Blue (#3b82f6) - 신뢰감, 안정성
 - **Secondary**: Purple (#8b5cf6) - 혁신, 창의성
 - **Travel Colors**: 여행 유형별 컬러 (해변, 산, 도시, 자연 등)
 
 ### 타이포그래피
+
 - **Pretendard 폰트** - 한글 최적화
 - **Korean Letter Spacing** - 한글 자간 최적화
 - **Break Keep Korean** - 한글 줄바꿈 최적화
 
 ### 반응형 디자인
+
 - **Container Queries** - 컴포넌트 기반 반응형
 - **Mobile First** - 모바일 우선 설계
 - **Safe Area** - iOS 노치 대응
@@ -162,11 +175,13 @@ moonwave-travel/
 ## 📊 성능 지표
 
 ### 빌드 결과
+
 - **First Load JS**: ~96KB (홈페이지)
 - **Static Generation**: 모든 페이지 정적 생성
 - **No TypeScript Errors**: 타입 안전성 확보
 
 ### 코드 품질
+
 - **ESLint**: Next.js 권장 설정
 - **Prettier**: 코드 포매팅
 - **TypeScript Strict Mode**: 엄격한 타입 체크
@@ -174,16 +189,19 @@ moonwave-travel/
 ## 🔧 다음 단계 (Phase 2)
 
 ### Week 3: 여행 관리 기능
+
 - [ ] 여행 일정 CRUD
 - [ ] 여행 관련 컴포넌트
 - [ ] 커스텀 훅
 
 ### Week 4: Day별 계획 관리
+
 - [ ] Day별 계획 페이지
 - [ ] 계획 관련 컴포넌트
 - [ ] 실시간 동기화
 
 ### Week 5: 지도 통합
+
 - [ ] Google Maps 연동
 - [ ] Google Places 연동
 - [ ] 지도 기능
@@ -191,12 +209,14 @@ moonwave-travel/
 ## 🤝 협업 가이드
 
 ### 문유의 역할
+
 - ✅ GitHub Repository 설정
 - ✅ Supabase 프로젝트 생성
 - ✅ 환경 변수 설정
 - ✅ 커스텀 도메인 설정
 
 ### Cursor AI의 역할 (완료)
+
 - ✅ Next.js 프로젝트 초기화
 - ✅ 컴포넌트 및 유틸리티 개발
 - ✅ 타입 정의 및 설정

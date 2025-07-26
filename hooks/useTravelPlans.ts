@@ -18,7 +18,19 @@ interface UseTravelPlansReturn {
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
-  createTravelPlan: (data: Partial<TravelPlan> & Pick<TravelPlan, 'title' | 'destination' | 'start_date' | 'end_date' | 'status' | 'is_public' | 'collaborators'>) => Promise<TravelPlan | null>;
+  createTravelPlan: (
+    data: Partial<TravelPlan> &
+      Pick<
+        TravelPlan,
+        | 'title'
+        | 'destination'
+        | 'start_date'
+        | 'end_date'
+        | 'status'
+        | 'is_public'
+        | 'collaborators'
+      >
+  ) => Promise<TravelPlan | null>;
   updateTravelPlan: (id: string, data: Partial<TravelPlan>) => Promise<boolean>;
   deleteTravelPlan: (id: string) => Promise<boolean>;
 }
@@ -42,7 +54,8 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
 
       const { data, error: fetchError } = await supabase
         .from('travel_plans')
-        .select(`
+        .select(
+          `
           *,
           travel_days (
             id,
@@ -53,7 +66,8 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
               *
             )
           )
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -62,99 +76,136 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
       }
 
       // travel_days를 day_number로 정렬
-      const sortedData = (data || []).map(plan => ({
+      const sortedData = (data || []).map((plan) => ({
         ...plan,
-        travel_days: plan.travel_days.sort((a, b) => a.day_number - b.day_number)
+        travel_days: plan.travel_days.sort(
+          (a, b) => a.day_number - b.day_number
+        ),
       }));
 
       setTravelPlans(sortedData);
     } catch (err) {
       console.error('여행 계획 가져오기 실패:', err);
-      setError(err instanceof Error ? err : new Error('알 수 없는 오류가 발생했습니다'));
+      setError(
+        err instanceof Error ? err : new Error('알 수 없는 오류가 발생했습니다')
+      );
     } finally {
       setLoading(false);
     }
   }, [user, supabase]);
 
   // 여행 계획 생성
-  const createTravelPlan = useCallback(async (data: Partial<TravelPlan> & Pick<TravelPlan, 'title' | 'destination' | 'start_date' | 'end_date' | 'status' | 'is_public' | 'collaborators'>): Promise<TravelPlan | null> => {
-    if (!user) throw new Error('로그인이 필요합니다');
+  const createTravelPlan = useCallback(
+    async (
+      data: Partial<TravelPlan> &
+        Pick<
+          TravelPlan,
+          | 'title'
+          | 'destination'
+          | 'start_date'
+          | 'end_date'
+          | 'status'
+          | 'is_public'
+          | 'collaborators'
+        >
+    ): Promise<TravelPlan | null> => {
+      if (!user) throw new Error('로그인이 필요합니다');
 
-    try {
-      const { data: newPlan, error: createError } = await supabase
-        .from('travel_plans')
-        .insert({
-          ...data,
-          user_id: user.id,
-          metadata: data.metadata || {},
-          cover_image_url: data.cover_image_url || null,
-        })
-        .select()
-        .single();
+      try {
+        const { data: newPlan, error: createError } = await supabase
+          .from('travel_plans')
+          .insert({
+            ...data,
+            user_id: user.id,
+            metadata: data.metadata || {},
+            cover_image_url: data.cover_image_url || null,
+          })
+          .select()
+          .single();
 
-      if (createError) {
-        throw new Error(`여행 계획 생성 실패: ${createError.message}`);
+        if (createError) {
+          throw new Error(`여행 계획 생성 실패: ${createError.message}`);
+        }
+
+        // 목록 새로고침
+        await fetchTravelPlans();
+        return newPlan;
+      } catch (err) {
+        console.error('여행 계획 생성 실패:', err);
+        setError(
+          err instanceof Error
+            ? err
+            : new Error('여행 계획 생성에 실패했습니다')
+        );
+        return null;
       }
-
-      // 목록 새로고침
-      await fetchTravelPlans();
-      return newPlan;
-    } catch (err) {
-      console.error('여행 계획 생성 실패:', err);
-      setError(err instanceof Error ? err : new Error('여행 계획 생성에 실패했습니다'));
-      return null;
-    }
-  }, [user, supabase, fetchTravelPlans]);
+    },
+    [user, supabase, fetchTravelPlans]
+  );
 
   // 여행 계획 수정
-  const updateTravelPlan = useCallback(async (id: string, data: Partial<TravelPlan>): Promise<boolean> => {
-    if (!user) throw new Error('로그인이 필요합니다');
+  const updateTravelPlan = useCallback(
+    async (id: string, data: Partial<TravelPlan>): Promise<boolean> => {
+      if (!user) throw new Error('로그인이 필요합니다');
 
-    try {
-      const { error: updateError } = await supabase
-        .from('travel_plans')
-        .update(data)
-        .eq('id', id)
-        .eq('user_id', user.id);
+      try {
+        const { error: updateError } = await supabase
+          .from('travel_plans')
+          .update(data)
+          .eq('id', id)
+          .eq('user_id', user.id);
 
-      if (updateError) {
-        throw new Error(`여행 계획 수정 실패: ${updateError.message}`);
+        if (updateError) {
+          throw new Error(`여행 계획 수정 실패: ${updateError.message}`);
+        }
+
+        // 목록 새로고침
+        await fetchTravelPlans();
+        return true;
+      } catch (err) {
+        console.error('여행 계획 수정 실패:', err);
+        setError(
+          err instanceof Error
+            ? err
+            : new Error('여행 계획 수정에 실패했습니다')
+        );
+        return false;
       }
-
-      // 목록 새로고침
-      await fetchTravelPlans();
-      return true;
-    } catch (err) {
-      console.error('여행 계획 수정 실패:', err);
-      setError(err instanceof Error ? err : new Error('여행 계획 수정에 실패했습니다'));
-      return false;
-    }
-  }, [user, supabase, fetchTravelPlans]);
+    },
+    [user, supabase, fetchTravelPlans]
+  );
 
   // 여행 계획 삭제
-  const deleteTravelPlan = useCallback(async (id: string): Promise<boolean> => {
-    if (!user) throw new Error('로그인이 필요합니다');
+  const deleteTravelPlan = useCallback(
+    async (id: string): Promise<boolean> => {
+      if (!user) throw new Error('로그인이 필요합니다');
 
-    try {
-      const { error: deleteError } = await supabase
-        .from('travel_plans')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
+      try {
+        const { error: deleteError } = await supabase
+          .from('travel_plans')
+          .delete()
+          .eq('id', id)
+          .eq('user_id', user.id);
 
-      if (deleteError) {
-        throw new Error(`여행 계획 삭제 실패: ${deleteError.message}`);
+        if (deleteError) {
+          throw new Error(`여행 계획 삭제 실패: ${deleteError.message}`);
+        }
+
+        // 목록 새로고침
+        await fetchTravelPlans();
+        return true;
+      } catch (err) {
+        console.error('여행 계획 삭제 실패:', err);
+        setError(
+          err instanceof Error
+            ? err
+            : new Error('여행 계획 삭제에 실패했습니다')
+        );
+        return false;
       }
-
-      // 목록 새로고침
-      await fetchTravelPlans();
-      return true;
-    } catch (err) {
-      console.error('여행 계획 삭제 실패:', err);
-      setError(err instanceof Error ? err : new Error('여행 계획 삭제에 실패했습니다'));
-      return false;
-    }
-  }, [user, supabase, fetchTravelPlans]);
+    },
+    [user, supabase, fetchTravelPlans]
+  );
 
   // 초기 데이터 로딩 및 실시간 구독
   useEffect(() => {
@@ -169,28 +220,40 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
     // 실시간 구독 설정
     const subscription = supabase
       .channel('travel_plans_realtime')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'travel_plans',
-        filter: `user_id=eq.${user.id}`
-      }, () => {
-        fetchTravelPlans();
-      })
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'travel_days'
-      }, () => {
-        fetchTravelPlans();
-      })
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'day_plans'
-      }, () => {
-        fetchTravelPlans();
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'travel_plans',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchTravelPlans();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'travel_days',
+        },
+        () => {
+          fetchTravelPlans();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'day_plans',
+        },
+        () => {
+          fetchTravelPlans();
+        }
+      )
       .subscribe();
 
     return () => {

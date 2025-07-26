@@ -38,12 +38,12 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
   ({ travelPlans, className, ...props }, ref) => {
     const router = useRouter();
     const { deleteTravelPlan } = useTravelPlans();
-    
+
     const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
     // 상태에 따른 여행 필터링
-    const filteredTravels = travelPlans.filter(travel => {
+    const filteredTravels = travelPlans.filter((travel) => {
       if (filterStatus === 'all') return true;
       return travel.status === filterStatus;
     });
@@ -66,17 +66,18 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
     // 상태별 개수 계산
     const statusCounts = {
       all: travelPlans.length,
-      planning: travelPlans.filter(t => t.status === 'planning').length,
-      ongoing: travelPlans.filter(t => t.status === 'ongoing').length,
-      completed: travelPlans.filter(t => t.status === 'completed').length,
+      planning: travelPlans.filter((t) => t.status === 'planning').length,
+      ongoing: travelPlans.filter((t) => t.status === 'ongoing').length,
+      completed: travelPlans.filter((t) => t.status === 'completed').length,
     };
 
-    const filterButtons: { key: FilterStatus; label: string; count: number }[] = [
-      { key: 'all', label: '전체', count: statusCounts.all },
-      { key: 'planning', label: '계획 중', count: statusCounts.planning },
-      { key: 'ongoing', label: '진행 중', count: statusCounts.ongoing },
-      { key: 'completed', label: '완료', count: statusCounts.completed },
-    ];
+    const filterButtons: { key: FilterStatus; label: string; count: number }[] =
+      [
+        { key: 'all', label: '전체', count: statusCounts.all },
+        { key: 'planning', label: '계획 중', count: statusCounts.planning },
+        { key: 'ongoing', label: '진행 중', count: statusCounts.ongoing },
+        { key: 'completed', label: '완료', count: statusCounts.completed },
+      ];
 
     if (travelPlans.length === 0) {
       return null; // EmptyTravelState는 상위 컴포넌트에서 처리
@@ -85,34 +86,33 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          '@container/travel-list',
-          className
-        )}
+        className={cn('@container/travel-list', className)}
         {...props}
       >
         {/* 필터 및 뷰 옵션 */}
-        <div className="@container/controls mb-6">
-          <div className="flex @lg/controls:flex-row flex-col @lg/controls:items-center @lg/controls:justify-between gap-4">
+        <div className="mb-6 @container/controls">
+          <div className="flex flex-col gap-4 @lg/controls:flex-row @lg/controls:items-center @lg/controls:justify-between">
             {/* 상태 필터 */}
-            <div className="flex @md/controls:flex-row flex-col @md/controls:items-center gap-3">
+            <div className="flex flex-col gap-3 @md/controls:flex-row @md/controls:items-center">
               <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                <span className={cn(
-                  'font-pretendard text-sm font-medium text-gray-700',
-                  'tracking-korean-normal'
-                )}>
+                <Filter className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                <span
+                  className={cn(
+                    'font-pretendard text-sm font-medium text-gray-700',
+                    'tracking-korean-normal'
+                  )}
+                >
                   상태별 보기:
                 </span>
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
                 {filterButtons.map(({ key, label, count }) => (
                   <button
                     key={key}
                     onClick={() => setFilterStatus(key)}
                     className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
+                      'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
                       'font-pretendard tracking-korean-normal',
                       filterStatus === key
                         ? 'bg-moonwave-primary text-white'
@@ -129,38 +129,40 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
             </div>
 
             {/* 뷰 모드 선택 */}
-            <div className="@lg/controls:ml-4 flex items-center gap-2">
-              <span className={cn(
-                'font-pretendard text-sm font-medium text-gray-700 @lg/controls:block hidden',
-                'tracking-korean-normal'
-              )}>
+            <div className="flex items-center gap-2 @lg/controls:ml-4">
+              <span
+                className={cn(
+                  'hidden font-pretendard text-sm font-medium text-gray-700 @lg/controls:block',
+                  'tracking-korean-normal'
+                )}
+              >
                 보기:
               </span>
-              
-              <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+
+              <div className="flex overflow-hidden rounded-lg border border-gray-200">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={cn(
-                    'flex items-center justify-center w-8 h-8 transition-colors',
+                    'flex h-8 w-8 items-center justify-center transition-colors',
                     viewMode === 'grid'
                       ? 'bg-moonwave-primary text-white'
                       : 'bg-white text-gray-500 hover:text-gray-700'
                   )}
                   title="그리드 보기"
                 >
-                  <Grid className="w-4 h-4" />
+                  <Grid className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
                   className={cn(
-                    'flex items-center justify-center w-8 h-8 transition-colors',
+                    'flex h-8 w-8 items-center justify-center transition-colors',
                     viewMode === 'list'
                       ? 'bg-moonwave-primary text-white'
                       : 'bg-white text-gray-500 hover:text-gray-700'
                   )}
                   title="리스트 보기"
                 >
-                  <List className="w-4 h-4" />
+                  <List className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -169,43 +171,50 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
 
         {/* 결과 표시 */}
         <div className="mb-4">
-          <p className={cn(
-            'font-pretendard text-sm text-gray-600',
-            'tracking-korean-normal'
-          )}>
-            {filterStatus === 'all' 
+          <p
+            className={cn(
+              'font-pretendard text-sm text-gray-600',
+              'tracking-korean-normal'
+            )}
+          >
+            {filterStatus === 'all'
               ? `총 ${filteredTravels.length}개의 여행 계획`
-              : `${filterButtons.find(f => f.key === filterStatus)?.label} ${filteredTravels.length}개`
-            }
+              : `${filterButtons.find((f) => f.key === filterStatus)?.label} ${filteredTravels.length}개`}
           </p>
         </div>
 
         {/* 여행 목록 */}
         {filteredTravels.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-            <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <Filter className="w-8 h-8 text-gray-400" />
+          <div className="rounded-xl border border-gray-200 bg-white py-12 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <Filter className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className={cn(
-              'font-pretendard font-semibold text-lg text-gray-900 mb-2',
-              'tracking-korean-tight break-keep-ko'
-            )}>
+            <h3
+              className={cn(
+                'mb-2 font-pretendard text-lg font-semibold text-gray-900',
+                'tracking-korean-tight break-keep-ko'
+              )}
+            >
               해당하는 여행이 없습니다
             </h3>
-            <p className={cn(
-              'font-pretendard text-gray-600',
-              'tracking-korean-normal break-keep-ko'
-            )}>
+            <p
+              className={cn(
+                'font-pretendard text-gray-600',
+                'tracking-korean-normal break-keep-ko'
+              )}
+            >
               다른 상태의 여행을 확인해보세요
             </p>
           </div>
         ) : (
-          <div className={cn(
-            '@container/grid',
-            viewMode === 'grid' 
-              ? 'grid @6xl/grid:grid-cols-3 @3xl/grid:grid-cols-2 grid-cols-1 gap-6'
-              : 'space-y-4'
-          )}>
+          <div
+            className={cn(
+              '@container/grid',
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 gap-6 @3xl/grid:grid-cols-2 @6xl/grid:grid-cols-3'
+                : 'space-y-4'
+            )}
+          >
             {filteredTravels.map((travel) => (
               <div
                 key={travel.id}
@@ -220,9 +229,9 @@ export const TravelList = React.forwardRef<HTMLDivElement, TravelListProps>(
                   onDelete={handleDelete}
                   className={cn(
                     viewMode === 'list' && [
-                      '@lg/list-item:flex-row flex flex-col',
-                      '@lg/list-item:items-center @lg/list-item:p-4 p-3',
-                      '@lg/list-item:h-auto h-auto'
+                      'flex flex-col @lg/list-item:flex-row',
+                      'p-3 @lg/list-item:items-center @lg/list-item:p-4',
+                      'h-auto @lg/list-item:h-auto',
                     ]
                   )}
                 />

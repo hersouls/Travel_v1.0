@@ -18,21 +18,21 @@ module.exports = {
     extend: {
       fontFamily: {
         pretendard: [
-          'Pretendard Variable', 
-          'Pretendard', 
-          '-apple-system', 
-          'BlinkMacSystemFont', 
-          'system-ui', 
-          'sans-serif'
+          'Pretendard Variable',
+          'Pretendard',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
         ],
         sans: [
-          'Pretendard Variable', 
-          'Pretendard', 
-          '-apple-system', 
-          'BlinkMacSystemFont', 
-          'system-ui', 
-          'sans-serif'
-        ]
+          'Pretendard Variable',
+          'Pretendard',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       colors: {
         moonwave: {
@@ -64,7 +64,7 @@ module.exports = {
             700: '#7c3aed',
             800: '#6b21a8',
             900: '#581c87',
-          }
+          },
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -129,7 +129,7 @@ module.exports = {
     require('tailwindcss-animate'),
     require('@tailwindcss/container-queries'),
     // 한글 최적화 플러그인
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.tracking-korean-tight': {
           'letter-spacing': '-0.02em',
@@ -143,9 +143,9 @@ module.exports = {
         },
         '.text-numeric': {
           'font-variant-numeric': 'tabular-nums',
-        }
-      }
-      addUtilities(newUtilities)
-    }
+        },
+      };
+      addUtilities(newUtilities);
+    },
   ],
-}
+};

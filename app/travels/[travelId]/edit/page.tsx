@@ -18,7 +18,7 @@ export default function EditTravelPage({ params }: EditTravelPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-moonwave-blue-50 via-white to-moonwave-purple-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <Suspense fallback={<TravelDetailSkeleton />}>
           <EditTravelForm travelId={travelId} />
         </Suspense>
@@ -30,12 +30,14 @@ export default function EditTravelPage({ params }: EditTravelPageProps) {
 export async function generateStaticParams() {
   // Static export compatibility - provide a placeholder
   // Actual routes will be handled dynamically at runtime
-  return [{ travelId: 'placeholder' }]
+  return [{ travelId: 'placeholder' }];
 }
 
-export async function generateMetadata({ params: _params }: EditTravelPageProps) {
+export async function generateMetadata({
+  params: _params,
+}: EditTravelPageProps) {
   return {
     title: `여행 계획 수정 | Moonwave Travel`,
     description: '여행 계획을 수정하세요.',
-  }
+  };
 }

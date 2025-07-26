@@ -63,6 +63,7 @@ erDiagram
 ### 테이블 상세 설명
 
 #### 1. `profiles` - 사용자 프로필
+
 ```sql
 -- 사용자 기본 정보 및 여행 통계
 id UUID PRIMARY KEY               -- auth.users.id와 연결
@@ -76,6 +77,7 @@ timezone TEXT                     -- 시간대
 ```
 
 #### 2. `travel_plans` - 여행 계획
+
 ```sql
 -- 여행 기본 정보
 id UUID PRIMARY KEY               -- 여행 고유 ID
@@ -91,6 +93,7 @@ collaborators TEXT[]              -- 협업자 목록
 ```
 
 #### 3. `travel_days` - 일자별 정보
+
 ```sql
 -- 여행 일자별 기본 정보
 id UUID PRIMARY KEY               -- Day 고유 ID
@@ -102,6 +105,7 @@ theme TEXT                        -- Day 테마
 ```
 
 #### 4. `day_plans` - 세부 계획
+
 ```sql
 -- 일자별 상세 계획
 id UUID PRIMARY KEY               -- 계획 고유 ID
@@ -120,6 +124,7 @@ order_index INTEGER               -- 순서
 ```
 
 #### 5. `payment_history` - 결제 이력
+
 ```sql
 -- 여행 관련 결제 기록
 id UUID PRIMARY KEY               -- 결제 ID
@@ -185,18 +190,21 @@ SELECT public.cleanup_test_data('your-user-uuid');
 ## 🔧 유용한 함수들
 
 ### 1. 사용자 통계 조회
+
 ```sql
 SELECT * FROM public.get_user_stats('user-uuid');
 -- 반환: total_travels, total_plans, total_spent, active_notifications
 ```
 
 ### 2. 여행 일자 자동 생성
+
 ```sql
 -- travel_plans 삽입 시 자동으로 travel_days 생성
 -- 트리거: generate_travel_days_trigger
 ```
 
 ### 3. 사용자 통계 자동 업데이트
+
 ```sql
 -- travel_plans 변경 시 profiles.subscription_count 자동 업데이트
 -- 트리거: update_travel_stats_trigger
@@ -217,8 +225,9 @@ SELECT * FROM public.get_user_stats('user-uuid');
 ### 쿼리 예시
 
 #### 여행 목록 조회 (관련 데이터 포함)
+
 ```sql
-SELECT 
+SELECT
   tp.*,
   COUNT(td.id) as total_days,
   COUNT(dp.id) as total_plans,
@@ -233,8 +242,9 @@ ORDER BY tp.created_at DESC;
 ```
 
 #### 특정 여행의 전체 계획 조회
+
 ```sql
-SELECT 
+SELECT
   tp.title,
   td.day_number,
   td.date,
@@ -257,12 +267,13 @@ Next.js 애플리케이션에서 실시간 데이터 동기화:
 // 여행 계획 실시간 구독
 const subscription = supabase
   .channel('travel_plans_realtime')
-  .on('postgres_changes', 
-    { 
-      event: '*', 
-      schema: 'public', 
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
       table: 'travel_plans',
-      filter: `user_id=eq.${user.id}`
+      filter: `user_id=eq.${user.id}`,
     },
     (payload) => {
       // UI 업데이트 로직
@@ -287,5 +298,5 @@ const subscription = supabase
 ---
 
 **Moonwave Travel Database v1.0**  
-*실제 흐름 중심의 여행 플래닝 데이터베이스*  
-*Created: 2025-07-26*
+_실제 흐름 중심의 여행 플래닝 데이터베이스_  
+_Created: 2025-07-26_

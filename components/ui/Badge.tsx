@@ -13,8 +13,9 @@ const badgeVariants = cva(
         success: 'bg-success-100 text-success-800 hover:bg-success-200',
         warning: 'bg-warning-100 text-warning-800 hover:bg-warning-200',
         error: 'bg-error-100 text-error-800 hover:bg-error-200',
-        outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
-        
+        outline:
+          'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
+
         // 여행 관련 변형
         beach: 'bg-cyan-100 text-cyan-800 hover:bg-cyan-200',
         mountain: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200',

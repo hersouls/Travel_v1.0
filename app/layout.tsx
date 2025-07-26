@@ -41,11 +41,7 @@ export default function RootLayout({
     <html lang="ko" className="h-full">
       <head>
         {/* Pretendard 폰트 최적화 로드 */}
-        <link
-          rel="preconnect"
-          href="https://cdn.jsdelivr.net"
-          crossOrigin=""
-        />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
         <link
           rel="preload"
           as="style"
@@ -57,14 +53,18 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
           crossOrigin=""
         />
-        
+
         {/* Google Maps 최적화 */}
         <link rel="preconnect" href="https://maps.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
       </head>
       <body className="h-full font-pretendard antialiased tracking-korean-normal break-keep-ko">
         <SupabaseProvider>
-          <div id="root" className="h-full flex flex-col">
+          <div id="root" className="flex h-full flex-col">
             <MainNavigation />
             <main id="main-content" className="flex-1">
               {children}
