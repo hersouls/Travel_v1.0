@@ -81,22 +81,22 @@ export default function DayPlanDetail({ travelId, dayId }: DayPlanDetailProps) {
         </div>
         <div className="flex gap-2">
           <Button 
-            variant={viewMode === 'list' ? 'primary' : 'outline'} 
+            variant={viewMode === 'list' ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setViewMode('list')}
           >
             목록
           </Button>
           <Button 
-            variant={viewMode === 'timeline' ? 'primary' : 'outline'} 
+            variant={viewMode === 'timeline' ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setViewMode('timeline')}
           >
             타임라인
           </Button>
           <Button 
-            variant="primary" 
-            size="md" 
+            variant="default" 
+            size="default" 
             className="flex items-center gap-2"
             onClick={() => setShowEditor(true)}
           >
@@ -238,7 +238,7 @@ export default function DayPlanDetail({ travelId, dayId }: DayPlanDetailProps) {
                 </p>
               </div>
               <Button 
-                variant="primary" 
+                variant="default" 
                 className="flex items-center gap-2"
                 onClick={() => setShowEditor(true)}
               >

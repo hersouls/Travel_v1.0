@@ -152,7 +152,7 @@ export default function DayPlanAccordion({
           ) : (
             <div className="text-center py-8 text-gray-500">
               <p className="mb-3">아직 계획이 없습니다.</p>
-              <Button variant="primary" size="sm" className="flex items-center gap-2">
+              <Button variant="default" size="sm" className="flex items-center gap-2">
                 <Plus className="w-4 h-4" />
                 계획 추가하기
               </Button>

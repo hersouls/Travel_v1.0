@@ -160,7 +160,7 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
         </div>
         <Button
           variant="outline"
-          size="md"
+          size="default"
           className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
           onClick={() => setShowDeleteModal(true)}
         >
@@ -292,7 +292,7 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
               </Button>
               <Button
                 type="submit"
-                variant="primary"
+                variant="default"
                 size="lg"
                 loading={updateLoading}
                 className="flex-1"
@@ -317,15 +317,15 @@ export default function EditTravelForm({ travelId }: EditTravelFormProps) {
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                size="md"
+                size="default"
                 onClick={() => setShowDeleteModal(false)}
                 className="flex-1"
               >
                 취소
               </Button>
               <Button
-                variant="primary"
-                size="md"
+                variant="default"
+                size="default"
                 loading={deleteLoading}
                 onClick={handleDelete}
                 className="flex-1 bg-red-600 hover:bg-red-700"

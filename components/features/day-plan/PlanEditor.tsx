@@ -37,7 +37,7 @@ export default function PlanEditor({ dayId, planId, onClose }: PlanEditorProps) 
               {planId && <p>planId: {planId}</p>}
             </div>
             <Button 
-              variant="primary" 
+              variant="default" 
               className="mt-6"
               onClick={onClose}
             >
