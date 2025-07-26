@@ -43,7 +43,6 @@ const nextConfig = {
 
   // Vercel에서 권장하는 설정
   poweredByHeader: false,
-
 };
 
 module.exports = nextConfig;
