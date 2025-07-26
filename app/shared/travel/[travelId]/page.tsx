@@ -12,9 +12,9 @@ interface SharedTravelPageProps {
 
 // 정적 내보내기를 위한 generateStaticParams 함수
 export async function generateStaticParams() {
-  // 빈 배열을 반환하여 모든 동적 라우트를 런타임에 처리
-  // 실제로는 공개된 여행 계획 목록을 가져와서 미리 생성할 수 있음
-  return []
+  // Static export compatibility - provide a placeholder
+  // Actual routes will be handled dynamically at runtime
+  return [{ travelId: 'placeholder' }]
 }
 
 export async function generateMetadata({ params }: SharedTravelPageProps): Promise<Metadata> {
