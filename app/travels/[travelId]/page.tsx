@@ -28,8 +28,9 @@ export default function TravelDetailPage({ params }: TravelDetailPageProps) {
 }
 
 export async function generateStaticParams() {
-  // 동적 라우트이므로 빈 배열 반환 (runtime에서 생성됨)
-  return []
+  // Static export compatibility - provide a placeholder
+  // Actual routes will be handled dynamically at runtime
+  return [{ travelId: 'placeholder' }]
 }
 
 export async function generateMetadata({ params: _params }: TravelDetailPageProps) {
