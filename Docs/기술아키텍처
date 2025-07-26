@@ -1,0 +1,716 @@
+## 요약
+React MVP 단계를 건너뛰고 바로 Next.js로 시작하는 결정에 맞춰, Static Export를 활용한 GitHub Pages 배포 전략과 App Router 기반의 최적화된 기술 아키텍처를 재구성합니다.
+
+## 분석
+
+### 🚀 Next.js 직접 시작의 장점
+- **SEO 최적화**: 처음부터 메타데이터 관리
+- **이미지 최적화**: Next/Image 컴포넌트 활용
+- **성능**: Static Generation으로 빠른 로딩
+- **개발 경험**: 파일 기반 라우팅, 타입 안전성
+
+### ⚡ 주요 고려사항
+- GitHub Pages는 Static Export만 지원
+- 서버 컴포넌트는 빌드 타임에만 실행
+- API Routes는 사용 불가 (Supabase 직접 호출)
+
+## 실행
+
+# Moonwave Travel 기술 아키텍처 문서 v2.0 (Next.js First)
+
+> "가짜 흐름이 아닌, 실제 흐름으로 설계한다" - Next.js 기반 여행 플래닝 시스템
+
+## 📋 수정된 아키텍처 개요
+
+### 1.1 Next.js 중심 아키텍처
+
+```mermaid
+graph TB
+    subgraph "Frontend (Next.js Static Export)"
+        A[Next.js 14 App Router] --> B[Static HTML/CSS/JS]
+        A --> C[React Server Components]
+        A --> D[Client Components]
+        E[Tailwind CSS + Container Queries]
+        F[Pretendard Font System]
+        G[Next/Image Optimization]
+    end
+    
+    subgraph "Data Layer"
+        H[Supabase Client SDK]
+        I[Google Maps API]
+        J[Google Places API]
+    end
+    
+    subgraph "Backend Services"
+        K[Supabase PostgreSQL]
+        L[Supabase Auth]
+        M[Supabase Realtime]
+        N[Supabase Storage]
+    end
+    
+    subgraph "Deployment"
+        O[GitHub Repository]
+        P[GitHub Actions]
+        Q[Static Export Build]
+        R[GitHub Pages]
+        S[travel.moonwave.kr]
+    end
+    
+    D --> H
+    D --> I
+    D --> J
+    H --> K
+    H --> L
+    H --> M
+    H --> N
+    O --> P
+    P --> Q
+    Q --> R
+    R --> S
+```
+
+### 1.2 Next.js 프로젝트 구조
+
+```
+moonwave-travel-next/
+├── app/                           # App Router
+│   ├── layout.tsx                # 루트 레이아웃
+│   ├── page.tsx                  # 홈페이지
+│   ├── globals.css               # Tailwind + Pretendard
+│   ├── loading.tsx               # 로딩 UI
+│   ├── error.tsx                 # 에러 UI
+│   ├── not-found.tsx             # 404 페이지
+│   ├── (auth)/                   # 인증 그룹
+│   │   ├── signin/
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   ├── travels/                  # 여행 관리
+│   │   ├── page.tsx              # 여행 목록
+│   │   ├── new/
+│   │   │   └── page.tsx          # 여행 생성
+│   │   └── [travelId]/           # 동적 라우트
+│   │       ├── page.tsx          # 여행 상세
+│   │       ├── loading.tsx
+│   │       ├── edit/
+│   │       │   └── page.tsx
+│   │       └── plans/
+│   │           ├── page.tsx      # 계획 목록
+│   │           └── [dayId]/
+│   │               └── page.tsx  # Day별 계획
+│   └── map/                      # 지도 뷰
+│       └── page.tsx
+├── components/
+│   ├── ui/                       # 기본 UI 컴포넌트
+│   │   ├── Button.tsx
+│   │   ├── Card.tsx
+│   │   ├── Input.tsx
+│   │   └── Badge.tsx
+│   ├── features/                 # 도메인 컴포넌트
+│   │   ├── travel/
+│   │   │   ├── TravelCard.tsx
+│   │   │   ├── TravelList.tsx
+│   │   │   └── CreateTravelForm.tsx
+│   │   ├── plans/
+│   │   │   ├── DayPlanCard.tsx
+│   │   │   ├── PlanEditor.tsx
+│   │   │   └── PlanTimeline.tsx
+│   │   └── maps/
+│   │       ├── TravelMap.tsx
+│   │       └── PlaceSearch.tsx
+│   └── providers/                # 전역 프로바이더
+│       ├── SupabaseProvider.tsx
+│       └── QueryProvider.tsx
+├── lib/
+│   ├── supabase/
+│   │   ├── client.ts             # 클라이언트 인스턴스
+│   │   ├── server.ts             # 서버 컴포넌트용
+│   │   └── queries.ts            # 쿼리 함수
+│   ├── google/
+│   │   ├── maps.ts
+│   │   └── places.ts
+│   └── utils/
+│       ├── cn.ts
+│       └── formatters.ts
+├── hooks/                        # 커스텀 훅
+│   ├── useTravelPlans.ts
+│   ├── useDayPlans.ts
+│   └── useGoogleMaps.ts
+├── types/
+│   ├── supabase.ts
+│   └── travel.ts
+├── public/
+│   └── fonts/                    # 로컬 폰트 (선택)
+├── supabase/
+│   └── migrations/
+├── next.config.js                # Next.js 설정
+├── tailwind.config.js
+├── tsconfig.json
+└── package.json
+```
+
+## 2. Next.js 기술 스택
+
+### 2.1 핵심 설정
+
+```javascript
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Static Export 설정 (GitHub Pages 필수)
+  output: 'export',
+  
+  // 이미지 최적화
+  images: {
+    unoptimized: true, // Static Export 시 필수
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'maps.googleapis.com',
+      }
+    ],
+  },
+  
+  // 환경 변수
+  env: {
+    NEXT_PUBLIC_SITE_URL: 'https://travel.moonwave.kr',
+  },
+  
+  // Trailing Slash (GitHub Pages 호환)
+  trailingSlash: true,
+  
+  // 실험적 기능
+  experimental: {
+    // 타입 안전한 라우트
+    typedRoutes: true,
+  }
+};
+
+module.exports = nextConfig;
+```
+
+### 2.2 App Router 레이아웃
+
+```typescript
+// app/layout.tsx
+import type { Metadata } from 'next';
+import { Pretendard } from '@/lib/fonts';
+import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
+import { QueryProvider } from '@/components/providers/QueryProvider';
+import './globals.css';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Moonwave Travel - 여행 계획의 새로운 기준',
+    template: '%s | Moonwave Travel'
+  },
+  description: '여행 계획의 복잡함을 직관적 흐름으로 변화시켜, 모든 여행자가 자신만의 스토리를 아름답게 설계할 수 있도록 돕습니다.',
+  keywords: ['여행 계획', '여행 플래너', '여행 일정', 'travel planner'],
+  authors: [{ name: 'Moonwave' }],
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: 'https://travel.moonwave.kr',
+    siteName: 'Moonwave Travel',
+    images: [{
+      url: 'https://travel.moonwave.kr/og-image.png',
+      width: 1200,
+      height: 630,
+    }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  manifest: '/manifest.json',
+  themeColor: '#3b82f6',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ko" className={Pretendard.variable}>
+      <body className="font-pretendard antialiased bg-gray-50">
+        <SupabaseProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+        </SupabaseProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### 2.3 서버/클라이언트 컴포넌트 전략
+
+```typescript
+// 서버 컴포넌트 (기본값) - app/travels/page.tsx
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { TravelList } from '@/components/features/travel/TravelList';
+
+export default async function TravelsPage() {
+  const supabase = createServerComponentClient({ cookies });
+  
+  // 서버에서 데이터 페칭 (빌드 타임)
+  const { data: travels } = await supabase
+    .from('travel_plans')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="font-pretendard font-bold text-3xl mb-8 tracking-korean-tight">
+        내 여행
+      </h1>
+      {/* 클라이언트 컴포넌트에 데이터 전달 */}
+      <TravelList initialTravels={travels} />
+    </div>
+  );
+}
+
+// 클라이언트 컴포넌트 - components/features/travel/TravelList.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSupabase } from '@/hooks/useSupabase';
+import { TravelCard } from './TravelCard';
+import type { Travel } from '@/types/travel';
+
+interface TravelListProps {
+  initialTravels: Travel[] | null;
+}
+
+export function TravelList({ initialTravels }: TravelListProps) {
+  const [travels, setTravels] = useState(initialTravels || []);
+  const { supabase } = useSupabase();
+  
+  // 실시간 구독 (클라이언트에서만)
+  useEffect(() => {
+    const subscription = supabase
+      .channel('travels')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'travel_plans'
+      }, (payload) => {
+        // 실시간 업데이트 처리
+        if (payload.eventType === 'INSERT') {
+          setTravels(prev => [payload.new as Travel, ...prev]);
+        }
+      })
+      .subscribe();
+      
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+  
+  return (
+    <div className="@container grid gap-6 @lg:grid-cols-2 @2xl:grid-cols-3">
+      {travels.map((travel) => (
+        <TravelCard key={travel.id} travel={travel} />
+      ))}
+    </div>
+  );
+}
+```
+
+## 3. 정적 배포 최적화
+
+### 3.1 GitHub Actions 워크플로우 (Next.js)
+
+```yaml
+# .github/workflows/deploy-nextjs.yml
+name: Deploy Next.js to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build Next.js
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+        run: |
+          npm run build
+          touch out/.nojekyll
+          echo "travel.moonwave.kr" > out/CNAME
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+          
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+### 3.2 정적 생성 최적화
+
+```typescript
+// app/travels/[travelId]/page.tsx
+import { notFound } from 'next/navigation';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+
+// 동적 메타데이터
+export async function generateMetadata({ params }: Props) {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: travel } = await supabase
+    .from('travel_plans')
+    .select('title, description, destination')
+    .eq('id', params.travelId)
+    .single();
+    
+  if (!travel) return {};
+  
+  return {
+    title: `${travel.destination} 여행 - ${travel.title}`,
+    description: travel.description,
+    openGraph: {
+      title: travel.title,
+      description: travel.description,
+    }
+  };
+}
+
+// 정적 경로 생성 (빌드 타임)
+export async function generateStaticParams() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: travels } = await supabase
+    .from('travel_plans')
+    .select('id');
+    
+  return travels?.map((travel) => ({
+    travelId: travel.id,
+  })) || [];
+}
+
+export default async function TravelDetailPage({ params }: Props) {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: travel } = await supabase
+    .from('travel_plans')
+    .select(`
+      *,
+      travel_days (
+        *,
+        day_plans (*)
+      )
+    `)
+    .eq('id', params.travelId)
+    .single();
+    
+  if (!travel) notFound();
+  
+  return (
+    <div className="container mx-auto py-8">
+      {/* 서버 렌더링된 콘텐츠 */}
+    </div>
+  );
+}
+```
+
+## 4. Supabase 통합 (Next.js)
+
+### 4.1 클라이언트 설정
+
+```typescript
+// lib/supabase/client.ts
+import { createBrowserClient } from '@supabase/ssr';
+import type { Database } from '@/types/supabase';
+
+export function createClient() {
+  return createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+// hooks/useSupabase.ts
+'use client';
+
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+
+export function useSupabase() {
+  const [supabase] = useState<SupabaseClient<Database>>(() => createClient());
+  
+  return { supabase };
+}
+```
+
+### 4.2 서버 컴포넌트 설정
+
+```typescript
+// lib/supabase/server.ts
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import type { Database } from '@/types/supabase';
+
+export function createServerClient() {
+  const cookieStore = cookies();
+  
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+      },
+    }
+  );
+}
+```
+
+## 5. Next.js 특화 최적화
+
+### 5.1 이미지 최적화
+
+```typescript
+// components/ui/OptimizedImage.tsx
+'use client';
+
+import Image from 'next/image';
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+  priority?: boolean;
+}
+
+export function OptimizedImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  priority = false
+}: OptimizedImageProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  return (
+    <div className={cn('relative overflow-hidden', className)}>
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        priority={priority}
+        className={cn(
+          'duration-700 ease-in-out',
+          isLoading ? 'scale-110 blur-2xl grayscale' : 'scale-100 blur-0 grayscale-0'
+        )}
+        onLoad={() => setIsLoading(false)}
+      />
+    </div>
+  );
+}
+```
+
+### 5.2 폰트 최적화
+
+```typescript
+// lib/fonts.ts
+import localFont from 'next/font/local';
+
+export const Pretendard = localFont({
+  src: [
+    {
+      path: '../public/fonts/PretendardVariable.woff2',
+      weight: '45 920',
+    },
+  ],
+  variable: '--font-pretendard',
+  display: 'swap',
+  preload: true,
+  fallback: [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'system-ui',
+    'Roboto',
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'sans-serif',
+  ],
+});
+```
+
+### 5.3 성능 모니터링
+
+```typescript
+// components/Analytics.tsx
+'use client';
+
+import { useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+
+export function Analytics() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    // Core Web Vitals 측정
+    if (typeof window !== 'undefined' && 'web-vital' in window) {
+      const { getCLS, getFID, getLCP } = window['web-vital'];
+      
+      getCLS(console.log);
+      getFID(console.log);
+      getLCP(console.log);
+    }
+  }, [pathname, searchParams]);
+  
+  return null;
+}
+```
+
+## 6. 개발 환경 설정
+
+### 6.1 package.json (Next.js)
+
+```json
+{
+  "name": "moonwave-travel",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'localhost 개발 금지. GitHub Codespaces 사용' && exit 1",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "export": "next build && next export"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "@supabase/ssr": "^0.1.0",
+    "@react-google-maps/api": "^2.19.0",
+    "@tanstack/react-query": "^5.0.0",
+    "zustand": "^4.4.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0",
+    "lucide-react": "^0.300.0",
+    "date-fns": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "14.1.0",
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/container-queries": "^0.1.0",
+    "autoprefixer": "^10.0.0",
+    "postcss": "^8.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.0"
+  }
+}
+```
+
+### 6.2 TypeScript 설정
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/types/*": ["./types/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+---
+
+**Moonwave Travel Next.js 아키텍처 v2.0**  
+*"가짜 흐름이 아닌, 실제 흐름으로 설계한다"*  
+*Next.js Static Export + Supabase Realtime + Pretendard 한글 최적화*
+
+이제 바로 Next.js로 시작하실 수 있으며, SEO와 성능 최적화를 처음부터 적용한 견고한 아키텍처입니다.
