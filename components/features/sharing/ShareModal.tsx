@@ -134,7 +134,7 @@ export function ShareModal({
     try {
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');
-      
+
       alert('초대 기능은 현재 개발 중입니다.');
     } catch (error) {
       console.error('Invite collaborator error:', error);

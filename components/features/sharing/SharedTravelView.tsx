@@ -87,8 +87,6 @@ export function SharedTravelView({
     // TODO: Implement like functionality with backend
   };
 
-
-
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4">
       {/* Header */}
@@ -155,7 +153,7 @@ export function SharedTravelView({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400" />
             <span className="text-sm text-gray-600">
-                              {travel.profiles?.name || '여행자'}님이 계획함
+              {travel.profiles?.name || '여행자'}님이 계획함
             </span>
           </div>
 
@@ -234,7 +232,9 @@ export function SharedTravelView({
               {currentDay.day_plans.length > 0 ? (
                 <div className="space-y-4">
                   {currentDay.day_plans
-                    .sort((a, b) => (a.planned_time || '').localeCompare(b.planned_time || ''))
+                    .sort((a, b) =>
+                      (a.planned_time || '').localeCompare(b.planned_time || '')
+                    )
                     .map((plan) => (
                       <div
                         key={plan.id}
@@ -268,8 +268,7 @@ export function SharedTravelView({
 
                           {plan.budget && (
                             <div className="text-sm text-gray-500">
-                              예상 비용:{' '}
-                              {plan.budget.toLocaleString('ko-KR')}원
+                              예상 비용: {plan.budget.toLocaleString('ko-KR')}원
                             </div>
                           )}
                         </div>

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-
 interface UseDeleteTravelReturn {
   deleteTravel: (travelId: string) => Promise<void>;
   loading: boolean;
