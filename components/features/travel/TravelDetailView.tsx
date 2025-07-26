@@ -85,12 +85,12 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="md" className="flex items-center gap-2">
+          <Button variant="outline" size="default" className="flex items-center gap-2">
             <Share2 className="w-4 h-4" />
             공유
           </Button>
           <Link href={`/travels/${travelId}/edit`}>
-            <Button variant="primary" size="md" className="flex items-center gap-2">
+            <Button variant="default" size="default" className="flex items-center gap-2">
               <Edit className="w-4 h-4" />
               수정
             </Button>
@@ -158,15 +158,15 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
             <Link href={`/travels/${travelId}/plans`}>
               <Button 
                 variant="outline" 
-                size="md" 
+                size="default" 
                 className="flex items-center gap-2"
               >
                 전체 보기
               </Button>
             </Link>
             <Button 
-              variant="primary" 
-              size="md" 
+              variant="default" 
+              size="default" 
               className="flex items-center gap-2"
               onClick={() => {/* 새 계획 추가 모달 열기 */}}
             >
@@ -205,7 +205,7 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <p>아직 계획이 없습니다.</p>
-                        <Button variant="primary" size="sm" className="mt-2">
+                        <Button variant="default" size="sm" className="mt-2">
                           첫 계획 추가하기
                         </Button>
                       </div>
@@ -218,7 +218,7 @@ export default function TravelDetailView({ travelId }: TravelDetailViewProps) {
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">일정이 아직 생성되지 않았습니다.</p>
-            <Button variant="primary">일정 생성하기</Button>
+            <Button variant="default">일정 생성하기</Button>
           </div>
         )}
       </div>

@@ -43,7 +43,7 @@ export default function DayPlansList({ travelId }: DayPlansListProps) {
             여행 일정을 추가해서 계획을 세워보세요!
           </p>
         </div>
-        <Button variant="primary" className="flex items-center gap-2">
+        <Button variant="default" className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
           첫 일정 추가하기
         </Button>

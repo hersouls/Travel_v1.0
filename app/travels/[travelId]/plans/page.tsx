@@ -38,7 +38,7 @@ export default function DayPlansPage({ params }: DayPlansPageProps) {
           </p>
         </div>
         <Button 
-          variant="primary" 
+          variant="default" 
           size="lg" 
           className="flex items-center gap-2"
         >
