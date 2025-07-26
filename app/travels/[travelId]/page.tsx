@@ -9,6 +9,22 @@ interface TravelDetailPageProps {
   };
 }
 
+// Generate static params for build optimization
+export async function generateStaticParams() {
+  // Return placeholder params for static generation
+  return [
+    { travelId: 'placeholder' }
+  ];
+}
+
+// Generate dynamic metadata
+export async function generateMetadata({ params: _params }: TravelDetailPageProps) {
+  return {
+    title: '여행 상세 | Moonwave Travel',
+    description: '여행 계획 상세 정보를 확인하고 관리하세요.',
+  };
+}
+
 export default function TravelDetailPage({ params }: TravelDetailPageProps) {
   const { travelId } = params;
 
@@ -25,17 +41,4 @@ export default function TravelDetailPage({ params }: TravelDetailPageProps) {
       </div>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  // Static export compatibility - provide a placeholder
-  // Actual routes will be handled dynamically at runtime
-  return [{ travelId: 'placeholder' }]
-}
-
-export async function generateMetadata({ params: _params }: TravelDetailPageProps) {
-  return {
-    title: `여행 상세 | Moonwave Travel`,
-    description: '여행 계획 상세 정보를 확인하세요.',
-  }
 }

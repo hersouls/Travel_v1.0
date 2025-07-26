@@ -39,24 +39,34 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full">
       <head>
-        {/* Pretendard 폰트 로드 */}
+        {/* Pretendard 폰트 최적화 로드 */}
         <link
-          rel="stylesheet"
-          as="style"
+          rel="preconnect"
+          href="https://cdn.jsdelivr.net"
           crossOrigin=""
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
         <link
           rel="preload"
           as="style"
-          crossOrigin=""
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+          crossOrigin=""
         />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+          crossOrigin=""
+        />
+        
+        {/* Google Maps 최적화 */}
+        <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       </head>
       <body className="h-full font-pretendard antialiased tracking-korean-normal break-keep-ko">
         <SupabaseProvider>
           <div id="root" className="h-full">
-            {children}
+            <main id="main-content" className="h-full">
+              {children}
+            </main>
           </div>
         </SupabaseProvider>
       </body>
