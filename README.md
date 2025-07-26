@@ -46,9 +46,9 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 
 ### ✅ 배포 설정
 
-- [x] **GitHub Actions 워크플로우** (`.github/workflows/deploy-nextjs.yml`)
+- [x] **GitHub Actions 워크플로우** (`.github/workflows/vercel-deployment.yml`)
 - [x] **환경 변수 검증 시스템** (`lib/env.ts`)
-- [x] **정적 배포 설정** (GitHub Pages 준비)
+- [x] **Vercel 배포 설정** (동적 기능 지원)
 
 ## 🛠 기술 스택
 
@@ -75,6 +75,23 @@ Moonwave Travel은 협업 기반의 여행 계획 관리 시스템입니다. Nex
 - **Pretendard 폰트** - 한글 최적화
 - **Moonwave 컬러 시스템** - 브랜드 아이덴티티
 - **Lucide React** - 아이콘 시스템
+
+## 🚀 배포 플랫폼 변경사항
+
+### GitHub Pages → Vercel 마이그레이션 완료 ✅
+
+**주요 변경사항:**
+- ✅ **정적 Export 제거**: 동적 기능 활성화 (Server Actions, API Routes)
+- ✅ **이미지 최적화**: Vercel 네이티브 이미지 최적화 지원
+- ✅ **자동 배포**: GitHub 연동을 통한 자동 배포 설정
+- ✅ **성능 향상**: Edge Functions 및 CDN 최적화
+- ✅ **도메인 설정**: `travel.moonwave.kr` 커스텀 도메인 연결
+
+**마이그레이션 혜택:**
+- 더 빠른 빌드 및 배포 시간
+- 실시간 Preview 배포 (Pull Request)
+- 향상된 이미지 최적화 (WebP, AVIF)
+- 서버사이드 기능 지원
 
 ## 🚀 시작하기
 
@@ -117,8 +134,8 @@ npm run dev
 # 프로덕션 빌드
 npm run build
 
-# 정적 파일 생성 (GitHub Pages용)
-# 자동으로 ./out 디렉토리에 생성됨
+# Vercel 배포용 빌드
+# 자동으로 최적화된 빌드 생성
 ```
 
 ## 📁 프로젝트 구조
@@ -228,4 +245,4 @@ moonwave-travel/
 
 ---
 
-**🎉 Phase 1 완료!** Next.js 프로젝트 초기화와 기본 구조 생성이 완료되었습니다. 이제 `travel.moonwave.kr`에서 배포 준비가 완료되었습니다.
+**🎉 Phase 1 완료!** Next.js 프로젝트 초기화와 기본 구조 생성이 완료되었습니다. 이제 Vercel을 통한 `travel.moonwave.kr` 배포가 완료되었습니다.

@@ -96,13 +96,13 @@
   - [x] ESLint 검사
   - [x] Next.js 빌드
   - [x] 환경 변수 주입
-  - [x] GitHub Pages 배포
+  - [x] Vercel 배포
 
 #### 배포 파일
 
 - [x] **public/CNAME** - `travel.moonwave.kr` 도메인 설정
 - [x] **.env.example** - 환경 변수 템플릿
-- [x] **정적 빌드 설정** - GitHub Pages 호환 static export
+- [x] **Vercel 배포 설정** - 동적 기능 지원 최적화
 
 ## 🎨 디자인 시스템 구현
 

@@ -349,7 +349,7 @@ const COMPONENT_CHECKLIST = [
 ```javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',  // GitHub Pages 배포용
+  // output: 'export',  // Vercel에서는 제거하여 동적 기능 활성화
   images: {
     unoptimized: true,
     remotePatterns: [

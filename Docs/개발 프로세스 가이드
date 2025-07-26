@@ -156,12 +156,13 @@ jobs:
     - name: Build
       run: npm run build
     
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        cname: ${{ secrets.CUSTOM_DOMAIN }}
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
 ```
 
 ### 2.3 패키지 및 설정 파일 생성
@@ -248,14 +249,14 @@ module.exports = {
 # DNS 설정 요청
 Record Type: CNAME
 Name: project-name
-Value: username.github.io
+Value: your-project.vercel.app
 TTL: 3600
 
-# GitHub Pages 설정
-Repository Settings > Pages
-Source: Deploy from a branch
-Branch: gh-pages
-Custom domain: project-name.moonwave.kr
+# Vercel 배포 설정
+Vercel Dashboard > Project Settings
+Git Repository: Connected to GitHub
+Production Branch: main
+Custom Domain: project-name.moonwave.kr
 ```
 
 ---

@@ -15,7 +15,7 @@ AI 개발 도구가 Moonwave 프로젝트를 정확히 이해하고, GitHub Repo
 ### 분석
 - **개발 환경**: GitHub Repository 직접 연동 (localhost 완전 금지)
 - **기술 스택**: React + TypeScript + Tailwind CSS + Supabase (실시간 DB)
-- **배포 전략**: GitHub Actions → GitHub Pages → xxx.moonwave.kr 자동 배포
+- **배포 전략**: GitHub Actions → Vercel → xxx.moonwave.kr 자동 배포
 - **데이터 정책**: Mock 데이터 완전 금지, Supabase DB 실시간 연동 필수
 - **디자인 시스템**: Utility-First + Pretendard 폰트 + Container Queries
 
@@ -73,7 +73,7 @@ const REQUIRED_PRACTICES = {
   
   deployment_automation: {
     trigger: "main branch push",
-    process: "GitHub Actions → Build → GitHub Pages",
+    process: "GitHub Actions → Build → Vercel",
     result: "xxx.moonwave.kr 자동 배포"
   }
 } as const;
@@ -138,12 +138,13 @@ jobs:
         VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
         VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
     
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        cname: ${{ secrets.CUSTOM_DOMAIN }}
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
 ```
 
 ### 2.3 GitHub Repository 직접 연동 설정
@@ -850,13 +851,14 @@ jobs:
         fi
         echo "✅ 빌드 출력 검증 완료"
     
-    - name: Deploy to GitHub Pages
+    - name: Deploy to Vercel
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: amondnet/vercel-action@v25
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        cname: ${{ secrets.CUSTOM_DOMAIN }}
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
         force_orphan: true
     
     - name: Verify Deployment
@@ -895,7 +897,7 @@ const REQUIRED_GITHUB_SECRETS = {
 const DNS_CONFIGURATION = {
   record_type: "CNAME",
   name: "project-name", // 프로젝트명
-  value: "username.github.io", // GitHub Pages 기본 도메인
+  value: "your-project.vercel.app", // Vercel 기본 도메인
   ttl: "3600"
 } as const;
 ```
