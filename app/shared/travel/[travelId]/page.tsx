@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: SharedTravelPageProps): Promise<Metadata> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createServerSupabaseClient();
 
   try {
     const { data: travel } = await supabase
@@ -120,11 +120,11 @@ export default async function SharedTravelPage({
     notFound();
   }
 
-  return (
+      return (
     <div className="min-h-screen bg-gray-50">
       <SharedTravelView
-        travel={data.travel}
-        collaborators={data.collaborators}
+        travel={data.travel as any}
+        collaborators={data.collaborators as any}
       />
     </div>
   );
