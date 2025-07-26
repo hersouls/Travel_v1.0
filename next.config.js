@@ -27,6 +27,7 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}/api`
       : 'http://localhost:3000/api',
+    ANALYZE: process.env.ANALYZE || 'false',
   },
   
   // 실험적 기능 활성화
@@ -42,11 +43,6 @@ const nextConfig = {
   
   // Vercel에서 권장하는 설정
   poweredByHeader: false,
-  
-  // 번들 분석기
-  env: {
-    ANALYZE: process.env.ANALYZE || 'false',
-  },
 };
 
 module.exports = nextConfig;
