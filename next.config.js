@@ -22,6 +22,36 @@ const nextConfig = {
     ],
   },
 
+  // Security headers
+  async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    // More permissive CSP for development, stricter for production
+    const cspDirectives = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com`,
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: https: blob:",
+      "connect-src 'self' https://*.supabase.co https://maps.googleapis.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ].filter(Boolean).join('; ');
+
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: cspDirectives,
+          },
+        ],
+      },
+    ];
+  },
+
   // 환경별 설정
   env: {
     NEXT_PUBLIC_API_URL: process.env.VERCEL_URL
