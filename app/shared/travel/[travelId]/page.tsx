@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { SharedTravelView } from '@/components/features/sharing/SharedTravelView';
 
 interface SharedTravelPageProps {
@@ -20,113 +19,114 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: SharedTravelPageProps): Promise<Metadata> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createServerSupabaseClient();
 
   try {
     const { data: travel } = await supabase
       .from('travel_plans')
       .select('title, description, start_date, end_date, destination')
-      .eq('id', params.travelId)
-      .eq('is_public', true)
+      .eq('id', params.travelId as any)
+      .eq('is_public', true as any)
       .single();
 
     if (!travel) {
       return {
         title: '여행 계획을 찾을 수 없습니다 | Moonwave Travel',
+        description: '요청하신 여행 계획을 찾을 수 없습니다.',
       };
     }
 
-    const startDate = new Date(travel.start_date).toLocaleDateString('ko-KR');
-    const endDate = new Date(travel.end_date).toLocaleDateString('ko-KR');
+    const title = `${(travel as any).title} | Moonwave Travel`;
+    const description = 
+      (travel as any).description || 
+      `${(travel as any).destination}으로의 여행 계획 (${new Date((travel as any).start_date).toLocaleDateString('ko-KR')} ~ ${new Date((travel as any).end_date).toLocaleDateString('ko-KR')})`;
 
     return {
-      title: `${travel.title} | Moonwave Travel`,
-      description:
-        travel.description ||
-        `${travel.destination}으로의 특별한 여행 (${startDate} - ${endDate})`,
+      title,
+      description,
       openGraph: {
-        title: travel.title,
-        description:
-          travel.description || `${travel.destination}으로의 특별한 여행`,
+        title,
+        description,
         type: 'article',
-        url: `/shared/travel/${params.travelId}`,
+        images: [
+          {
+            url: '/og-travel-plan.jpg',
+            width: 1200,
+            height: 630,
+            alt: (travel as any).title,
+          },
+        ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: travel.title,
-        description:
-          travel.description || `${travel.destination}으로의 특별한 여행`,
+        title,
+        description,
+        images: ['/og-travel-plan.jpg'],
       },
     };
-  } catch {
+  } catch (error) {
+    console.error('메타데이터 생성 중 오류:', error);
     return {
-      title: '여행 계획을 찾을 수 없습니다 | Moonwave Travel',
+      title: '여행 계획 | Moonwave Travel',
+      description: '멋진 여행 계획을 공유합니다.',
     };
   }
 }
 
-async function getSharedTravel(travelId: string) {
-  const supabase = createServerComponentClient({ cookies });
+export default async function SharedTravelPage({ params }: SharedTravelPageProps) {
+  const supabase = createServerSupabaseClient();
 
   try {
-    // Get travel plan
+    // 공개된 여행 계획과 관련 데이터 조회
     const { data: travel, error: travelError } = await supabase
       .from('travel_plans')
-      .select(
-        `
+      .select(`
         *,
-        profiles:user_id (
+        profiles!travel_plans_user_id_fkey(
           full_name,
           avatar_url
         ),
-        travel_days (
-          *,
-          day_plans (
-            *
+        travel_days(
+          id,
+          day_number,
+          day_plans(
+            id,
+            time,
+            activity,
+            location,
+            notes,
+            estimated_cost,
+            latitude,
+            longitude
           )
         )
-      `
-      )
-      .eq('id', travelId)
-      .eq('is_public', true)
+      `)
+      .eq('id', params.travelId as any)
+      .eq('is_public', true as any)
       .single();
 
     if (travelError || !travel) {
-      return null;
+      console.error('여행 계획 조회 오류:', travelError);
+      notFound();
     }
 
-    // Get collaborators
-    const { data: collaborators } = await supabase
+    // 협업자 정보 조회
+    const { data: collaborators = [] } = await supabase
       .from('collaborators')
       .select('*')
-      .eq('travel_plan_id', travelId)
-      .eq('status', 'accepted');
+      .eq('travel_plan_id', params.travelId as any)
+      .eq('status', 'accepted' as any);
 
-    return {
-      travel,
-      collaborators: collaborators || [],
-    };
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <SharedTravelView 
+          travel={travel as any} 
+          collaborators={collaborators as any} 
+        />
+      </div>
+    );
   } catch (error) {
-    console.error('Get shared travel error:', error);
-    return null;
-  }
-}
-
-export default async function SharedTravelPage({
-  params,
-}: SharedTravelPageProps) {
-  const data = await getSharedTravel(params.travelId);
-
-  if (!data) {
+    console.error('페이지 로드 중 오류:', error);
     notFound();
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <SharedTravelView
-        travel={data.travel}
-        collaborators={data.collaborators}
-      />
-    </div>
-  );
 }

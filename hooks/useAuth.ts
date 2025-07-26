@@ -1,188 +1,79 @@
 'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import type { User, Session } from '@supabase/supabase-js';
 
-interface AuthState {
+interface UseAuthReturn {
   user: User | null;
+  session: Session | null;
   loading: boolean;
-  error: string | null;
+  signOut: () => Promise<void>;
 }
 
-export function useAuth() {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    error: null,
-  });
-  const router = useRouter();
-  const supabase = createClientComponentClient();
+export function useAuth(): UseAuthReturn {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session
-    const getUser = async () => {
+    // 초기 세션 가져오기
+    const getInitialSession = async () => {
       try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
-
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
         if (error) {
-          setAuthState((prev) => ({
-            ...prev,
-            error: error.message,
-            loading: false,
-          }));
-          return;
+          console.error('세션 가져오기 오류:', error);
+        } else {
+          setSession(session);
+          setUser(session?.user || null);
         }
-
-        setAuthState((prev) => ({
-          ...prev,
-          user: session?.user ?? null,
-          loading: false,
-          error: null,
-        }));
       } catch (error) {
-        setAuthState((prev) => ({
-          ...prev,
-          error: '인증 상태를 확인할 수 없습니다.',
-          loading: false,
-        }));
+        console.error('초기 세션 로드 오류:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    getUser();
+    getInitialSession();
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setAuthState((prev) => ({
-        ...prev,
-        user: session?.user ?? null,
-        loading: false,
-        error: null,
-      }));
-
-      if (event === 'SIGNED_IN') {
-        router.push('/travels');
-        router.refresh();
-      } else if (event === 'SIGNED_OUT') {
-        router.push('/');
-        router.refresh();
+    // 인증 상태 변경 구독
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('인증 상태 변경:', event, session);
+        setSession(session);
+        setUser(session?.user || null);
+        setLoading(false);
       }
-    });
+    );
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase.auth, router]);
+  }, []);
 
   const signOut = async () => {
     try {
-      setAuthState((prev) => ({ ...prev, loading: true, error: null }));
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
-
       if (error) {
-        setAuthState((prev) => ({
-          ...prev,
-          error: error.message,
-          loading: false,
-        }));
-      } else {
-        setAuthState((prev) => ({
-          ...prev,
-          user: null,
-          loading: false,
-          error: null,
-        }));
-        router.push('/');
+        console.error('로그아웃 오류:', error);
+        throw error;
       }
     } catch (error) {
-      setAuthState((prev) => ({
-        ...prev,
-        error: '로그아웃 중 문제가 발생했습니다.',
-        loading: false,
-      }));
-    }
-  };
-
-  const signInWithEmail = async (email: string) => {
-    try {
-      setAuthState((prev) => ({ ...prev, loading: true, error: null }));
-
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/travels`,
-        },
-      });
-
-      if (error) {
-        setAuthState((prev) => ({
-          ...prev,
-          error:
-            error.message === 'Invalid login credentials'
-              ? '유효하지 않은 이메일 주소입니다.'
-              : '로그인 중 문제가 발생했습니다.',
-          loading: false,
-        }));
-        return false;
-      }
-
-      setAuthState((prev) => ({ ...prev, loading: false, error: null }));
-      return true;
-    } catch (error) {
-      setAuthState((prev) => ({
-        ...prev,
-        error: '네트워크 오류가 발생했습니다.',
-        loading: false,
-      }));
-      return false;
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    try {
-      setAuthState((prev) => ({ ...prev, loading: true, error: null }));
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/travels`,
-        },
-      });
-
-      if (error) {
-        setAuthState((prev) => ({
-          ...prev,
-          error: '구글 로그인 중 문제가 발생했습니다.',
-          loading: false,
-        }));
-        return false;
-      }
-
-      // Don't set loading to false here as user will be redirected
-      return true;
-    } catch (error) {
-      setAuthState((prev) => ({
-        ...prev,
-        error: '네트워크 오류가 발생했습니다.',
-        loading: false,
-      }));
-      return false;
+      console.error('로그아웃 실패:', error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   return {
-    user: authState.user,
-    loading: authState.loading,
-    error: authState.error,
-    isAuthenticated: !!authState.user,
+    user,
+    session,
+    loading,
     signOut,
-    signInWithEmail,
-    signInWithGoogle,
   };
 }

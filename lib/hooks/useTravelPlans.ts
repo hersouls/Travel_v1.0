@@ -1,148 +1,89 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { TravelPlan, TravelStatus, Database } from '@/lib/types/database';
+import { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
+import type { Database } from '@/lib/types/database';
 
-interface UseTravelPlansOptions {
-  status?: TravelStatus;
-  limit?: number;
-  userId?: string;
-}
+type TravelPlan = Database['public']['Tables']['travel_plans']['Row'];
 
 interface UseTravelPlansReturn {
-  data: TravelPlan[] | null;
+  travels: TravelPlan[];
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
 }
 
-export function useTravelPlans(
-  options: UseTravelPlansOptions = {}
-): UseTravelPlansReturn {
-  const { status, limit, userId } = options;
-  const [data, setData] = useState<TravelPlan[] | null>(null);
+export function useTravelPlans(user: User | null): UseTravelPlansReturn {
+  const [travels, setTravels] = useState<TravelPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
-  const fetchTravelPlans = async () => {
+  const fetchTravels = async () => {
+    if (!user) {
+      setTravels([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
-      // 현재 사용자 가져오기 (userId가 제공되지 않은 경우)
-      let currentUserId = userId;
-      if (!currentUserId) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (!user) {
-          throw new Error('로그인이 필요합니다.');
-        }
-        currentUserId = user.id;
-      }
-
-      // 쿼리 빌드
-      let query = supabase
+      const { data, error: fetchError } = await supabase
         .from('travel_plans')
         .select('*')
-        .eq('user_id', currentUserId)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      // 상태 필터 적용
-      if (status) {
-        query = query.eq('status', status);
-      }
-
-      // 제한 적용
-      if (limit) {
-        query = query.limit(limit);
-      }
-
-      const { data: travels, error: fetchError } = await query;
-
       if (fetchError) {
-        throw new Error(fetchError.message);
+        throw fetchError;
       }
 
-      setData(travels || []);
+      setTravels(data || []);
     } catch (err) {
-      console.error('여행 계획 조회 에러:', err);
-      setError(
-        err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.'
-      );
+      console.error('여행 목록 조회 오류:', err);
+      setError(err instanceof Error ? err.message : '여행 목록을 불러올 수 없습니다.');
+      setTravels([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // 실시간 구독 설정
   useEffect(() => {
-    fetchTravelPlans();
+    fetchTravels();
 
-    // 현재 사용자 확인
-    const setupRealtimeSubscription = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const currentUserId = userId || user.id;
-
-      // travel_plans 테이블 변경 구독
+    // 실시간 구독 설정
+    if (user) {
       const subscription = supabase
-        .channel(`travel_plans_${currentUserId}`)
+        .channel('travel_plans_changes')
         .on(
           'postgres_changes',
           {
-            event: '*', // INSERT, UPDATE, DELETE 모두 구독
+            event: '*',
             schema: 'public',
             table: 'travel_plans',
-            filter: `user_id=eq.${currentUserId}`,
+            filter: `user_id=eq.${user.id}`,
           },
-          (payload) => {
-            console.log('실시간 변경:', payload);
-
-            if (payload.eventType === 'INSERT') {
-              const newTravel = payload.new as TravelPlan;
-              setData((prevData) =>
-                prevData ? [newTravel, ...prevData] : [newTravel]
-              );
-            } else if (payload.eventType === 'UPDATE') {
-              const updatedTravel = payload.new as TravelPlan;
-              setData(
-                (prevData) =>
-                  prevData?.map((travel) =>
-                    travel.id === updatedTravel.id ? updatedTravel : travel
-                  ) || null
-              );
-            } else if (payload.eventType === 'DELETE') {
-              const deletedTravel = payload.old as TravelPlan;
-              setData(
-                (prevData) =>
-                  prevData?.filter(
-                    (travel) => travel.id !== deletedTravel.id
-                  ) || null
-              );
-            }
+          () => {
+            console.log('여행 계획 실시간 업데이트 감지');
+            fetchTravels();
           }
         )
         .subscribe();
 
-      return () => {
-        subscription.unsubscribe();
-      };
-    };
-
-    setupRealtimeSubscription();
-  }, [status, limit, userId]); // eslint-disable-line react-hooks/exhaustive-deps
+             return () => {
+         subscription.unsubscribe();
+       };
+     }
+   }, [user?.id, fetchTravels, supabase]);
 
   return {
-    data,
+    travels,
     loading,
     error,
-    refetch: fetchTravelPlans,
+    refetch: fetchTravels,
   };
 }

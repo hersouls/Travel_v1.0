@@ -17,6 +17,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { formatKoreanDate, calculateTravelDuration } from '@/lib/utils';
+import { useTravelLikes } from '@/lib/hooks/useTravelLikes';
 
 interface TravelPlan {
   id: string;
@@ -72,7 +73,14 @@ export function SharedTravelView({
   collaborators,
 }: SharedTravelViewProps) {
   const [selectedDay, setSelectedDay] = useState<number>(1);
-  const [isLiked, setIsLiked] = useState(false);
+
+  // 좋아요 기능 훅 사용
+  const {
+    likesCount,
+    isLiked,
+    isLoading: likesLoading,
+    toggleLike,
+  } = useTravelLikes(travel.id);
 
   const duration = calculateTravelDuration(travel.start_date, travel.end_date);
   const currentDay = travel.travel_days.find(
@@ -104,9 +112,12 @@ export function SharedTravelView({
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    // TODO: Implement like functionality with backend
+  const handleLike = async () => {
+    try {
+      await toggleLike();
+    } catch (error) {
+      console.error('좋아요 처리 실패:', error);
+    }
   };
 
   const getTravelTypeColor = (type: string) => {
@@ -182,10 +193,16 @@ export function SharedTravelView({
               variant="outline"
               size="sm"
               onClick={handleLike}
+              disabled={likesLoading}
               className={`flex items-center gap-2 ${isLiked ? 'border-red-200 text-red-600' : ''}`}
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
               {isLiked ? '좋아함' : '좋아요'}
+              {likesCount > 0 && (
+                <span className="ml-1 text-sm text-gray-600">
+                  {likesCount}
+                </span>
+              )}
             </Button>
             <Button
               variant="outline"

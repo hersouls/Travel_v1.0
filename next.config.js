@@ -33,7 +33,7 @@ const nextConfig = {
   // 실험적 기능 활성화
   experimental: {
     // Server Actions are now available by default in Next.js 14, no need to explicitly enable
-    optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
+    optimizePackageImports: ['lucide-react', '@supabase/ssr'],
   },
 
   // 컴파일러 최적화

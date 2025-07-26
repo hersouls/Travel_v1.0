@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -65,7 +65,7 @@ export function ShareModal({
   const [removingCollaborators, setRemovingCollaborators] = useState<
     Set<string>
   >(new Set());
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   useEffect(() => {
     if (isOpen) {
@@ -135,19 +135,48 @@ export function ShareModal({
       // Add collaborator to database
       const { error } = await supabase.from('collaborators').insert({
         travel_plan_id: travelId,
-        invited_by: user.id,
+        user_id: user.id,
         email: inviteEmail.trim(),
         role: inviteRole,
         status: 'pending',
-      });
+      } as any);
 
       if (error) throw error;
 
+      // 이메일 초대 발송
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (!session.session?.access_token) {
+          throw new Error('인증 토큰이 없습니다.');
+        }
+
+        const response = await fetch('/api/send-invitation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.session.access_token}`,
+          },
+          body: JSON.stringify({
+            travelPlanId: travelId,
+            email: inviteEmail.trim(),
+            role: inviteRole,
+            message: `함께 여행 계획을 세워보아요!`,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || '이메일 발송에 실패했습니다.');
+        }
+
+        console.log('초대 이메일이 성공적으로 발송되었습니다:', inviteEmail.trim());
+      } catch (emailError) {
+        console.error('이메일 발송 오류:', emailError);
+        // 이메일 발송 실패해도 초대는 성공한 것으로 처리 (사용자가 직접 링크 공유 가능)
+      }
+
       onCollaboratorAdd?.(inviteEmail.trim());
       setInviteEmail('');
-
-      // TODO: Send invitation email
-      console.log('Invitation email should be sent to:', inviteEmail.trim());
     } catch (error) {
       console.error('Invite collaborator error:', error);
       alert('협력자 초대 중 오류가 발생했습니다.');

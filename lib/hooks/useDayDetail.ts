@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { TravelDay, DayPlan, Database } from '@/lib/types/database';
+import { createClient } from '@/lib/supabase/client';
+import { TravelDay, DayPlan } from '@/lib/types/database';
 
 // 여행 일정과 세부 계획을 포함한 확장 타입
 interface DayDetailWithPlans extends TravelDay {
@@ -21,7 +21,7 @@ export function useDayDetail(dayId: string): UseDayDetailReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
   const fetchDayDetail = async () => {
     try {
