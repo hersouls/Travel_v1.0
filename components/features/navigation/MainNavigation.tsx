@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { UserMenu } from '@/components/features/auth/UserMenu';
 import { Button } from '@/components/ui/Button';
 import { Menu, X, Map, Calendar, Home } from 'lucide-react';
+import { GLASS_CLASSES } from '@/components/ui/backgrounds';
 
 export function MainNavigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,13 +38,13 @@ export function MainNavigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white">
+    <nav className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold text-gray-900 tracking-korean-normal"
+            className="flex items-center gap-2 text-xl font-bold text-white tracking-korean-normal"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
               <span className="text-sm text-white">🌙</span>
@@ -61,8 +62,8 @@ export function MainNavigation() {
                   href={item.href}
                   className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors tracking-korean-normal ${
                     isActivePath(item.href)
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/90 hover:bg-white/20 hover:text-white'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -108,8 +109,8 @@ export function MainNavigation() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors tracking-korean-normal ${
                       isActivePath(item.href)
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
+                        ? 'bg-white/20 text-white'
+                        : 'text-white/90 hover:bg-white/20 hover:text-white'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
@@ -120,7 +121,7 @@ export function MainNavigation() {
             </div>
 
             {/* Mobile User Menu */}
-            <div className="mt-4 border-t border-gray-200 pt-4">
+            <div className="mt-4 border-t border-white/20 pt-4">
               <UserMenu />
             </div>
           </div>
