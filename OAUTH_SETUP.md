@@ -5,10 +5,12 @@
 ## 🎯 설정된 OAuth 구성
 
 ### 승인된 JavaScript 원본
+
 - `https://travel.moonwave.kr` (프로덕션)
 - `http://localhost:3000` (개발 환경)
 
 ### 승인된 리디렉션 URI
+
 - `http://localhost:3000/auth/callback` (개발 환경)
 - `https://travel.moonwave.kr/auth/callback` (프로덕션)
 - `https://travel.moonwave.kr/travels` (프로덕션)
@@ -25,6 +27,7 @@
 ### 2. OAuth 클라이언트 생성
 
 #### Web Application 클라이언트 생성
+
 1. **Application type**: Web application 선택
 2. **Name**: "Moonwave Travel" 입력
 3. **Authorized JavaScript origins** 추가:
@@ -61,6 +64,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ### 2. Google OAuth 정보 입력
 
 Supabase Google 제공자 설정에서:
+
 - **Client ID**: Google Cloud Console에서 생성한 클라이언트 ID
 - **Client Secret**: Google Cloud Console에서 생성한 클라이언트 시크릿
 - **Redirect URL**: Supabase에서 제공하는 리디렉션 URL 사용
@@ -68,16 +72,19 @@ Supabase Google 제공자 설정에서:
 ## 🚀 구현된 기능
 
 ### 1. OAuth 콜백 처리
+
 - `app/(auth)/auth/callback/route.ts`: OAuth 콜백을 처리하는 API 라우트
 - 인증 코드를 세션으로 교환
 - 성공 시 `/travels` 페이지로 리디렉션
 
 ### 2. 환경별 리디렉션 URL 관리
+
 - `lib/oauth.ts`: OAuth 관련 유틸리티 함수
 - 개발/프로덕션 환경에 따른 자동 URL 선택
 - 허용된 원본 및 리디렉션 URI 검증
 
 ### 3. 보안 설정
+
 - `middleware.ts`: OAuth 콜백 경로 허용
 - 허용된 도메인 검증
 - 환경 변수 검증
@@ -85,11 +92,13 @@ Supabase Google 제공자 설정에서:
 ## 🔍 설정 확인
 
 ### 개발 환경에서 확인
+
 ```bash
 npm run dev
 ```
 
 콘솔에서 다음 정보 확인:
+
 ```
 🔐 OAuth Configuration Status:
 ✅ OAuth Config: Valid
@@ -99,6 +108,7 @@ npm run dev
 ```
 
 ### 프로덕션 환경에서 확인
+
 ```bash
 npm run build
 npm start
@@ -123,15 +133,17 @@ npm start
 ### 디버깅 방법
 
 1. **환경 변수 확인**
+
    ```bash
    # 개발 환경에서 환경 변수 상태 확인
    npm run dev
    ```
 
 2. **OAuth 설정 검증**
+
    ```typescript
    import { validateOAuthConfig } from '@/lib/oauth';
-   
+
    const config = validateOAuthConfig();
    console.log(config);
    ```
