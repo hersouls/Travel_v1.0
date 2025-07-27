@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import type { Database, DayPlan } from '@/lib/types/database';
+import { getKoreanErrorMessage, logError } from '@/lib/utils/errorHandling';
 
 type TravelPlan = Database['public']['Tables']['travel_plans']['Row'];
 type TravelPlanWithDays = TravelPlan & {
@@ -78,7 +79,8 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
         .order('created_at', { ascending: false });
 
       if (fetchError) {
-        throw new Error(`여행 데이터 로딩 실패: ${fetchError.message}`);
+        logError(fetchError, 'database', 'fetchTravelPlans');
+        throw new Error(getKoreanErrorMessage(fetchError, 'fetch'));
       }
 
       // travel_days를 day_number로 정렬
@@ -91,9 +93,10 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
 
       setTravelPlans(sortedData);
     } catch (err) {
+      logError(err, 'database', 'fetchTravelPlans');
       console.error('여행 계획 가져오기 실패:', err);
       setError(
-        err instanceof Error ? err : new Error('알 수 없는 오류가 발생했습니다')
+        err instanceof Error ? err : new Error(getKoreanErrorMessage(err, 'fetch'))
       );
     } finally {
       setLoading(false);
@@ -115,7 +118,11 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
           | 'collaborators'
         >
     ): Promise<TravelPlan | null> => {
-      if (!user) throw new Error('로그인이 필요합니다');
+      if (!user) {
+        const authError = { message: 'Not authenticated' };
+        logError(authError, 'auth', 'createTravelPlan');
+        throw new Error(getKoreanErrorMessage(authError, 'auth'));
+      }
 
       try {
         const { data: newPlan, error: createError } = await supabase
@@ -130,18 +137,20 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
           .single();
 
         if (createError) {
-          throw new Error(`여행 계획 생성 실패: ${createError.message}`);
+          logError(createError, 'database', 'createTravelPlan');
+          throw new Error(getKoreanErrorMessage(createError, 'create'));
         }
 
         // 목록 새로고침
         await fetchTravelPlans();
         return newPlan;
       } catch (err) {
+        logError(err, 'database', 'createTravelPlan');
         console.error('여행 계획 생성 실패:', err);
         setError(
           err instanceof Error
             ? err
-            : new Error('여행 계획 생성에 실패했습니다')
+            : new Error(getKoreanErrorMessage(err, 'create'))
         );
         return null;
       }
@@ -152,7 +161,11 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
   // 여행 계획 수정
   const updateTravelPlan = useCallback(
     async (id: string, data: Partial<TravelPlan>): Promise<boolean> => {
-      if (!user) throw new Error('로그인이 필요합니다');
+      if (!user) {
+        const authError = { message: 'Not authenticated' };
+        logError(authError, 'auth', 'updateTravelPlan');
+        throw new Error(getKoreanErrorMessage(authError, 'auth'));
+      }
 
       try {
         const { error: updateError } = await supabase
@@ -162,18 +175,20 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
           .eq('user_id', user.id);
 
         if (updateError) {
-          throw new Error(`여행 계획 수정 실패: ${updateError.message}`);
+          logError(updateError, 'database', 'updateTravelPlan');
+          throw new Error(getKoreanErrorMessage(updateError, 'update'));
         }
 
         // 목록 새로고침
         await fetchTravelPlans();
         return true;
       } catch (err) {
+        logError(err, 'database', 'updateTravelPlan');
         console.error('여행 계획 수정 실패:', err);
         setError(
           err instanceof Error
             ? err
-            : new Error('여행 계획 수정에 실패했습니다')
+            : new Error(getKoreanErrorMessage(err, 'update'))
         );
         return false;
       }
@@ -184,7 +199,11 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
   // 여행 계획 삭제
   const deleteTravelPlan = useCallback(
     async (id: string): Promise<boolean> => {
-      if (!user) throw new Error('로그인이 필요합니다');
+      if (!user) {
+        const authError = { message: 'Not authenticated' };
+        logError(authError, 'auth', 'deleteTravelPlan');
+        throw new Error(getKoreanErrorMessage(authError, 'auth'));
+      }
 
       try {
         const { error: deleteError } = await supabase
@@ -194,18 +213,20 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
           .eq('user_id', user.id);
 
         if (deleteError) {
-          throw new Error(`여행 계획 삭제 실패: ${deleteError.message}`);
+          logError(deleteError, 'database', 'deleteTravelPlan');
+          throw new Error(getKoreanErrorMessage(deleteError, 'delete'));
         }
 
         // 목록 새로고침
         await fetchTravelPlans();
         return true;
       } catch (err) {
+        logError(err, 'database', 'deleteTravelPlan');
         console.error('여행 계획 삭제 실패:', err);
         setError(
           err instanceof Error
             ? err
-            : new Error('여행 계획 삭제에 실패했습니다')
+            : new Error(getKoreanErrorMessage(err, 'delete'))
         );
         return false;
       }

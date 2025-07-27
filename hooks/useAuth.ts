@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { getKoreanErrorMessage, logError } from '@/lib/utils/errorHandling';
 
 interface AuthState {
   user: User | null;
@@ -30,9 +31,10 @@ export function useAuth() {
         } = await supabase.auth.getSession();
 
         if (error) {
+          logError(error, 'auth', 'getSession');
           setAuthState((prev) => ({
             ...prev,
-            error: error.message,
+            error: getKoreanErrorMessage(error, 'auth'),
             loading: false,
           }));
           return;
@@ -45,9 +47,10 @@ export function useAuth() {
           error: null,
         }));
       } catch (error) {
+        logError(error, 'auth', 'getSession');
         setAuthState((prev) => ({
           ...prev,
-          error: '인증 상태를 확인할 수 없습니다.',
+          error: getKoreanErrorMessage(error, 'auth'),
           loading: false,
         }));
       }
@@ -86,9 +89,10 @@ export function useAuth() {
       const { error } = await supabase.auth.signOut();
 
       if (error) {
+        logError(error, 'auth', 'signOut');
         setAuthState((prev) => ({
           ...prev,
-          error: error.message,
+          error: getKoreanErrorMessage(error, 'auth'),
           loading: false,
         }));
       } else {
@@ -101,9 +105,10 @@ export function useAuth() {
         router.push('/');
       }
     } catch (error) {
+      logError(error, 'auth', 'signOut');
       setAuthState((prev) => ({
         ...prev,
-        error: '로그아웃 중 문제가 발생했습니다.',
+        error: getKoreanErrorMessage(error, 'auth'),
         loading: false,
       }));
     }
@@ -121,12 +126,10 @@ export function useAuth() {
       });
 
       if (error) {
+        logError(error, 'auth', 'signInWithEmail');
         setAuthState((prev) => ({
           ...prev,
-          error:
-            error.message === 'Invalid login credentials'
-              ? '유효하지 않은 이메일 주소입니다.'
-              : '로그인 중 문제가 발생했습니다.',
+          error: getKoreanErrorMessage(error, 'auth'),
           loading: false,
         }));
         return false;
@@ -135,9 +138,10 @@ export function useAuth() {
       setAuthState((prev) => ({ ...prev, loading: false, error: null }));
       return true;
     } catch (error) {
+      logError(error, 'auth', 'signInWithEmail');
       setAuthState((prev) => ({
         ...prev,
-        error: '네트워크 오류가 발생했습니다.',
+        error: getKoreanErrorMessage(error, 'auth'),
         loading: false,
       }));
       return false;
@@ -156,9 +160,10 @@ export function useAuth() {
       });
 
       if (error) {
+        logError(error, 'auth', 'signInWithGoogle');
         setAuthState((prev) => ({
           ...prev,
-          error: '구글 로그인 중 문제가 발생했습니다.',
+          error: getKoreanErrorMessage(error, 'auth'),
           loading: false,
         }));
         return false;
@@ -167,9 +172,10 @@ export function useAuth() {
       // Don't set loading to false here as user will be redirected
       return true;
     } catch (error) {
+      logError(error, 'auth', 'signInWithGoogle');
       setAuthState((prev) => ({
         ...prev,
-        error: '네트워크 오류가 발생했습니다.',
+        error: getKoreanErrorMessage(error, 'auth'),
         loading: false,
       }));
       return false;
