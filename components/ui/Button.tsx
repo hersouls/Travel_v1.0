@@ -115,9 +115,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             </span>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
-            {children}
-          </div>
+          <div className="flex items-center gap-2">{children}</div>
         )}
       </Comp>
     );
