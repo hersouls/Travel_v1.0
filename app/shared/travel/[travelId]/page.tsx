@@ -97,7 +97,8 @@ async function getSharedTravel(travelId: string) {
     // Get collaborators
     const { data: collaborators } = await supabase
       .from('collaborators')
-      .select(`
+      .select(
+        `
         id,
         travel_plan_id,
         user_id,
@@ -109,22 +110,27 @@ async function getSharedTravel(travelId: string) {
           avatar_url,
           email
         )
-      `)
+      `
+      )
       .eq('travel_plan_id', travelId)
       .not('joined_at', 'is', null);
 
     // Transform collaborators to match ExtendedCollaborator interface
-    const transformedCollaborators = (collaborators || []).map(collaborator => ({
-      id: collaborator.id,
-      email: collaborator.profiles?.email || '',
-      role: collaborator.role as 'viewer' | 'editor',
-      status: 'accepted' as const,
-      joined_at: collaborator.joined_at,
-      profiles: collaborator.profiles ? {
-        name: collaborator.profiles.name,
-        avatar_url: collaborator.profiles.avatar_url
-      } : null
-    }));
+    const transformedCollaborators = (collaborators || []).map(
+      (collaborator) => ({
+        id: collaborator.id,
+        email: collaborator.profiles?.email || '',
+        role: collaborator.role as 'viewer' | 'editor',
+        status: 'accepted' as const,
+        joined_at: collaborator.joined_at,
+        profiles: collaborator.profiles
+          ? {
+              name: collaborator.profiles.name,
+              avatar_url: collaborator.profiles.avatar_url,
+            }
+          : null,
+      })
+    );
 
     return {
       travel,
