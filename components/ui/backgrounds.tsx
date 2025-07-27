@@ -16,12 +16,12 @@ export interface WaveEffectProps {
   className?: string;
 }
 
-export interface GlassCardProps {
+export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   variant?: 'light' | 'medium' | 'dark';
   className?: string;
   onClick?: () => void;
-} & React.HTMLAttributes<HTMLDivElement>;
+}
 
 export interface HeaderBackgroundProps {
   children: React.ReactNode;

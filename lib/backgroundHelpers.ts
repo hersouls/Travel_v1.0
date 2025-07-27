@@ -107,7 +107,18 @@ export const getThemeBackground = (
   variant: keyof typeof GRADIENT_CLASSES,
   theme: 'light' | 'dark' = 'dark'
 ): string => {
-  return THEME_BACKGROUNDS[theme][variant] || THEME_BACKGROUNDS.dark.moonwave;
+  // THEME_BACKGROUNDS에 해당 variant가 있는지 확인
+  if (variant in THEME_BACKGROUNDS[theme]) {
+    return THEME_BACKGROUNDS[theme][variant as keyof typeof THEME_BACKGROUNDS[typeof theme]];
+  }
+  
+  // variant가 THEME_BACKGROUNDS에 없으면 GRADIENT_CLASSES에서 직접 가져오기
+  if (variant in GRADIENT_CLASSES) {
+    return GRADIENT_CLASSES[variant];
+  }
+  
+  // 기본값 반환
+  return THEME_BACKGROUNDS.dark.moonwave;
 };
 
 // 배경 전환 애니메이션 클래스

@@ -206,7 +206,7 @@ export default function HomePage() {
               </Button>
             )}
           </div>
-        </div>
+        </GlassCard>
       </div>
       
       {/* 웨이브 효과 */}
@@ -217,6 +217,6 @@ export default function HomePage() {
         height={80}
         className="absolute bottom-0"
       />
-    </div>
+    </GradientBackground>
   );
 }
