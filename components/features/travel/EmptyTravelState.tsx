@@ -41,15 +41,16 @@ export function EmptyTravelState() {
         {/* 액션 버튼 */}
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild size="lg">
-            <Link href="/travels/new">
-              <Plus className="mr-2 h-5 w-5" />새 여행 만들기
+            <Link href="/travels/new" className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              <span>새 여행 만들기</span>
             </Link>
           </Button>
 
           <Button asChild variant="outline" size="lg">
-            <Link href="/examples">
-              <Compass className="mr-2 h-5 w-5" />
-              예시 여행 보기
+            <Link href="/examples" className="flex items-center gap-2">
+              <Compass className="h-5 w-5" />
+              <span>예시 여행 보기</span>
             </Link>
           </Button>
         </div>

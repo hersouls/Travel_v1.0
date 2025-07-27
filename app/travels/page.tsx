@@ -127,8 +127,9 @@ export default function TravelsPage() {
 
             <div className="flex-shrink-0 @lg/header:ml-6">
               <Button asChild size="lg" className="w-full @lg/header:w-auto">
-                <Link href="/travels/new">
-                  <Plus className="mr-2 h-5 w-5" />새 여행 만들기
+                <Link href="/travels/new" className="flex items-center gap-2">
+                  <Plus className="h-5 w-5" />
+                  <span>새 여행 만들기</span>
                 </Link>
               </Button>
             </div>
