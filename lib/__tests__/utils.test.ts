@@ -42,7 +42,7 @@ describe('utils', () => {
     it('한국어 날짜 형식으로 올바르게 포매팅해야 함', () => {
       const date = new Date('2025-08-15');
       const result = formatKoreanDate(date);
-      
+
       expect(result).toContain('2025년');
       expect(result).toContain('8월');
       expect(result).toContain('15일');
@@ -50,7 +50,7 @@ describe('utils', () => {
 
     it('문자열 날짜를 올바르게 처리해야 함', () => {
       const result = formatKoreanDate('2025-08-15');
-      
+
       expect(result).toContain('2025년');
       expect(result).toContain('8월');
       expect(result).toContain('15일');
@@ -61,13 +61,13 @@ describe('utils', () => {
     it('한국어 시간 형식으로 올바르게 포매팅해야 함', () => {
       const date = new Date('2025-08-15T14:30:00');
       const result = formatKoreanTime(date);
-      
+
       expect(result).toMatch(/오후 02:30/);
     });
 
     it('문자열 시간을 올바르게 처리해야 함', () => {
       const result = formatKoreanTime('2025-08-15T09:15:00');
-      
+
       expect(result).toMatch(/오전 09:15/);
     });
   });
@@ -143,15 +143,21 @@ describe('utils', () => {
 
   describe('calculateTravelDuration', () => {
     it('당일치기를 올바르게 계산해야 함', () => {
-      expect(calculateTravelDuration('2025-08-15', '2025-08-15')).toBe('당일치기');
+      expect(calculateTravelDuration('2025-08-15', '2025-08-15')).toBe(
+        '당일치기'
+      );
     });
 
     it('1박 2일을 올바르게 계산해야 함', () => {
-      expect(calculateTravelDuration('2025-08-15', '2025-08-16')).toBe('1박 2일');
+      expect(calculateTravelDuration('2025-08-15', '2025-08-16')).toBe(
+        '1박 2일'
+      );
     });
 
     it('여러 일을 올바르게 계산해야 함', () => {
-      expect(calculateTravelDuration('2025-08-15', '2025-08-20')).toBe('5박 6일');
+      expect(calculateTravelDuration('2025-08-15', '2025-08-20')).toBe(
+        '5박 6일'
+      );
     });
 
     it('Date 객체를 올바르게 처리해야 함', () => {
@@ -174,7 +180,9 @@ describe('utils', () => {
     it('알 수 없는 에러 타입을 올바르게 처리해야 함', () => {
       expect(formatErrorMessage(123)).toBe('알 수 없는 오류가 발생했습니다.');
       expect(formatErrorMessage(null)).toBe('알 수 없는 오류가 발생했습니다.');
-      expect(formatErrorMessage(undefined)).toBe('알 수 없는 오류가 발생했습니다.');
+      expect(formatErrorMessage(undefined)).toBe(
+        '알 수 없는 오류가 발생했습니다.'
+      );
     });
   });
 
@@ -258,7 +266,10 @@ describe('utils', () => {
     it('setItem이 올바르게 작동해야 함', () => {
       safeLocalStorage.setItem('test-key', 'test-value');
 
-      expect(localStorage.setItem).toHaveBeenCalledWith('test-key', 'test-value');
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'test-key',
+        'test-value'
+      );
     });
 
     it('removeItem이 올바르게 작동해야 함', () => {

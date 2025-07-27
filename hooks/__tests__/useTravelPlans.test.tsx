@@ -60,7 +60,9 @@ describe('useTravelPlans', () => {
     renderHook(() => useTravelPlans());
 
     await waitFor(() => {
-      expect(mockSupabase.channel).toHaveBeenCalledWith('travel_plans_realtime');
+      expect(mockSupabase.channel).toHaveBeenCalledWith(
+        'travel_plans_realtime'
+      );
     });
   });
 

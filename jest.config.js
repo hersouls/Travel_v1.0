@@ -10,11 +10,14 @@ module.exports = {
     '^@/app/(.*)$': '<rootDir>/app/$1',
   },
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react-jsx'
-      }
-    }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          jsx: 'react-jsx',
+        },
+      },
+    ],
   },
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   collectCoverageFrom: [
@@ -25,16 +28,13 @@ module.exports = {
     '!**/node_modules/**',
     '!**/.next/**',
   ],
-  testMatch: [
-    '**/__tests__/**/*.(ts|tsx|js)',
-    '**/*.(test|spec).(ts|tsx|js)'
-  ],
+  testMatch: ['**/__tests__/**/*.(ts|tsx|js)', '**/*.(test|spec).(ts|tsx|js)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   globals: {
     'ts-jest': {
       tsconfig: {
-        jsx: 'react-jsx'
-      }
-    }
-  }
+        jsx: 'react-jsx',
+      },
+    },
+  },
 };
