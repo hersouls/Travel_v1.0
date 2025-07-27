@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { MapPin, Plus, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { GradientBackground, GlassCard, GLASS_CLASSES, WaveEffect } from '@/components/ui/backgrounds';
+import { GradientBackground, GlassCard, WaveEffect } from '@/components/ui/backgrounds';
 
 export default function HomePage() {
   const router = useRouter();
