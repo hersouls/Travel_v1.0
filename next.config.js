@@ -30,10 +30,10 @@ const nextConfig = {
     const cspDirectives = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com`,
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+      "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://*.supabase.co https://maps.googleapis.com",
+      "connect-src 'self' https://*.supabase.co https://maps.googleapis.com wss://*.supabase.co",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
