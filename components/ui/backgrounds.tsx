@@ -296,7 +296,7 @@ export const CUSTOM_STYLES = `
 }
 `;
 
-export default {
+const BackgroundComponents = {
   GradientBackground,
   WaveEffect,
   GlassCard,
@@ -306,3 +306,5 @@ export default {
   ExampleUsage,
   CUSTOM_STYLES
 };
+
+export default BackgroundComponents;
