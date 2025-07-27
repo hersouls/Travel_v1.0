@@ -6,6 +6,7 @@ import { mockTravel } from '@/test/fixtures/travel';
 // TravelCard에 필요한 타입 정의
 const mockTravelWithDays = {
   ...mockTravel,
+  metadata: {},
   travel_days: [
     {
       id: 'day-1',
@@ -104,18 +105,18 @@ describe('TravelCard', () => {
     expect(screen.getByText('계획 중')).toHaveClass('text-blue-600');
     
     // ongoing 상태로 변경
-    const ongoingTravel = { ...mockTravelWithDays, status: 'ongoing' as const };
+    const ongoingTravel = { ...mockTravelWithDays, status: 'ongoing' as const, metadata: {} };
     rerender(<TravelCard travel={ongoingTravel} />);
     expect(screen.getByText('진행 중')).toHaveClass('text-green-600');
     
     // completed 상태로 변경
-    const completedTravel = { ...mockTravelWithDays, status: 'completed' as const };
+    const completedTravel = { ...mockTravelWithDays, status: 'completed' as const, metadata: {} };
     rerender(<TravelCard travel={completedTravel} />);
     expect(screen.getByText('완료')).toHaveClass('text-gray-600');
   });
 
   it('공개 여행인 경우 공개 배지가 표시되어야 함', () => {
-    const publicTravel = { ...mockTravelWithDays, is_public: true };
+    const publicTravel = { ...mockTravelWithDays, is_public: true, metadata: {} };
     render(<TravelCard travel={publicTravel} />);
     
     expect(screen.getByText('공개')).toBeInTheDocument();
@@ -124,7 +125,8 @@ describe('TravelCard', () => {
   it('협업자가 있는 경우 참여자 수가 표시되어야 함', () => {
     const collaborativeTravel = {
       ...mockTravelWithDays,
-      collaborators: [{ id: 'user-2', name: '김철수' }],
+      collaborators: ['user-2'],
+      metadata: {},
     };
     render(<TravelCard travel={collaborativeTravel} />);
     
@@ -189,7 +191,7 @@ describe('TravelCard', () => {
   });
 
   it('설명이 없는 경우 설명 섹션이 표시되지 않아야 함', () => {
-    const travelWithoutDescription = { ...mockTravelWithDays, description: null };
+    const travelWithoutDescription = { ...mockTravelWithDays, description: null, metadata: {} };
     render(<TravelCard travel={travelWithoutDescription} />);
     
     expect(screen.queryByText('제주도 가족 여행')).not.toBeInTheDocument();

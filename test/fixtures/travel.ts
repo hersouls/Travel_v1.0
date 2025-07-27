@@ -13,6 +13,7 @@ export const mockTravel = {
   currency: 'KRW' as const,
   is_public: false,
   cover_image_url: null,
+  metadata: {},
 };
 
 export const mockTravelList = [
