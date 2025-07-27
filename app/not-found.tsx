@@ -32,9 +32,7 @@ export default function NotFound() {
           </Button>
 
           <Button asChild variant="outline" size="lg">
-            <Link href="/travels">
-              여행 관리
-            </Link>
+            <Link href="/travels">여행 관리</Link>
           </Button>
         </div>
       </div>

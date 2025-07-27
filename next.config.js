@@ -84,7 +84,7 @@ const nextConfig = {
 
   // 정적 내보내기 비활성화
   output: 'standalone',
-  
+
   // 정적 생성 비활성화
   trailingSlash: false,
   generateBuildId: async () => {
