@@ -167,24 +167,28 @@ console.log('Testing Supabase connection...');
 
 #### 2. `Supabase connection test failed`
 
-**원인**: 
+**원인**:
+
 - 잘못된 Supabase URL/Key
 - 네트워크 연결 문제
 - Supabase 프로젝트가 일시 중지됨
 
-**해결**: 
+**해결**:
+
 1. Supabase 대시보드에서 URL과 Key 재확인
 2. 프로젝트가 활성 상태인지 확인
 3. API 키 권한 확인
 
 #### 3. `Google Maps API errors`
 
-**원인**: 
+**원인**:
+
 - API 키가 유효하지 않음
 - 필요한 API가 활성화되지 않음
 - API 사용량 한도 초과
 
 **해결**:
+
 1. Google Cloud Console에서 API 키 확인
 2. 필요한 모든 API 활성화 확인
 3. 사용량 및 요금 확인

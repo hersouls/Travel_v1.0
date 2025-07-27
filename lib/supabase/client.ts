@@ -29,12 +29,12 @@ export const supabase = createClient();
 export const checkSupabaseConnection = async () => {
   try {
     const { error } = await supabase.from('profiles').select('count').limit(1);
-    
+
     if (error) {
       console.error('❌ Supabase connection test failed:', error.message);
       return false;
     }
-    
+
     console.log('✅ Supabase connection test successful');
     return true;
   } catch (error) {
