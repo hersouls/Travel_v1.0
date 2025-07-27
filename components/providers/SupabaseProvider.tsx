@@ -50,7 +50,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
       setLoading(false);
       setIsConnected(false);
       setConnectionError('Supabase configuration is not properly set');
-      console.warn('⚠️ Supabase Provider: Configuration not valid, operating in offline mode');
+      console.warn(
+        '⚠️ Supabase Provider: Configuration not valid, operating in offline mode'
+      );
       return;
     }
 
@@ -82,7 +84,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         setConnectionError(null);
       } catch (error) {
         console.error('Failed to initialize Supabase:', error);
-        setConnectionError(error instanceof Error ? error.message : 'Unknown error');
+        setConnectionError(
+          error instanceof Error ? error.message : 'Unknown error'
+        );
         setIsConnected(false);
       } finally {
         setLoading(false);
@@ -92,14 +96,17 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     initializeSupabase();
 
     // 인증 상태 변경 리스너 (연결이 성공한 경우에만)
-    let subscription: { subscription: { unsubscribe: () => void } } | null = null;
-    
+    let subscription: { subscription: { unsubscribe: () => void } } | null =
+      null;
+
     if (isValidConfig) {
-      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth state changed:', event);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      });
+      const { data } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          console.log('Auth state changed:', event);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      );
       subscription = data;
     }
 

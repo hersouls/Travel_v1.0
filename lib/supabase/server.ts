@@ -42,7 +42,9 @@ export const createRouteHandlerSupabaseClient = () => {
 
   // 환경 변수 검증
   if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Route Handler Supabase client: Environment variables not set');
+    console.error(
+      '❌ Route Handler Supabase client: Environment variables not set'
+    );
     throw new Error('Supabase environment variables are not configured');
   }
 
