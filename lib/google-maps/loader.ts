@@ -6,7 +6,7 @@ export const loadGoogleMapsAPI = (): Promise<void> => {
   if (typeof window === 'undefined') {
     return Promise.resolve();
   }
-  
+
   if (isLoaded) return Promise.resolve();
   if (isLoading) return loadPromise!;
 
@@ -39,12 +39,8 @@ export const isGoogleMapsLoaded = (): boolean => {
   if (typeof window === 'undefined') {
     return false;
   }
-  
-  return (
-    isLoaded &&
-    !!window.google &&
-    !!window.google.maps
-  );
+
+  return isLoaded && !!window.google && !!window.google.maps;
 };
 
 // Google Maps API 로드 상태 리셋 (테스트용)
