@@ -71,6 +71,10 @@ const nextConfig = {
   // 빌드 시 타임아웃 문제 해결
   staticPageGenerationTimeout: 120,
 
+  // 빌드 최적화
+  swcMinify: true,
+  compress: true,
+
   // 컴파일러 최적화
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
