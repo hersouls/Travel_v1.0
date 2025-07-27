@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { MapPin, Plus, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { GradientBackground, GlassCard, GLASS_CLASSES, WaveEffect } from '@/components/ui/backgrounds';
 
 export default function HomePage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-moonwave-blue-50 via-white to-moonwave-purple-50">
+    <GradientBackground variant="moonwave" className="min-h-screen relative">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
@@ -50,7 +51,7 @@ export default function HomePage() {
           {/* 제목 */}
           <h1
             className={cn(
-              'mb-6 font-pretendard text-5xl font-bold text-gray-900 sm:text-6xl',
+              'mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl',
               'tracking-korean-tight break-keep-ko'
             )}
           >
@@ -60,7 +61,7 @@ export default function HomePage() {
           {/* 부제목 */}
           <p
             className={cn(
-              'mb-8 font-pretendard text-xl text-gray-600',
+              'mb-8 font-pretendard text-xl text-white/90',
               'leading-relaxed tracking-korean-normal break-keep-ko'
             )}
           >
@@ -98,13 +99,13 @@ export default function HomePage() {
 
         {/* 특징 섹션 */}
         <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <div className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-moonwave-blue-100">
-              <Calendar className="h-8 w-8 text-moonwave-primary" />
+          <GlassCard variant="medium" className="p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+              <Calendar className="h-8 w-8 text-white" />
             </div>
             <h3
               className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-gray-900',
+                'mb-2 font-pretendard text-lg font-semibold text-white',
                 'tracking-korean-tight break-keep-ko'
               )}
             >
@@ -112,21 +113,21 @@ export default function HomePage() {
             </h3>
             <p
               className={cn(
-                'font-pretendard text-gray-600',
+                'font-pretendard text-white/90',
                 'tracking-korean-normal break-keep-ko'
               )}
             >
               AI 기반 여행 일정 최적화로 효율적인 여행을 계획하세요
             </p>
-          </div>
+          </GlassCard>
 
-          <div className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-moonwave-purple-100">
-              <Users className="h-8 w-8 text-moonwave-secondary" />
+          <GlassCard variant="medium" className="p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+              <Users className="h-8 w-8 text-white" />
             </div>
             <h3
               className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-gray-900',
+                'mb-2 font-pretendard text-lg font-semibold text-white',
                 'tracking-korean-tight break-keep-ko'
               )}
             >
@@ -134,21 +135,21 @@ export default function HomePage() {
             </h3>
             <p
               className={cn(
-                'font-pretendard text-gray-600',
+                'font-pretendard text-white/90',
                 'tracking-korean-normal break-keep-ko'
               )}
             >
               친구, 가족과 함께 실시간으로 여행을 계획하고 공유하세요
             </p>
-          </div>
+          </GlassCard>
 
-          <div className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-moonwave-blue-100">
-              <MapPin className="h-8 w-8 text-moonwave-primary" />
+          <GlassCard variant="medium" className="p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+              <MapPin className="h-8 w-8 text-white" />
             </div>
             <h3
               className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-gray-900',
+                'mb-2 font-pretendard text-lg font-semibold text-white',
                 'tracking-korean-tight break-keep-ko'
               )}
             >
@@ -156,20 +157,20 @@ export default function HomePage() {
             </h3>
             <p
               className={cn(
-                'font-pretendard text-gray-600',
+                'font-pretendard text-white/90',
                 'tracking-korean-normal break-keep-ko'
               )}
             >
               Google Maps 연동으로 정확한 위치와 경로를 확인하세요
             </p>
-          </div>
+          </GlassCard>
         </div>
 
         {/* CTA 섹션 */}
-        <div className="rounded-2xl bg-white p-8 text-center shadow-lg">
+        <GlassCard variant="dark" className="rounded-2xl p-8 text-center">
           <h2
             className={cn(
-              'mb-4 font-pretendard text-3xl font-bold text-gray-900',
+              'mb-4 font-pretendard text-3xl font-bold text-white',
               'tracking-korean-tight break-keep-ko'
             )}
           >
@@ -178,7 +179,7 @@ export default function HomePage() {
 
           <p
             className={cn(
-              'mb-8 font-pretendard text-gray-600',
+              'mb-8 font-pretendard text-white/90',
               'tracking-korean-normal break-keep-ko'
             )}
           >
@@ -207,6 +208,15 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      
+      {/* 웨이브 효과 */}
+      <WaveEffect 
+        variant="double" 
+        color="white" 
+        opacity={[0.1, 0.15]}
+        height={80}
+        className="absolute bottom-0"
+      />
     </div>
   );
 }
