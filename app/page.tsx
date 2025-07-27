@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/Button';
 import { MapPin, Plus, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { GradientBackground, GlassCard, WaveEffect } from '@/components/ui/backgrounds';
+import {
+  GradientBackground,
+  GlassCard,
+  WaveEffect,
+} from '@/components/ui/backgrounds';
 
 export default function HomePage() {
   const router = useRouter();
@@ -39,7 +43,7 @@ export default function HomePage() {
   }
 
   return (
-    <GradientBackground variant="moonwave" className="min-h-screen relative">
+    <GradientBackground variant="moonwave" className="relative min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
@@ -208,11 +212,11 @@ export default function HomePage() {
           </div>
         </GlassCard>
       </div>
-      
+
       {/* 웨이브 효과 */}
-      <WaveEffect 
-        variant="double" 
-        color="white" 
+      <WaveEffect
+        variant="double"
+        color="white"
         opacity={[0.1, 0.15]}
         height={80}
         className="absolute bottom-0"

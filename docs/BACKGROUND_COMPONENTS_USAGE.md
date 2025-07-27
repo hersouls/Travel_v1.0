@@ -16,9 +16,9 @@ import { GradientBackground } from '@/components/ui/backgrounds';
 // 기본 사용법
 <GradientBackground variant="moonwave">
   <div className="p-8">
-    <h1 className="text-white text-4xl">Moonwave App</h1>
+    <h1 className="text-4xl text-white">Moonwave App</h1>
   </div>
-</GradientBackground>
+</GradientBackground>;
 
 // 사용 가능한 variants
 // - moonwave: 파란색 그라디언트 (기본값)
@@ -37,13 +37,9 @@ import { WaveEffect } from '@/components/ui/backgrounds';
 
 // 기본 사용법
 <div className="relative h-32 bg-blue-600">
-  <p className="text-white p-4">Content with wave at bottom</p>
-  <WaveEffect 
-    variant="double" 
-    color="white" 
-    opacity={[0.1, 0.15]}
-  />
-</div>
+  <p className="p-4 text-white">Content with wave at bottom</p>
+  <WaveEffect variant="double" color="white" opacity={[0.1, 0.15]} />
+</div>;
 
 // 사용 가능한 variants
 // - single: 단일 웨이브
@@ -74,8 +70,8 @@ import { GlassCard } from '@/components/ui/backgrounds';
 // - dark: 진한 글래스 효과
 
 // 클릭 이벤트 추가
-<GlassCard 
-  variant="medium" 
+<GlassCard
+  variant="medium"
   className="p-4 cursor-pointer"
   onClick={() => console.log('Card clicked!')}
 >
@@ -91,18 +87,18 @@ import { GlassCard } from '@/components/ui/backgrounds';
 import { HeaderBackground } from '@/components/ui/backgrounds';
 
 // 기본 사용법
-<HeaderBackground 
+<HeaderBackground
   gradientVariant="moonwave"
   waveVariant="double"
   className="h-64 p-8"
 >
   <div className="relative z-10">
-    <h1 className="text-white text-4xl mb-4">Header Title</h1>
-    <GlassCard variant="medium" className="p-4 max-w-md">
+    <h1 className="mb-4 text-4xl text-white">Header Title</h1>
+    <GlassCard variant="medium" className="max-w-md p-4">
       <p className="text-white">Glass card content</p>
     </GlassCard>
   </div>
-</HeaderBackground>
+</HeaderBackground>;
 ```
 
 ## CSS 클래스 상수
@@ -119,7 +115,7 @@ import { GRADIENT_CLASSES } from '@/components/ui/backgrounds';
   <div className="p-8">
     <h1 className="text-white">Direct class usage</h1>
   </div>
-</div>
+</div>;
 
 // 사용 가능한 클래스들
 // - moonwave: 세로 그라디언트
@@ -139,7 +135,7 @@ import { GLASS_CLASSES } from '@/components/ui/backgrounds';
 // 직접 클래스 사용
 <div className={GLASS_CLASSES.cardMedium}>
   <p className="text-white">Glass effect with direct class</p>
-</div>
+</div>;
 
 // 사용 가능한 클래스들
 // - light, medium, dark: 기본 글래스 효과
@@ -158,7 +154,7 @@ import { usePathname } from 'next/navigation';
 function MyComponent() {
   const pathname = usePathname();
   const backgroundVariant = getPageBackground(pathname);
-  
+
   return (
     <GradientBackground variant={backgroundVariant}>
       {/* 컴포넌트 내용 */}
@@ -174,7 +170,7 @@ import { getTimeBasedBackground } from '@/lib/backgroundHelpers';
 
 function TimeBasedBackground() {
   const timeBackground = getTimeBasedBackground();
-  
+
   return (
     <GradientBackground variant={timeBackground}>
       {/* 시간대에 따른 배경 */}
@@ -189,18 +185,22 @@ function TimeBasedBackground() {
 
 ```tsx
 // app/page.tsx
-import { GradientBackground, GlassCard, WaveEffect } from '@/components/ui/backgrounds';
+import {
+  GradientBackground,
+  GlassCard,
+  WaveEffect,
+} from '@/components/ui/backgrounds';
 
 export default function HomePage() {
   return (
-    <GradientBackground variant="moonwave" className="min-h-screen relative">
+    <GradientBackground variant="moonwave" className="relative min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
-          <h1 className="text-white text-5xl font-bold mb-6">
+          <h1 className="mb-6 text-5xl font-bold text-white">
             Moonwave Travel
           </h1>
-          <p className="text-white/90 text-xl mb-8">
+          <p className="mb-8 text-xl text-white/90">
             스마트한 여행 계획 시스템
           </p>
         </div>
@@ -208,21 +208,19 @@ export default function HomePage() {
         {/* 특징 섹션 */}
         <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
           <GlassCard variant="medium" className="p-6 text-center">
-            <h3 className="text-white text-lg font-semibold mb-2">
+            <h3 className="mb-2 text-lg font-semibold text-white">
               스마트한 일정 관리
             </h3>
-            <p className="text-white/90">
-              AI 기반 여행 일정 최적화
-            </p>
+            <p className="text-white/90">AI 기반 여행 일정 최적화</p>
           </GlassCard>
           {/* 추가 카드들... */}
         </div>
       </div>
-      
+
       {/* 웨이브 효과 */}
-      <WaveEffect 
-        variant="double" 
-        color="white" 
+      <WaveEffect
+        variant="double"
+        color="white"
         opacity={[0.1, 0.15]}
         height={80}
         className="absolute bottom-0"
@@ -240,19 +238,21 @@ import { GLASS_CLASSES } from '@/components/ui/backgrounds';
 
 export function MainNavigation() {
   return (
-    <nav className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}>
+    <nav
+      className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* 로고 */}
-          <Link href="/" className="text-white text-xl font-bold">
+          <Link href="/" className="text-xl font-bold text-white">
             Moonwave Travel
           </Link>
-          
+
           {/* 네비게이션 아이템들 */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link 
+          <div className="hidden items-center space-x-8 md:flex">
+            <Link
               href="/travels"
-              className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded-md"
+              className="rounded-md px-3 py-2 text-white/90 hover:bg-white/20 hover:text-white"
             >
               여행 관리
             </Link>
@@ -277,16 +277,16 @@ export function UserMenu() {
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
           <User className="h-4 w-4 text-white" />
         </div>
-        <div className="text-white text-sm font-medium">
-          사용자명
-        </div>
+        <div className="text-sm font-medium text-white">사용자명</div>
       </button>
-      
+
       {isMenuOpen && (
-        <div className={`absolute right-0 z-50 mt-2 w-64 rounded-lg ${GLASS_CLASSES.cardMedium}`}>
+        <div
+          className={`absolute right-0 z-50 mt-2 w-64 rounded-lg ${GLASS_CLASSES.cardMedium}`}
+        >
           <div className="border-b border-white/20 p-4">
-            <div className="text-white text-sm font-medium">사용자명</div>
-            <div className="text-white/70 text-xs">user@example.com</div>
+            <div className="text-sm font-medium text-white">사용자명</div>
+            <div className="text-xs text-white/70">user@example.com</div>
           </div>
           {/* 메뉴 아이템들... */}
         </div>
