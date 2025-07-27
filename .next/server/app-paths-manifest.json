@@ -4,11 +4,11 @@
   "/page": "app/page.js",
   "/travels/new/page": "app/travels/new/page.js",
   "/travels/page": "app/travels/page.js",
-  "/travels/[travelId]/plans/page": "app/travels/[travelId]/plans/page.js",
-  "/travels/[travelId]/plans/[dayId]/page": "app/travels/[travelId]/plans/[dayId]/page.js",
   "/travels/[travelId]/edit/page": "app/travels/[travelId]/edit/page.js",
-  "/shared/travel/[travelId]/page": "app/shared/travel/[travelId]/page.js",
+  "/travels/[travelId]/plans/[dayId]/page": "app/travels/[travelId]/plans/[dayId]/page.js",
   "/travels/[travelId]/page": "app/travels/[travelId]/page.js",
+  "/shared/travel/[travelId]/page": "app/shared/travel/[travelId]/page.js",
+  "/travels/[travelId]/plans/page": "app/travels/[travelId]/plans/page.js",
   "/(auth)/auth/callback/route": "app/(auth)/auth/callback/route.js",
   "/(auth)/signin/page": "app/(auth)/signin/page.js"
 }

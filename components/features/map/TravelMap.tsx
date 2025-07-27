@@ -73,7 +73,7 @@ export default function TravelMap({ className }: TravelMapProps) {
 
   // 지도 초기화
   const initializeMap = useCallback(async () => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || typeof window === 'undefined') return;
 
     try {
       setIsLoading(true);

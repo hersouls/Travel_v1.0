@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { Button } from '@/components/ui/Button';
@@ -11,14 +11,42 @@ import { GradientBackground, GlassCard, WaveEffect } from '@/components/ui/backg
 
 export default function HomePage() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   const { user, loading } = useSupabase();
+  
+  // 클라이언트 사이드 렌더링 확인
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 로그인된 사용자는 여행 목록으로 자동 이동
   useEffect(() => {
-    if (!loading && user) {
+    if (isClient && !loading && user) {
       router.push('/travels');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isClient]);
+
+  // 서버 사이드 렌더링 중에는 기본 UI만 표시
+  if (!isClient) {
+    return (
+      <GradientBackground variant="moonwave" className="min-h-screen relative">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-moonwave-primary to-moonwave-secondary shadow-lg">
+              <MapPin className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl tracking-korean-tight break-keep-ko">
+              Moonwave Travel
+            </h1>
+            <p className="mb-8 font-pretendard text-xl text-white/90 leading-relaxed tracking-korean-normal break-keep-ko">
+              스마트한 여행 계획 시스템으로<br />
+              특별한 여행을 설계하세요
+            </p>
+          </div>
+        </div>
+      </GradientBackground>
+    );
+  }
 
   if (loading) {
     return (

@@ -48,6 +48,12 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
       return;
     }
 
+    // 서버 사이드 렌더링 중에는 건너뛰기
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);

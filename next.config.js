@@ -68,6 +68,9 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
   },
 
+  // 빌드 시 타임아웃 문제 해결
+  staticPageGenerationTimeout: 120,
+
   // 컴파일러 최적화
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
