@@ -19,8 +19,9 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // 성공적으로 인증된 경우 travels 페이지로 리디렉션
-      return NextResponse.redirect(`${origin}${next}`);
+      // 성공적으로 인증된 경우 지정된 페이지로 리디렉션
+      const redirectUrl = next.startsWith('/') ? `${origin}${next}` : `${origin}/${next}`;
+      return NextResponse.redirect(redirectUrl);
     } catch (error) {
       console.error('❌ OAuth callback exception:', error);
       return NextResponse.redirect(
