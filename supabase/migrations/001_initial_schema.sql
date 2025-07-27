@@ -297,7 +297,11 @@ CREATE POLICY "Users can manage own notifications" ON public.notifications
 CREATE POLICY "Users can manage own categories" ON public.categories
   FOR ALL USING (auth.uid() = user_id);
 
--- 협업자 정책
+-- 협업자 정책 수정: 무한 재귀 방지
+DROP POLICY IF EXISTS "Travel owners can manage collaborators" ON public.collaborators;
+DROP POLICY IF EXISTS "Collaborators can view collaboration info" ON public.collaborators;
+
+-- 새로운 협업자 정책 (무한 재귀 방지)
 CREATE POLICY "Travel owners can manage collaborators" ON public.collaborators
   FOR ALL USING (
     EXISTS (
@@ -307,8 +311,11 @@ CREATE POLICY "Travel owners can manage collaborators" ON public.collaborators
     )
   );
 
-CREATE POLICY "Collaborators can view collaboration info" ON public.collaborators
+CREATE POLICY "Collaborators can view own collaborations" ON public.collaborators
   FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Collaborators can update own collaborations" ON public.collaborators
+  FOR UPDATE USING (auth.uid() = user_id);
 
 -- ===============================================
 -- 8. 트리거 함수 생성
