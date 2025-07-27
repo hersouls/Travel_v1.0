@@ -298,12 +298,4 @@ export const CUSTOM_STYLES = `
 }
 `;
 
-const BackgroundComponents = {
-  GradientBackground,
-  WaveEffect,
-  GlassCard,
-  HeaderBackground,
-  GRADIENT_CLASSES,
-  GLASS_CLASSES,
-  ExampleUsage,
-};
+
