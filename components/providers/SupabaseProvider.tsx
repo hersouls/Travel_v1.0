@@ -70,7 +70,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         if (!connectionTest) {
           const connectionError = { message: 'Failed to connect' };
           logError(connectionError, 'connection', 'test');
-          setConnectionError(getKoreanErrorMessage(connectionError, 'connection'));
+          setConnectionError(
+            getKoreanErrorMessage(connectionError, 'connection')
+          );
           setLoading(false);
           return;
         }
@@ -111,7 +113,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
           console.log('Auth state changed:', event);
           setUser(session?.user ?? null);
           setLoading(false);
-          
+
           // 인증 상태 변경 시 연결 에러 초기화
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             setConnectionError(null);

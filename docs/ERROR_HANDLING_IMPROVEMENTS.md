@@ -14,10 +14,10 @@
 // 기존
 error.message === 'Invalid login credentials'
   ? '유효하지 않은 이메일 주소입니다.'
-  : '로그인 중 문제가 발생했습니다.'
+  : '로그인 중 문제가 발생했습니다.';
 
 // 개선 후
-getKoreanErrorMessage(error, 'auth')
+getKoreanErrorMessage(error, 'auth');
 // 자동으로 적절한 한글 메시지 반환
 ```
 
@@ -26,7 +26,11 @@ getKoreanErrorMessage(error, 'auth')
 `lib/utils/errorHandling.ts`에 모든 에러 처리 로직을 통합했습니다:
 
 ```typescript
-import { getKoreanErrorMessage, logError, classifyError } from '@/lib/utils/errorHandling';
+import {
+  getKoreanErrorMessage,
+  logError,
+  classifyError,
+} from '@/lib/utils/errorHandling';
 
 // 에러 메시지 한글화
 const errorMessage = getKoreanErrorMessage(error, 'auth');
@@ -54,22 +58,26 @@ const errorType = classifyError(error);
 ## 지원하는 에러 메시지
 
 ### 인증 에러
+
 - `Invalid login credentials` → "유효하지 않은 이메일 주소입니다."
 - `Email not confirmed` → "이메일 인증이 완료되지 않았습니다."
 - `Token expired` → "인증 토큰이 만료되었습니다. 다시 로그인해주세요."
 - `Not authenticated` → "로그인이 필요합니다."
 
 ### 연결 에러
+
 - `Failed to connect` → "데이터베이스 연결에 실패했습니다."
 - `Network error` → "네트워크 연결을 확인해주세요."
 - `Connection timeout` → "연결 시간이 초과되었습니다."
 
 ### 데이터베이스 에러
+
 - `Row Level Security (RLS) policy violation` → "접근 권한이 없습니다."
 - `Duplicate key value violates unique constraint` → "중복된 데이터가 존재합니다."
 - `Foreign key violation` → "관련 데이터가 존재하지 않습니다."
 
 ### 설정 에러
+
 - `Missing environment variables` → "환경 변수가 설정되지 않았습니다."
 - `Invalid configuration` → "잘못된 설정입니다."
 - `API key not found` → "API 키를 찾을 수 없습니다."
@@ -83,7 +91,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 function LoginComponent() {
   const { user, loading, error, signInWithEmail } = useAuth();
-  
+
   const handleLogin = async (email: string) => {
     const success = await signInWithEmail(email);
     if (!success) {
@@ -91,7 +99,7 @@ function LoginComponent() {
       console.log('로그인 실패:', error);
     }
   };
-  
+
   return (
     <div>
       {error && <div className="error">{error}</div>}
@@ -108,7 +116,7 @@ import { useTravelPlans } from '@/hooks/useTravelPlans';
 
 function TravelPlansComponent() {
   const { travelPlans, loading, error, createTravelPlan } = useTravelPlans();
-  
+
   const handleCreate = async () => {
     try {
       await createTravelPlan({
@@ -121,7 +129,7 @@ function TravelPlansComponent() {
       console.log('생성 실패:', error);
     }
   };
-  
+
   return (
     <div>
       {error && <div className="error">{error.message}</div>}
@@ -138,7 +146,7 @@ import { useSupabase } from '@/components/providers/SupabaseProvider';
 
 function AppComponent() {
   const { isConnected, connectionError, user } = useSupabase();
-  
+
   if (!isConnected) {
     return (
       <div className="error">
@@ -147,7 +155,7 @@ function AppComponent() {
       </div>
     );
   }
-  
+
   return <div>정상 연결됨</div>;
 }
 ```
@@ -211,9 +219,11 @@ import { ErrorHandlingExample } from '@/components/examples/ErrorHandlingExample
 ```typescript
 // 기존
 if (error) {
-  setError(error.message === 'Invalid login credentials' 
-    ? '유효하지 않은 이메일 주소입니다.' 
-    : '로그인 중 문제가 발생했습니다.');
+  setError(
+    error.message === 'Invalid login credentials'
+      ? '유효하지 않은 이메일 주소입니다.'
+      : '로그인 중 문제가 발생했습니다.'
+  );
 }
 
 // 개선 후
