@@ -79,7 +79,7 @@ export function createSlug(text: string): string {
   return text
     .trim()
     .toLowerCase()
-    .replace(/[^\w\s-가-힣]/g, '')
+    .replace(/[^\w\s가-힣]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
