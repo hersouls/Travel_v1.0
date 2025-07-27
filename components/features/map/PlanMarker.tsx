@@ -89,13 +89,6 @@ export default function PlanMarker({
   );
 
   useEffect(() => {
-    if (
-      !map ||
-      !plan.latitude ||
-      !plan.longitude ||
-      typeof window === 'undefined'
-    )
-      return;
 
     const config = getPlanMarkerConfig(plan.plan_type);
     const position = {

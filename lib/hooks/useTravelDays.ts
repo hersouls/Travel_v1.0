@@ -28,6 +28,12 @@ export function useTravelDays(travelId: string): UseTravelDaysReturn {
       setLoading(true);
       setError(null);
 
+      // 서버 사이드 렌더링 중에는 건너뛰기
+      if (typeof window === 'undefined') {
+        setLoading(false);
+        return;
+      }
+
       // 여행 일정과 세부 계획을 함께 조회
       const { data: travelDays, error: fetchError } = await supabase
         .from('travel_days')

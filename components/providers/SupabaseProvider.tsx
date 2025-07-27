@@ -41,6 +41,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     // Skip Supabase calls during build/server-side rendering
     if (typeof window === 'undefined') {
       setLoading(false);
+      setIsConnected(false);
       return;
     }
 

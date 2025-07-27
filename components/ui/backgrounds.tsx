@@ -306,7 +306,3 @@ const BackgroundComponents = {
   GRADIENT_CLASSES,
   GLASS_CLASSES,
   ExampleUsage,
-  CUSTOM_STYLES,
-};
-
-export default BackgroundComponents;

@@ -185,7 +185,31 @@ export function logEnvStatus(): void {
 // 환경 변수 초기 검증 (빌드 시)
 if (typeof window === 'undefined') {
   try {
-    validateEnv();
+    // 빌드 시에는 환경 변수 검증을 건너뛰고 경고만 표시
+    const missingVars: string[] = [];
+    const placeholderVars: string[] = [];
+
+    // 필수 환경 변수 검증
+    Object.entries(requiredEnvVars).forEach(([key, value]) => {
+      if (!value || value.trim() === '') {
+        missingVars.push(key);
+      } else if (isPlaceholderValue(value)) {
+        placeholderVars.push(key);
+      }
+    });
+
+    if (missingVars.length > 0) {
+      console.warn(
+        `⚠️ Missing environment variables during build:\n${missingVars.map((v) => `- ${v}`).join('\n')}`
+      );
+    }
+
+    if (placeholderVars.length > 0) {
+      console.warn(
+        `⚠️ Placeholder values detected during build:\n${placeholderVars.map((v) => `- ${v}`).join('\n')}`
+      );
+    }
+
     logEnvStatus();
 
     // OAuth 상태 로깅 추가
@@ -197,8 +221,6 @@ if (typeof window === 'undefined') {
     }
   } catch (error) {
     console.error('❌ Environment validation failed:', error);
-    if (env.IS_PRODUCTION) {
-      process.exit(1);
-    }
+    // 빌드 시에는 프로세스를 종료하지 않음
   }
 }

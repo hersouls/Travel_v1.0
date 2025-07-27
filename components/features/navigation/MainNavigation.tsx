@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { UserMenu } from '@/components/features/auth/UserMenu';
 import { Button } from '@/components/ui/Button';
 import { Menu, X, Map, Calendar, Home } from 'lucide-react';
-import { GLASS_CLASSES } from '@/components/ui/backgrounds';
 
 export function MainNavigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,9 +37,6 @@ export function MainNavigation() {
   };
 
   return (
-    <nav
-      className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}
-    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}

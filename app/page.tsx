@@ -1,43 +1,56 @@
 'use client';
 
-import React, { useEffect } from 'react';
-
-// Force dynamic rendering to prevent static generation issues
-export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { Button } from '@/components/ui/Button';
-import { MapPin, Plus, Calendar, Users } from 'lucide-react';
+import { MapPin, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import {
-  GradientBackground,
-  GlassCard,
-  WaveEffect,
-} from '@/components/ui/backgrounds';
 
 export default function HomePage() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   const { user, loading } = useSupabase();
+  
+  // 클라이언트 사이드 렌더링 확인
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 로그인된 사용자는 여행 목록으로 자동 이동
   useEffect(() => {
-    if (typeof window !== 'undefined' && !loading && user) {
       router.push('/travels');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isClient]);
+
+  // 서버 사이드 렌더링 중에는 기본 UI만 표시
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 relative">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+              <MapPin className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl tracking-korean-tight break-keep-ko">
+              Moonwave Travel
+            </h1>
+            <p className="mb-8 font-pretendard text-xl text-white/90 leading-relaxed tracking-korean-normal break-keep-ko">
+              스마트한 여행 계획 시스템으로<br />
+              특별한 여행을 설계하세요
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-moonwave-primary border-t-transparent" />
-          <p
-            className={cn(
-              'font-pretendard text-gray-600',
-              'tracking-korean-normal break-keep-ko'
-            )}
-          >
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+          <p className="font-pretendard text-gray-600 tracking-korean-normal break-keep-ko">
             로딩 중...
           </p>
         </div>
@@ -46,32 +59,21 @@ export default function HomePage() {
   }
 
   return (
-    <GradientBackground variant="moonwave" className="relative min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
           {/* 로고/아이콘 */}
-          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-moonwave-primary to-moonwave-secondary shadow-lg">
+          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
             <MapPin className="h-10 w-10 text-white" />
           </div>
 
           {/* 제목 */}
-          <h1
-            className={cn(
-              'mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl',
-              'tracking-korean-tight break-keep-ko'
-            )}
-          >
+          <h1 className="mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl tracking-korean-tight break-keep-ko">
             Moonwave Travel
           </h1>
 
           {/* 부제목 */}
-          <p
-            className={cn(
-              'mb-8 font-pretendard text-xl text-white/90',
-              'leading-relaxed tracking-korean-normal break-keep-ko'
-            )}
-          >
+          <p className="mb-8 font-pretendard text-xl text-white/90 leading-relaxed tracking-korean-normal break-keep-ko">
             스마트한 여행 계획 시스템으로
             <br />
             특별한 여행을 설계하세요
@@ -105,125 +107,46 @@ export default function HomePage() {
         </div>
 
         {/* 특징 섹션 */}
-        <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <GlassCard variant="medium" className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-              <Calendar className="h-8 w-8 text-white" />
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {/* 특징 1 */}
+          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+              <Calendar className="h-6 w-6 text-blue-500" />
             </div>
-            <h3
-              className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-white',
-                'tracking-korean-tight break-keep-ko'
-              )}
-            >
-              스마트한 일정 관리
+            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+              스마트 일정 관리
             </h3>
-            <p
-              className={cn(
-                'font-pretendard text-white/90',
-                'tracking-korean-normal break-keep-ko'
-              )}
-            >
-              AI 기반 여행 일정 최적화로 효율적인 여행을 계획하세요
+            <p className="text-white/90 tracking-korean-normal break-keep-ko">
+              AI 기반 추천으로 최적의 여행 일정을 계획하고 관리하세요
             </p>
-          </GlassCard>
-
-          <GlassCard variant="medium" className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-              <Users className="h-8 w-8 text-white" />
-            </div>
-            <h3
-              className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-white',
-                'tracking-korean-tight break-keep-ko'
-              )}
-            >
-              실시간 협업
-            </h3>
-            <p
-              className={cn(
-                'font-pretendard text-white/90',
-                'tracking-korean-normal break-keep-ko'
-              )}
-            >
-              친구, 가족과 함께 실시간으로 여행을 계획하고 공유하세요
-            </p>
-          </GlassCard>
-
-          <GlassCard variant="medium" className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-              <MapPin className="h-8 w-8 text-white" />
-            </div>
-            <h3
-              className={cn(
-                'mb-2 font-pretendard text-lg font-semibold text-white',
-                'tracking-korean-tight break-keep-ko'
-              )}
-            >
-              지도 연동
-            </h3>
-            <p
-              className={cn(
-                'font-pretendard text-white/90',
-                'tracking-korean-normal break-keep-ko'
-              )}
-            >
-              Google Maps 연동으로 정확한 위치와 경로를 확인하세요
-            </p>
-          </GlassCard>
-        </div>
-
-        {/* CTA 섹션 */}
-        <GlassCard variant="dark" className="rounded-2xl p-8 text-center">
-          <h2
-            className={cn(
-              'mb-4 font-pretendard text-3xl font-bold text-white',
-              'tracking-korean-tight break-keep-ko'
-            )}
-          >
-            지금 시작해보세요
-          </h2>
-
-          <p
-            className={cn(
-              'mb-8 font-pretendard text-white/90',
-              'tracking-korean-normal break-keep-ko'
-            )}
-          >
-            무료로 여행 계획을 세우고 친구들과 공유해보세요
-          </p>
-
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg">
-              <Link
-                href={user ? '/travels/new' : '/signin'}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-5 w-5" />
-                <span>{user ? '새 여행 만들기' : '지금 시작하기'}</span>
-              </Link>
-            </Button>
-
-            {user && (
-              <Button asChild variant="outline" size="lg">
-                <Link href="/map" className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  <span>지도에서 보기</span>
-                </Link>
-              </Button>
-            )}
           </div>
-        </GlassCard>
-      </div>
 
-      {/* 웨이브 효과 */}
-      <WaveEffect
-        variant="double"
-        color="white"
-        opacity={[0.1, 0.15]}
-        height={80}
-        className="absolute bottom-0"
-      />
-    </GradientBackground>
+          {/* 특징 2 */}
+          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10">
+              <MapPin className="h-6 w-6 text-purple-500" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+              실시간 지도 연동
+            </h3>
+            <p className="text-white/90 tracking-korean-normal break-keep-ko">
+              Google Maps와 연동하여 실제 위치 기반으로 계획을 확인하세요
+            </p>
+          </div>
+
+          {/* 특징 3 */}
+          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+              <Users className="h-6 w-6 text-blue-500" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+              협업 기능
+            </h3>
+            <p className="text-white/90 tracking-korean-normal break-keep-ko">
+              친구들과 함께 여행 계획을 세우고 실시간으로 공유하세요
+            </p>
+          </div>
+        </div>
+      </div>
   );
 }

@@ -68,28 +68,6 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
   },
 
-  // Edge Runtime 설정
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // 클라이언트 사이드에서 Node.js API 사용 방지
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
-    return config;
-  },
-
-  // 정적 내보내기 비활성화
-  output: 'standalone',
-
-  // 정적 생성 비활성화
-  trailingSlash: false,
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
-  },
 
   // 컴파일러 최적화
   compiler: {
