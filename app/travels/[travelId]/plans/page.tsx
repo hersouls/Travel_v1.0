@@ -6,6 +6,9 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 interface DayPlansPageProps {
   params: {
     travelId: string;

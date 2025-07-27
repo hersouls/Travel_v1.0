@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useEffect } from 'react';
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { Button } from '@/components/ui/Button';
@@ -15,7 +18,7 @@ export default function HomePage() {
 
   // 로그인된 사용자는 여행 목록으로 자동 이동
   useEffect(() => {
-    if (!loading && user) {
+    if (typeof window !== 'undefined' && !loading && user) {
       router.push('/travels');
     }
   }, [user, loading, router]);

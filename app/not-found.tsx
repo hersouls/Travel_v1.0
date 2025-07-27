@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MapIcon, HomeIcon } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function NotFound() {
   return (
@@ -23,14 +24,18 @@ export default function NotFound() {
         </p>
 
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <Link href="/" className="btn btn-primary gap-2 px-6 py-3">
-            <HomeIcon className="h-4 w-4" />
-            홈으로 돌아가기
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/" className="flex items-center gap-2">
+              <HomeIcon className="h-4 w-4" />
+              홈으로 돌아가기
+            </Link>
+          </Button>
 
-          <Link href="/travels" className="btn btn-outline px-6 py-3">
-            여행 관리
-          </Link>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/travels">
+              여행 관리
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
 import MapPageClient from '@/components/features/map/MapPageClient';
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 export default function MapPage() {
   return (
     <Suspense

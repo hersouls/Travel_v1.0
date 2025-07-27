@@ -9,6 +9,9 @@ interface SharedTravelPageProps {
   };
 }
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 // 정적 내보내기를 위한 generateStaticParams 함수
 export async function generateStaticParams() {
   // 빈 배열을 반환하여 모든 동적 라우트를 런타임에 처리
