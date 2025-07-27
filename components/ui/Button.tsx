@@ -12,7 +12,8 @@ const buttonVariants = cva(
     'transition-all duration-200',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
-    'active:scale-[0.98]'
+    'active:scale-[0.98]',
+    'flex-row gap-2'
   ),
   {
     variants: {
@@ -87,9 +88,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading ? (
-          <>
+          <div className="flex items-center gap-2">
             <svg
-              className="-ml-1 mr-2 h-4 w-4 animate-spin"
+              className="h-4 w-4 animate-spin"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -112,11 +113,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             <span className="tracking-korean-normal break-keep-ko">
               처리 중...
             </span>
-          </>
+          </div>
         ) : (
-          <span className="tracking-korean-normal break-keep-ko">
+          <div className="flex items-center gap-2">
             {children}
-          </span>
+          </div>
         )}
       </Comp>
     );
