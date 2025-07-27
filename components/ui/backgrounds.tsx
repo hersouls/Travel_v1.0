@@ -297,5 +297,3 @@ export const CUSTOM_STYLES = `
   -webkit-text-fill-color: transparent;
 }
 `;
-
-
