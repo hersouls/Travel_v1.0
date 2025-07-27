@@ -68,7 +68,6 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
   },
 
-
   // 컴파일러 최적화
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
