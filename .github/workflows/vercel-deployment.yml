@@ -72,6 +72,15 @@ jobs:
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://travel.moonwave.kr
 
       - name: Deploy Project Artifacts to Vercel
         id: deploy
@@ -151,8 +160,30 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Debug Environment Variables
+        run: |
+          echo "🔍 Checking environment variables..."
+          echo "SUPABASE_URL: $(echo $NEXT_PUBLIC_SUPABASE_URL | head -c 20)..."
+          echo "SUPABASE_KEY: $(echo $NEXT_PUBLIC_SUPABASE_ANON_KEY | head -c 20)..."
+          echo "GOOGLE_MAPS: $(echo $NEXT_PUBLIC_GOOGLE_MAPS_API_KEY | head -c 10)..."
+          echo "SITE_URL: $NEXT_PUBLIC_SITE_URL"
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://travel.moonwave.kr
+
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_NEW_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_DIRECTIONS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://travel.moonwave.kr
 
       - name: Deploy Project Artifacts to Vercel
         id: deploy

@@ -32,22 +32,77 @@ const optionalEnvVars = {
 } as const;
 
 /**
+ * 플레이스홀더나 테스트 값인지 확인
+ */
+function isPlaceholderValue(value: string | undefined): boolean {
+  if (!value) return true;
+  
+  const placeholderPatterns = [
+    'placeholder',
+    'test_key',
+    'test.supabase.co',
+    'your_',
+    'YOUR_',
+    'example',
+    'EXAMPLE'
+  ];
+  
+  return placeholderPatterns.some(pattern => value.includes(pattern));
+}
+
+/**
  * 환경 변수 검증 함수
  */
 export function validateEnv(): void {
   const missingVars: string[] = [];
+  const placeholderVars: string[] = [];
 
   // 필수 환경 변수 검증
   Object.entries(requiredEnvVars).forEach(([key, value]) => {
     if (!value || value.trim() === '') {
       missingVars.push(key);
+    } else if (isPlaceholderValue(value)) {
+      placeholderVars.push(key);
     }
   });
 
   if (missingVars.length > 0) {
     throw new Error(
-      `Missing required environment variables:\n${missingVars.map((v) => `- ${v}`).join('\n')}\n\nPlease check your .env.local file or GitHub Secrets.`
+      `Missing required environment variables:\n${missingVars.map((v) => `- ${v}`).join('\n')}\n\nPlease check your .env.local file or environment configuration.`
     );
+  }
+
+  if (placeholderVars.length > 0) {
+    console.warn(
+      `⚠️ Placeholder values detected in environment variables:\n${placeholderVars.map((v) => `- ${v}`).join('\n')}\n\nPlease set proper values for production deployment.`
+    );
+  }
+}
+
+/**
+ * Supabase 연결 상태 확인
+ */
+export function validateSupabaseConnection(): boolean {
+  const supabaseUrl = requiredEnvVars.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = requiredEnvVars.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Supabase: Environment variables not set');
+    return false;
+  }
+  
+  if (isPlaceholderValue(supabaseUrl) || isPlaceholderValue(supabaseKey)) {
+    console.warn('⚠️ Supabase: Using placeholder values');
+    return false;
+  }
+  
+  try {
+    new URL(supabaseUrl);
+    console.log('✅ Supabase: Configuration appears valid');
+    return true;
+  } catch {
+    console.error('❌ Supabase: Invalid URL format');
+    return false;
   }
 }
 
@@ -86,23 +141,29 @@ export const env = {
 export function logEnvStatus(): void {
   if (env.IS_DEVELOPMENT) {
     console.log('🔧 Environment Variables Status:');
-    console.log('✅ Supabase URL:', env.SUPABASE_URL ? 'Set' : '❌ Missing');
-    console.log(
-      '✅ Supabase Key:',
-      env.SUPABASE_ANON_KEY ? 'Set' : '❌ Missing'
-    );
-    console.log(
-      '✅ Google Maps:',
-      env.GOOGLE_MAPS_API_KEY ? 'Set' : '❌ Missing'
-    );
-    console.log(
-      '✅ Google Places:',
-      env.GOOGLE_PLACES_API_KEY ? 'Set' : '❌ Missing'
-    );
-    console.log(
-      '🔒 Google OAuth:',
-      env.GOOGLE_CLIENT_ID ? 'Set' : 'Not configured'
-    );
+    
+    // Supabase 상태
+    const supabaseValid = validateSupabaseConnection();
+    console.log(`${supabaseValid ? '✅' : '❌'} Supabase Connection:`, 
+      supabaseValid ? 'Ready' : 'Not configured properly');
+    
+    // Google Maps 상태
+    const mapsValid = !isPlaceholderValue(env.GOOGLE_MAPS_API_KEY);
+    console.log(`${mapsValid ? '✅' : '❌'} Google Maps:`, 
+      mapsValid ? 'Ready' : 'Not configured properly');
+    
+    // Google Places 상태  
+    const placesValid = !isPlaceholderValue(env.GOOGLE_PLACES_API_KEY);
+    console.log(`${placesValid ? '✅' : '❌'} Google Places:`, 
+      placesValid ? 'Ready' : 'Not configured properly');
+    
+    // OAuth 상태
+    const oauthConfigured = !!env.GOOGLE_CLIENT_ID;
+    console.log(`${oauthConfigured ? '✅' : '🔒'} Google OAuth:`, 
+      oauthConfigured ? 'Configured' : 'Not configured');
+      
+    console.log('🌍 Environment:', env.NODE_ENV);
+    console.log('🔗 Site URL:', env.SITE_URL);
   }
 }
 

@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient, checkSupabaseConnection } from '@/lib/supabase/client';
+import { validateSupabaseConnection } from '@/lib/env';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '@/lib/types/database';
 
@@ -9,6 +10,8 @@ type SupabaseContextType = {
   supabase: SupabaseClient<Database>;
   user: User | null;
   loading: boolean;
+  isConnected: boolean;
+  connectionError: string | null;
 };
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(
@@ -31,6 +34,8 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
   const [supabase] = useState(() => createClient());
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
     // Skip Supabase calls during build/server-side rendering
@@ -39,40 +44,69 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
       return;
     }
 
-    // Skip if using placeholder values (build environment)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+    // 환경 변수 유효성 검사
+    const isValidConfig = validateSupabaseConnection();
+    if (!isValidConfig) {
       setLoading(false);
+      setIsConnected(false);
+      setConnectionError('Supabase configuration is not properly set');
+      console.warn('⚠️ Supabase Provider: Configuration not valid, operating in offline mode');
       return;
     }
 
-    // 초기 사용자 세션 확인
-    const getInitialSession = async () => {
+    // 초기 연결 및 세션 확인
+    const initializeSupabase = async () => {
       try {
+        // 연결 테스트
+        const connectionTest = await checkSupabaseConnection();
+        setIsConnected(connectionTest);
+
+        if (!connectionTest) {
+          setConnectionError('Failed to connect to Supabase database');
+          setLoading(false);
+          return;
+        }
+
+        // 세션 확인
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.warn('Session error:', sessionError.message);
+          setConnectionError(sessionError.message);
+        }
+
         setUser(session?.user ?? null);
+        setConnectionError(null);
       } catch (error) {
-        console.warn('Failed to get initial session:', error);
-        setUser(null);
+        console.error('Failed to initialize Supabase:', error);
+        setConnectionError(error instanceof Error ? error.message : 'Unknown error');
+        setIsConnected(false);
       } finally {
         setLoading(false);
       }
     };
 
-    getInitialSession();
+    initializeSupabase();
 
-    // 인증 상태 변경 리스너
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // 인증 상태 변경 리스너 (연결이 성공한 경우에만)
+    let subscription: { subscription: { unsubscribe: () => void } } | null = null;
+    
+    if (isValidConfig) {
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('Auth state changed:', event);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
+      subscription = data;
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.subscription.unsubscribe();
+      }
     };
   }, [supabase]);
 
@@ -80,6 +114,8 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     supabase,
     user,
     loading,
+    isConnected,
+    connectionError,
   };
 
   return (
