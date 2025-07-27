@@ -25,10 +25,18 @@ export const createClient = () => {
 // 브라우저에서 사용할 기본 클라이언트
 export const supabase = createClient();
 
-// 연결 상태 확인 함수
-export const checkSupabaseConnection = async () => {
+// 연결 상태 확인 함수 (타임아웃 적용)
+export const checkSupabaseConnection = async (): Promise<boolean> => {
   try {
-    const { error } = await supabase.from('profiles').select('count').limit(1);
+    // 타임아웃 설정 (3초)
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Connection timeout')), 3000);
+    });
+
+    // 연결 테스트
+    const connectionPromise = supabase.from('profiles').select('count').limit(1);
+    
+    const { error } = await Promise.race([connectionPromise, timeoutPromise]);
 
     if (error) {
       console.error('❌ Supabase connection test failed:', error.message);

@@ -1,80 +1,69 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export' 제거 (정적 export 비활성화)
-  // Vercel에서는 동적 렌더링과 API Routes 사용 가능
-
-  // Vercel 최적화 설정
+  // 이미지 최적화 설정
   images: {
     domains: [
-      'travel.moonwave.kr',
-      'images.unsplash.com',
-      'plus.unsplash.com',
-      'your-supabase-project.supabase.co', // Supabase 이미지 도메인으로 변경 필요
+      'maps.googleapis.com',
+      'maps.gstatic.com',
+      'lh3.googleusercontent.com',
+      'cihoeiwbiwcyrjywvufp.supabase.co',
     ],
-    formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
-    ],
+    formats: ['image/webp', 'image/avif'],
   },
 
-  // Security headers
+  // 환경 변수 설정
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+
+  // 웹팩 설정
+  webpack: (config, { isServer }) => {
+    // 클라이언트 사이드에서만 적용되는 설정
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+
+    return config;
+  },
+
+  // 헤더 설정
   async headers() {
-    const isDev = process.env.NODE_ENV === 'development';
-
-    // More permissive CSP for development, stricter for production
-    const cspDirectives = [
-      "default-src 'self'",
-      `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com`,
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net", // ✅ CDN 추가
-      "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net", // ✅ 폰트 CDN 추가
-      "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co", // ✅ WebSocket 추가
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ]
-      .filter(Boolean)
-      .join('; ');
-
     return [
       {
         source: '/(.*)',
         headers: [
           {
-            key: 'Content-Security-Policy',
-            value: cspDirectives,
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },
     ];
   },
 
-  // 환경별 설정
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/api`
-      : 'http://localhost:3000/api',
-    ANALYZE: process.env.ANALYZE || 'false',
+  // 리다이렉트 설정
+  async redirects() {
+    return [
+      {
+        source: '/index.html',
+        destination: '/',
+        permanent: true,
+      },
+    ];
   },
-
-  // 실험적 기능 활성화
-  experimental: {
-    // Server Actions are now available by default in Next.js 14, no need to explicitly enable
-    optimizePackageImports: ['lucide-react', '@supabase/auth-helpers-nextjs'],
-  },
-
-  // 컴파일러 최적화
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-
-  // Vercel에서 권장하는 설정
-  poweredByHeader: false,
 };
 
 module.exports = nextConfig;

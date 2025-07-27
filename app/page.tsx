@@ -10,19 +10,19 @@ import Link from 'next/link';
 export default function HomePage() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
-  const { user, loading } = useSupabase();
+  const { user, loading, isConnected, connectionError } = useSupabase();
 
   // 클라이언트 사이드 렌더링 확인
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // 로그인된 사용자는 여행 목록으로 자동 이동
+  // 로그인된 사용자는 여행 목록으로 자동 이동 (연결이 성공한 경우에만)
   useEffect(() => {
-    if (user && !loading && isClient) {
+    if (user && !loading && isClient && isConnected) {
       router.push('/travels');
     }
-  }, [user, loading, router, isClient]);
+  }, [user, loading, router, isClient, isConnected]);
 
   // 서버 사이드 렌더링 중에는 기본 UI만 표시
   if (!isClient) {
@@ -47,7 +47,8 @@ export default function HomePage() {
     );
   }
 
-  if (loading) {
+  // 로딩 중이거나 연결 중일 때 (최대 3초까지만)
+  if (loading && isClient) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -82,9 +83,18 @@ export default function HomePage() {
             특별한 여행을 설계하세요
           </p>
 
+          {/* 연결 상태 알림 */}
+          {connectionError && (
+            <div className="mb-6 rounded-lg bg-yellow-500/20 border border-yellow-500/30 p-4">
+              <p className="text-yellow-200 text-sm">
+                ⚠️ 일부 기능이 제한될 수 있습니다. 네트워크 연결을 확인해주세요.
+              </p>
+            </div>
+          )}
+
           {/* 액션 버튼 */}
           <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
-            {user ? (
+            {user && isConnected ? (
               <Button asChild size="lg" className="px-8 py-4 text-lg">
                 <Link href="/travels">
                   <Calendar className="mr-2 h-5 w-5" />내 여행 보기

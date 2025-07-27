@@ -62,9 +62,16 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
 
     // 초기 연결 및 세션 확인
     const initializeSupabase = async () => {
+      // 타임아웃 설정 (5초)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Connection timeout')), 5000);
+      });
+
       try {
-        // 연결 테스트
-        const connectionTest = await checkSupabaseConnection();
+        // 연결 테스트 (타임아웃 적용)
+        const connectionPromise = checkSupabaseConnection();
+        const connectionTest = await Promise.race([connectionPromise, timeoutPromise]) as boolean;
+        
         setIsConnected(connectionTest);
 
         if (!connectionTest) {
@@ -77,11 +84,12 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
           return;
         }
 
-        // 세션 확인
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        // 세션 확인 (타임아웃 적용)
+        const sessionPromise = supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]) as { data: { session: any }, error: any };
 
         if (sessionError) {
           logError(sessionError, 'auth', 'getSession');

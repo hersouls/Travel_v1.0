@@ -5,6 +5,9 @@
   "regions": ["icn1"],
   "functions": {
     "app/api/**/*.ts": {
+      "maxDuration": 60
+    },
+    "app/**/*.tsx": {
       "maxDuration": 30
     }
   },
