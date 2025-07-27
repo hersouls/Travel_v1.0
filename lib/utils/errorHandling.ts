@@ -87,7 +87,7 @@ export const getKoreanErrorMessage = (
   error: unknown,
   context: ErrorContext = 'database'
 ): string => {
-  const message = error?.message || error?.toString() || '';
+  const message = (error as any)?.message || (error as any)?.toString() || '';
 
   // 모든 에러 메시지 매핑을 하나로 합치기
   const allErrorMessages = {
@@ -177,7 +177,7 @@ export const logError = (
 export const classifyError = (
   error: unknown
 ): 'network' | 'auth' | 'database' | 'validation' | 'unknown' => {
-  const message = error?.message || error?.toString() || '';
+  const message = (error as any)?.message || (error as any)?.toString() || '';
 
   if (
     message.includes('network') ||
