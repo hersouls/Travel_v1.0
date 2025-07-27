@@ -74,6 +74,7 @@ export function UserMenu() {
       </button>
 
       {isMenuOpen && (
+        <div className="absolute right-0 top-full mt-2 w-64 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-lg z-50">
           <div className="border-b border-white/20 p-4">
             <div className="text-sm font-medium text-white tracking-korean-normal">
               {userDisplayName}

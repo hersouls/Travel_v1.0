@@ -306,3 +306,4 @@ const BackgroundComponents = {
   GRADIENT_CLASSES,
   GLASS_CLASSES,
   ExampleUsage,
+};

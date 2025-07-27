@@ -91,6 +91,12 @@ export default function PlanMarker({
   useEffect(() => {
 
     const config = getPlanMarkerConfig(plan.plan_type);
+    
+    // Check if coordinates are valid
+    if (plan.latitude === null || plan.longitude === null) {
+      return;
+    }
+    
     const position = {
       lat: plan.latitude,
       lng: plan.longitude,

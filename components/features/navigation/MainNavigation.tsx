@@ -37,6 +37,7 @@ export function MainNavigation() {
   };
 
   return (
+    <nav className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 border-b border-white/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
