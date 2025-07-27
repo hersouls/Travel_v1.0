@@ -33,7 +33,7 @@ export const ALLOWED_REDIRECT_URIS = [
  * 현재 origin이 허용된 JavaScript 원본인지 확인
  */
 export function isAllowedOrigin(origin: string): boolean {
-  return ALLOWED_ORIGINS.includes(origin as any);
+  return ALLOWED_ORIGINS.includes(origin as typeof ALLOWED_ORIGINS[number]);
 }
 
 /**
