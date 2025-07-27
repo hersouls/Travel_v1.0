@@ -142,7 +142,7 @@ export function ShareModal({
     } finally {
       setIsInviting(false);
     }
-  }, [user, travelId, inviteEmail, inviteRole, onCollaboratorAdd]);
+  }, [user, inviteEmail, onCollaboratorAdd]);
 
   const handleRemoveCollaborator = useCallback(
     async (collaboratorId: string) => {

@@ -172,8 +172,6 @@ export function logEnvStatus(): void {
     );
 
     // OAuth 상태
-    const oauthConfigured = !!env.GOOGLE_CLIENT_ID;
-
     console.log('🌍 Environment:', env.NODE_ENV);
     console.log('🔗 Site URL:', env.SITE_URL);
   }
