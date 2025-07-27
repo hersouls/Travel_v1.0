@@ -29,6 +29,10 @@ const optionalEnvVars = {
   // Site URL
   NEXT_PUBLIC_SITE_URL:
     process.env.NEXT_PUBLIC_SITE_URL || 'https://travel.moonwave.kr',
+    
+  // OAuth Redirect URLs
+  OAUTH_REDIRECT_URL: process.env.OAUTH_REDIRECT_URL || 'https://travel.moonwave.kr/auth/callback',
+  OAUTH_DEVELOPMENT_REDIRECT_URL: process.env.OAUTH_DEVELOPMENT_REDIRECT_URL || 'http://localhost:3000/auth/callback',
 } as const;
 
 /**
@@ -128,6 +132,10 @@ export const env = {
   GOOGLE_CLIENT_ID: optionalEnvVars.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: optionalEnvVars.GOOGLE_CLIENT_SECRET,
   SITE_URL: optionalEnvVars.NEXT_PUBLIC_SITE_URL!,
+  
+  // OAuth URLs
+  OAUTH_REDIRECT_URL: optionalEnvVars.OAUTH_REDIRECT_URL!,
+  OAUTH_DEVELOPMENT_REDIRECT_URL: optionalEnvVars.OAUTH_DEVELOPMENT_REDIRECT_URL!,
 
   // 환경 구분
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test',
@@ -165,10 +173,6 @@ export function logEnvStatus(): void {
 
     // OAuth 상태
     const oauthConfigured = !!env.GOOGLE_CLIENT_ID;
-    console.log(
-      `${oauthConfigured ? '✅' : '🔒'} Google OAuth:`,
-      oauthConfigured ? 'Configured' : 'Not configured'
-    );
 
     console.log('🌍 Environment:', env.NODE_ENV);
     console.log('🔗 Site URL:', env.SITE_URL);
@@ -180,6 +184,14 @@ if (typeof window === 'undefined') {
   try {
     validateEnv();
     logEnvStatus();
+    
+    // OAuth 상태 로깅 추가
+    try {
+      const { logOAuthStatus } = await import('./oauth');
+      logOAuthStatus();
+    } catch (error) {
+      console.warn('⚠️ OAuth status logging failed:', error);
+    }
   } catch (error) {
     console.error('❌ Environment validation failed:', error);
     if (env.IS_PRODUCTION) {

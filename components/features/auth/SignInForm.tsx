@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Loader2, Mail, Chrome } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { getOAuthRedirectUrl } from '@/lib/oauth';
 
 interface AuthError {
   message: string;
@@ -35,7 +36,7 @@ export function SignInForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/travels`,
+          emailRedirectTo: getOAuthRedirectUrl('/travels'),
         },
       });
 
@@ -71,7 +72,7 @@ export function SignInForm() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/travels`,
+          redirectTo: getOAuthRedirectUrl('/travels'),
         },
       });
 
