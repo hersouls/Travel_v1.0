@@ -97,13 +97,38 @@ async function getSharedTravel(travelId: string) {
     // Get collaborators
     const { data: collaborators } = await supabase
       .from('collaborators')
-      .select('*')
+      .select(`
+        id,
+        travel_plan_id,
+        user_id,
+        role,
+        invited_at,
+        joined_at,
+        profiles:user_id (
+          name,
+          avatar_url,
+          email
+        )
+      `)
       .eq('travel_plan_id', travelId)
-      .eq('status', 'accepted');
+      .not('joined_at', 'is', null);
+
+    // Transform collaborators to match ExtendedCollaborator interface
+    const transformedCollaborators = (collaborators || []).map(collaborator => ({
+      id: collaborator.id,
+      email: collaborator.profiles?.email || '',
+      role: collaborator.role as 'viewer' | 'editor',
+      status: 'accepted' as const,
+      joined_at: collaborator.joined_at,
+      profiles: collaborator.profiles ? {
+        name: collaborator.profiles.name,
+        avatar_url: collaborator.profiles.avatar_url
+      } : null
+    }));
 
     return {
       travel,
-      collaborators: collaborators || [],
+      collaborators: transformedCollaborators,
     };
   } catch (error) {
     console.error('Get shared travel error:', error);
