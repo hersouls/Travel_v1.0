@@ -1,6 +1,9 @@
 'use client';
 
 import React from 'react';
+
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { useTravelPlans } from '@/hooks/useTravelPlans';
 import { TravelList } from '@/components/features/travel/TravelList';

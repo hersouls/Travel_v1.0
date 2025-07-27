@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import TravelDetailView from '@/components/features/travel/TravelDetailView';
 import TravelDetailSkeleton from '@/components/features/travel/TravelDetailSkeleton';
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 interface TravelDetailPageProps {
   params: {
     travelId: string;
