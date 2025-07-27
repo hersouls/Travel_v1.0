@@ -33,17 +33,17 @@ export interface HeaderBackgroundProps {
 }
 
 // 1. 그라디언트 배경 컴포넌트
-export const GradientBackground = ({ 
-  children, 
+export const GradientBackground = ({
+  children,
   variant = 'moonwave',
-  className = '' 
+  className = '',
 }: GradientBackgroundProps) => {
   const gradients = {
     moonwave: 'bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700',
     sunset: 'bg-gradient-to-b from-orange-900 via-red-800 to-pink-700',
     ocean: 'bg-gradient-to-b from-teal-900 via-cyan-800 to-blue-700',
     forest: 'bg-gradient-to-b from-green-900 via-emerald-800 to-teal-700',
-    purple: 'bg-gradient-to-b from-purple-900 via-indigo-800 to-blue-700'
+    purple: 'bg-gradient-to-b from-purple-900 via-indigo-800 to-blue-700',
   };
 
   return (
@@ -54,12 +54,12 @@ export const GradientBackground = ({
 };
 
 // 2. SVG 웨이브 효과 컴포넌트
-export const WaveEffect = ({ 
+export const WaveEffect = ({
   variant = 'double',
   color = 'white',
   opacity = [0.1, 0.15],
   height = 60,
-  className = ''
+  className = '',
 }: WaveEffectProps) => {
   const renderWaves = () => {
     switch (variant) {
@@ -71,7 +71,7 @@ export const WaveEffect = ({
             fillOpacity={opacity[0] || 0.1}
           />
         );
-      
+
       case 'double':
         return (
           <>
@@ -87,7 +87,7 @@ export const WaveEffect = ({
             />
           </>
         );
-      
+
       case 'triple':
         return (
           <>
@@ -108,7 +108,7 @@ export const WaveEffect = ({
             />
           </>
         );
-      
+
       default:
         return null;
     }
@@ -116,7 +116,11 @@ export const WaveEffect = ({
 
   return (
     <div className={cn('absolute bottom-0 left-0 right-0', className)}>
-      <svg viewBox={`0 0 375 ${height}`} className="w-full" style={{ height: `${height}px` }}>
+      <svg
+        viewBox={`0 0 375 ${height}`}
+        className="w-full"
+        style={{ height: `${height}px` }}
+      >
         {renderWaves()}
       </svg>
     </div>
@@ -124,17 +128,17 @@ export const WaveEffect = ({
 };
 
 // 3. 글래스모피즘 버튼/카드 컴포넌트
-export const GlassCard = ({ 
-  children, 
+export const GlassCard = ({
+  children,
   variant = 'light',
   className = '',
   onClick,
-  ...props 
+  ...props
 }: GlassCardProps) => {
   const glassStyles = {
     light: 'bg-white/10 backdrop-blur-sm border border-white/20',
     medium: 'bg-white/20 backdrop-blur-md border border-white/30',
-    dark: 'bg-white/30 backdrop-blur-lg border border-white/40'
+    dark: 'bg-white/30 backdrop-blur-lg border border-white/40',
   };
 
   return (
@@ -142,7 +146,7 @@ export const GlassCard = ({
       className={cn(
         glassStyles[variant],
         'rounded-lg transition-all duration-200',
-        'hover:bg-white/40 hover:shadow-lg hover:scale-105',
+        'hover:scale-105 hover:bg-white/40 hover:shadow-lg',
         onClick && 'cursor-pointer',
         className
       )}
@@ -155,26 +159,26 @@ export const GlassCard = ({
 };
 
 // 4. 완전한 헤더 배경 컴포넌트 (그라디언트 + 웨이브)
-export const HeaderBackground = ({ 
+export const HeaderBackground = ({
   children,
   gradientVariant = 'moonwave',
   waveVariant = 'double',
   waveColor = 'white',
   waveOpacity = [0.1, 0.15],
-  className = ''
+  className = '',
 }: HeaderBackgroundProps) => {
   const gradients = {
     moonwave: 'bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700',
     sunset: 'bg-gradient-to-b from-orange-900 via-red-800 to-pink-700',
     ocean: 'bg-gradient-to-b from-teal-900 via-cyan-800 to-blue-700',
     forest: 'bg-gradient-to-b from-green-900 via-emerald-800 to-teal-700',
-    purple: 'bg-gradient-to-b from-purple-900 via-indigo-800 to-blue-700'
+    purple: 'bg-gradient-to-b from-purple-900 via-indigo-800 to-blue-700',
   };
 
   return (
     <div className={cn('relative', gradients[gradientVariant], className)}>
       {children}
-      <WaveEffect 
+      <WaveEffect
         variant={waveVariant}
         color={waveColor}
         opacity={waveOpacity}
@@ -191,15 +195,15 @@ export const GRADIENT_CLASSES = {
   ocean: 'bg-gradient-to-b from-teal-900 via-cyan-800 to-blue-700',
   forest: 'bg-gradient-to-b from-green-900 via-emerald-800 to-teal-700',
   purple: 'bg-gradient-to-b from-purple-900 via-indigo-800 to-blue-700',
-  
+
   // 대각선 그라디언트
   moonwaveDiagonal: 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700',
   sunsetDiagonal: 'bg-gradient-to-br from-orange-900 via-red-800 to-pink-700',
-  
+
   // 가로 그라디언트
   moonwaveHorizontal: 'bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700',
   sunsetHorizontal: 'bg-gradient-to-r from-orange-900 via-red-800 to-pink-700',
-  
+
   // 버튼용 작은 그라디언트
   buttonPrimary: 'bg-gradient-to-r from-blue-600 to-purple-600',
   buttonSuccess: 'bg-gradient-to-r from-green-600 to-teal-600',
@@ -210,13 +214,15 @@ export const GRADIENT_CLASSES = {
 // 6. 글래스모피즘 클래스 모음
 export const GLASS_CLASSES = {
   light: 'bg-white/10 backdrop-blur-sm border border-white/20',
-  medium: 'bg-white/20 backdrop-blur-md border border-white/30', 
+  medium: 'bg-white/20 backdrop-blur-md border border-white/30',
   dark: 'bg-white/30 backdrop-blur-lg border border-white/40',
-  
+
   // 버튼용
-  buttonLight: 'bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/20',
-  buttonMedium: 'bg-white/30 hover:bg-white/50 backdrop-blur-md border border-white/30',
-  
+  buttonLight:
+    'bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/20',
+  buttonMedium:
+    'bg-white/30 hover:bg-white/50 backdrop-blur-md border border-white/30',
+
   // 카드용
   cardLight: 'bg-white/10 backdrop-blur-md border border-white/20 shadow-lg',
   cardMedium: 'bg-white/20 backdrop-blur-lg border border-white/30 shadow-xl',
@@ -229,19 +235,19 @@ export const ExampleUsage = () => {
       {/* 예시 1: 기본 그라디언트 배경 */}
       <GradientBackground variant="moonwave">
         <div className="p-8">
-          <h1 className="text-white text-4xl">Moonwave App</h1>
+          <h1 className="text-4xl text-white">Moonwave App</h1>
         </div>
       </GradientBackground>
 
       {/* 예시 2: 헤더 배경 (그라디언트 + 웨이브) */}
-      <HeaderBackground 
+      <HeaderBackground
         gradientVariant="moonwave"
         waveVariant="double"
         className="h-64 p-8"
       >
         <div className="relative z-10">
-          <h1 className="text-white text-4xl mb-4">Header Title</h1>
-          <GlassCard variant="medium" className="p-4 max-w-md">
+          <h1 className="mb-4 text-4xl text-white">Header Title</h1>
+          <GlassCard variant="medium" className="max-w-md p-4">
             <p className="text-white">Glass card content</p>
           </GlassCard>
         </div>
@@ -256,12 +262,8 @@ export const ExampleUsage = () => {
 
       {/* 예시 4: 독립적인 웨이브 효과 */}
       <div className="relative h-32 bg-blue-600">
-        <p className="text-white p-4">Content with wave at bottom</p>
-        <WaveEffect 
-          variant="triple" 
-          color="white" 
-          opacity={[0.1, 0.15, 0.2]}
-        />
+        <p className="p-4 text-white">Content with wave at bottom</p>
+        <WaveEffect variant="triple" color="white" opacity={[0.1, 0.15, 0.2]} />
       </div>
     </>
   );
@@ -304,7 +306,7 @@ const BackgroundComponents = {
   GRADIENT_CLASSES,
   GLASS_CLASSES,
   ExampleUsage,
-  CUSTOM_STYLES
+  CUSTOM_STYLES,
 };
 
 export default BackgroundComponents;

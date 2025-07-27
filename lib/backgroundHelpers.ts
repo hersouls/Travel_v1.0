@@ -1,7 +1,9 @@
 import { GRADIENT_CLASSES } from '@/components/ui/backgrounds';
 
 // 페이지별 배경 변형 매핑
-export const getPageBackground = (currentPath: string): keyof typeof GRADIENT_CLASSES => {
+export const getPageBackground = (
+  currentPath: string
+): keyof typeof GRADIENT_CLASSES => {
   // 기본 경로별 배경 설정
   const pathBackgrounds: Record<string, keyof typeof GRADIENT_CLASSES> = {
     '/': 'moonwave',
@@ -34,7 +36,7 @@ export const getPageBackground = (currentPath: string): keyof typeof GRADIENT_CL
 // 시간대별 배경 변형 (선택적)
 export const getTimeBasedBackground = (): keyof typeof GRADIENT_CLASSES => {
   const hour = new Date().getHours();
-  
+
   if (hour >= 6 && hour < 12) {
     return 'sunset'; // 아침
   } else if (hour >= 12 && hour < 18) {
@@ -71,7 +73,7 @@ export const getResponsiveBackground = (
 ): string => {
   const base = GRADIENT_CLASSES[baseClass];
   const mobile = mobileClass ? GRADIENT_CLASSES[mobileClass] : base;
-  
+
   return `${mobile} md:${base.replace('bg-gradient-', 'md:bg-gradient-')}`;
 };
 
@@ -109,14 +111,16 @@ export const getThemeBackground = (
 ): string => {
   // THEME_BACKGROUNDS에 해당 variant가 있는지 확인
   if (variant in THEME_BACKGROUNDS[theme]) {
-    return THEME_BACKGROUNDS[theme][variant as keyof typeof THEME_BACKGROUNDS[typeof theme]];
+    return THEME_BACKGROUNDS[theme][
+      variant as keyof (typeof THEME_BACKGROUNDS)[typeof theme]
+    ];
   }
-  
+
   // variant가 THEME_BACKGROUNDS에 없으면 GRADIENT_CLASSES에서 직접 가져오기
   if (variant in GRADIENT_CLASSES) {
     return GRADIENT_CLASSES[variant];
   }
-  
+
   // 기본값 반환
   return THEME_BACKGROUNDS.dark.moonwave;
 };

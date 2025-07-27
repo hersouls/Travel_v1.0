@@ -44,7 +44,7 @@ export function UserMenu() {
         variant="outline"
         size="sm"
         onClick={() => (window.location.href = '/signin')}
-        className={`${GLASS_CLASSES.buttonLight} tracking-korean-normal text-white border-white/30 hover:bg-white/30`}
+        className={`${GLASS_CLASSES.buttonLight} border-white/30 text-white tracking-korean-normal hover:bg-white/30`}
       >
         로그인
       </Button>
@@ -76,7 +76,9 @@ export function UserMenu() {
       </button>
 
       {isMenuOpen && (
-        <div className={`absolute right-0 z-50 mt-2 w-64 rounded-lg ${GLASS_CLASSES.cardMedium} border-white/30`}>
+        <div
+          className={`absolute right-0 z-50 mt-2 w-64 rounded-lg ${GLASS_CLASSES.cardMedium} border-white/30`}
+        >
           <div className="border-b border-white/20 p-4">
             <div className="text-sm font-medium text-white tracking-korean-normal">
               {userDisplayName}

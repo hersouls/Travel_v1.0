@@ -38,7 +38,9 @@ export function MainNavigation() {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}>
+    <nav
+      className={`sticky top-0 z-50 ${GLASS_CLASSES.light} border-b border-white/20`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
