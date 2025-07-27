@@ -3,6 +3,10 @@ let isLoading = false;
 let loadPromise: Promise<void> | null = null;
 
 export const loadGoogleMapsAPI = (): Promise<void> => {
+  if (typeof window === 'undefined') {
+    return Promise.resolve();
+  }
+
   if (isLoaded) return Promise.resolve();
   if (isLoading) return loadPromise!;
 
@@ -32,12 +36,11 @@ export const loadGoogleMapsAPI = (): Promise<void> => {
 
 // Google Maps API가 로드되었는지 확인
 export const isGoogleMapsLoaded = (): boolean => {
-  return (
-    isLoaded &&
-    typeof window !== 'undefined' &&
-    !!window.google &&
-    !!window.google.maps
-  );
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return isLoaded && !!window.google && !!window.google.maps;
 };
 
 // Google Maps API 로드 상태 리셋 (테스트용)

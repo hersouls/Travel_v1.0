@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { Button } from '@/components/ui/Button';
@@ -20,7 +19,6 @@ export default function HomePage() {
 
   // 로그인된 사용자는 여행 목록으로 자동 이동
   useEffect(() => {
-    if (isClient && !loading && user) {
       router.push('/travels');
     }
   }, [user, loading, router, isClient]);
@@ -61,7 +59,6 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 relative">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
@@ -151,6 +148,5 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

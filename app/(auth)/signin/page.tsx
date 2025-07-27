@@ -3,6 +3,9 @@ import { Suspense } from 'react';
 import { SignInForm } from '@/components/features/auth/SignInForm';
 import { Card } from '@/components/ui/Card';
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: '로그인 | Moonwave Travel',
   description:

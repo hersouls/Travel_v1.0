@@ -43,7 +43,6 @@ export function UserMenu() {
         variant="outline"
         size="sm"
         onClick={() => (window.location.href = '/signin')}
-        className="bg-white/20 hover:bg-white/40 backdrop-blur-sm border border-white/20 tracking-korean-normal text-white border-white/30 hover:bg-white/30"
       >
         로그인
       </Button>
@@ -75,7 +74,6 @@ export function UserMenu() {
       </button>
 
       {isMenuOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-64 rounded-lg bg-white/20 backdrop-blur-lg border border-white/30 shadow-xl border-white/30">
           <div className="border-b border-white/20 p-4">
             <div className="text-sm font-medium text-white tracking-korean-normal">
               {userDisplayName}

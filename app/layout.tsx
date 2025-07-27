@@ -3,6 +3,9 @@ import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
 import { MainNavigation } from '@/components/features/navigation/MainNavigation';
 import './globals.css';
 
+// Force dynamic rendering to prevent static generation issues
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'Moonwave Travel',
