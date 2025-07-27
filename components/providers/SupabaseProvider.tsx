@@ -5,6 +5,7 @@ import { createClient, checkSupabaseConnection } from '@/lib/supabase/client';
 import { validateSupabaseConnection } from '@/lib/env';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import type { Database } from '@/lib/types/database';
+import { getKoreanErrorMessage, logError } from '@/lib/utils/errorHandling';
 
 type SupabaseContextType = {
   supabase: SupabaseClient<Database>;
@@ -50,7 +51,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     if (!isValidConfig) {
       setLoading(false);
       setIsConnected(false);
-      setConnectionError('Supabase configuration is not properly set');
+      const configError = { message: 'Missing environment variables' };
+      logError(configError, 'config', 'validation');
+      setConnectionError(getKoreanErrorMessage(configError, 'config'));
       console.warn(
         '⚠️ Supabase Provider: Configuration not valid, operating in offline mode'
       );
@@ -65,7 +68,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         setIsConnected(connectionTest);
 
         if (!connectionTest) {
-          setConnectionError('Failed to connect to Supabase database');
+          const connectionError = { message: 'Failed to connect' };
+          logError(connectionError, 'connection', 'test');
+          setConnectionError(getKoreanErrorMessage(connectionError, 'connection'));
           setLoading(false);
           return;
         }
@@ -77,17 +82,17 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
         } = await supabase.auth.getSession();
 
         if (sessionError) {
+          logError(sessionError, 'auth', 'getSession');
           console.warn('Session error:', sessionError.message);
-          setConnectionError(sessionError.message);
+          setConnectionError(getKoreanErrorMessage(sessionError, 'auth'));
         }
 
         setUser(session?.user ?? null);
         setConnectionError(null);
       } catch (error) {
+        logError(error, 'connection', 'initialization');
         console.error('Failed to initialize Supabase:', error);
-        setConnectionError(
-          error instanceof Error ? error.message : 'Unknown error'
-        );
+        setConnectionError(getKoreanErrorMessage(error, 'connection'));
         setIsConnected(false);
       } finally {
         setLoading(false);
@@ -106,6 +111,11 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
           console.log('Auth state changed:', event);
           setUser(session?.user ?? null);
           setLoading(false);
+          
+          // 인증 상태 변경 시 연결 에러 초기화
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            setConnectionError(null);
+          }
         }
       );
       subscription = data;
