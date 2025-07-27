@@ -278,7 +278,7 @@ describe('utils', () => {
     it('SSR 환경에서 안전하게 작동해야 함', () => {
       // window 객체 제거
       const originalWindow = global.window;
-      delete (global as any).window;
+      delete (global as Record<string, unknown>).window;
 
       expect(safeLocalStorage.getItem('test-key')).toBeUndefined();
       expect(() => safeLocalStorage.setItem('test-key', 'value')).not.toThrow();

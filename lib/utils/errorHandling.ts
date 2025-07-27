@@ -84,7 +84,7 @@ const GENERAL_ERROR_MESSAGES: Record<string, string> = {
  * @returns 한글 에러 메시지
  */
 export const getKoreanErrorMessage = (
-  error: any,
+  error: unknown,
   context: ErrorContext = 'database'
 ): string => {
   const message = error?.message || error?.toString() || '';
@@ -157,7 +157,7 @@ export const getKoreanErrorMessage = (
  * @param operation - 수행 중이던 작업
  */
 export const logError = (
-  error: any,
+  error: unknown,
   context: string,
   operation?: string
 ): void => {
@@ -175,7 +175,7 @@ export const logError = (
  * @returns 에러 타입
  */
 export const classifyError = (
-  error: any
+  error: unknown
 ): 'network' | 'auth' | 'database' | 'validation' | 'unknown' => {
   const message = error?.message || error?.toString() || '';
 

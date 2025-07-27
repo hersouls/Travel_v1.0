@@ -12,7 +12,7 @@ describe('EmptyTravelState', () => {
   });
 
   it('Pretendard 폰트 클래스가 적용되어야 함', () => {
-    const { container } = render(<EmptyTravelState />);
+    render(<EmptyTravelState />);
     
     const titleElement = screen.getByText('첫 번째 여행을 계획해보세요');
     expect(titleElement).toHaveClass('font-pretendard');
