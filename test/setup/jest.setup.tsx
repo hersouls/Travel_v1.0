@@ -12,8 +12,8 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 jest.mock('next/font/local', () => ({
   default: () => ({
     className: 'font-pretendard',
-    variable: '--font-pretendard'
-  })
+    variable: '--font-pretendard',
+  }),
 }));
 
 // Next.js Image 컴포넌트 모킹
