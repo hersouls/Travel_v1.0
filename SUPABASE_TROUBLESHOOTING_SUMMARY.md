@@ -19,13 +19,18 @@
 // 플레이스홀더 값 감지
 function isPlaceholderValue(value: string | undefined): boolean {
   if (!value) return true;
-  
+
   const placeholderPatterns = [
-    'placeholder', 'test_key', 'test.supabase.co',
-    'your_', 'YOUR_', 'example', 'EXAMPLE'
+    'placeholder',
+    'test_key',
+    'test.supabase.co',
+    'your_',
+    'YOUR_',
+    'example',
+    'EXAMPLE',
   ];
-  
-  return placeholderPatterns.some(pattern => value.includes(pattern));
+
+  return placeholderPatterns.some((pattern) => value.includes(pattern));
 }
 
 // Supabase 연결 상태 확인
@@ -35,6 +40,7 @@ export function validateSupabaseConnection(): boolean {
 ```
 
 **결과**:
+
 - ✅ 실시간 환경 변수 상태 모니터링
 - ✅ 플레이스홀더 값 자동 감지
 - ✅ 명확한 오류 메시지 제공
@@ -50,11 +56,16 @@ export async function middleware(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   // 환경 변수가 없거나 플레이스홀더인 경우 인증 미들웨어 스킵
-  if (!supabaseUrl || !supabaseKey || 
-      supabaseUrl.includes('placeholder') || 
-      supabaseKey.includes('placeholder') ||
-      supabaseUrl.includes('test.supabase.co')) {
-    console.warn('⚠️ Supabase middleware skipped: Environment variables not properly configured');
+  if (
+    !supabaseUrl ||
+    !supabaseKey ||
+    supabaseUrl.includes('placeholder') ||
+    supabaseKey.includes('placeholder') ||
+    supabaseUrl.includes('test.supabase.co')
+  ) {
+    console.warn(
+      '⚠️ Supabase middleware skipped: Environment variables not properly configured'
+    );
     return NextResponse.next();
   }
 
@@ -68,6 +79,7 @@ export async function middleware(request: NextRequest) {
 ```
 
 **결과**:
+
 - ✅ Edge Runtime 경고 해결
 - ✅ 환경 변수 부재 시 graceful fallback
 - ✅ 오류 발생 시 안전한 처리
@@ -101,12 +113,12 @@ export const createClient = () => {
 export const checkSupabaseConnection = async () => {
   try {
     const { error } = await supabase.from('profiles').select('count').limit(1);
-    
+
     if (error) {
       console.error('❌ Supabase connection test failed:', error.message);
       return false;
     }
-    
+
     console.log('✅ Supabase connection test successful');
     return true;
   } catch (error) {
@@ -117,6 +129,7 @@ export const checkSupabaseConnection = async () => {
 ```
 
 **결과**:
+
 - ✅ 클라이언트 연결 상태 실시간 확인
 - ✅ 개발 환경에서 연결 테스트 기능
 - ✅ 빌드 시 안전한 fallback 값 제공
@@ -130,7 +143,7 @@ type SupabaseContextType = {
   supabase: SupabaseClient<Database>;
   user: User | null;
   loading: boolean;
-  isConnected: boolean;          // 새로 추가
+  isConnected: boolean; // 새로 추가
   connectionError: string | null; // 새로 추가
 };
 
@@ -141,7 +154,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
     setLoading(false);
     setIsConnected(false);
     setConnectionError('Supabase configuration is not properly set');
-    console.warn('⚠️ Supabase Provider: Configuration not valid, operating in offline mode');
+    console.warn(
+      '⚠️ Supabase Provider: Configuration not valid, operating in offline mode'
+    );
     return;
   }
 
@@ -159,7 +174,10 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
       }
 
       // 세션 확인
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
       if (sessionError) {
         console.warn('Session error:', sessionError.message);
@@ -170,7 +188,9 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
       setConnectionError(null);
     } catch (error) {
       console.error('Failed to initialize Supabase:', error);
-      setConnectionError(error instanceof Error ? error.message : 'Unknown error');
+      setConnectionError(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       setIsConnected(false);
     } finally {
       setLoading(false);
@@ -180,6 +200,7 @@ export function SupabaseProvider({ children }: SupabaseProviderProps) {
 ```
 
 **결과**:
+
 - ✅ 연결 상태를 컨텍스트에서 제공
 - ✅ 연결 오류 시 명확한 오류 메시지
 - ✅ 오프라인 모드 지원

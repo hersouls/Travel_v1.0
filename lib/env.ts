@@ -36,7 +36,7 @@ const optionalEnvVars = {
  */
 function isPlaceholderValue(value: string | undefined): boolean {
   if (!value) return true;
-  
+
   const placeholderPatterns = [
     'placeholder',
     'test_key',
@@ -44,10 +44,10 @@ function isPlaceholderValue(value: string | undefined): boolean {
     'your_',
     'YOUR_',
     'example',
-    'EXAMPLE'
+    'EXAMPLE',
   ];
-  
-  return placeholderPatterns.some(pattern => value.includes(pattern));
+
+  return placeholderPatterns.some((pattern) => value.includes(pattern));
 }
 
 /**
@@ -85,17 +85,17 @@ export function validateEnv(): void {
 export function validateSupabaseConnection(): boolean {
   const supabaseUrl = requiredEnvVars.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = requiredEnvVars.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseKey) {
     console.error('❌ Supabase: Environment variables not set');
     return false;
   }
-  
+
   if (isPlaceholderValue(supabaseUrl) || isPlaceholderValue(supabaseKey)) {
     console.warn('⚠️ Supabase: Using placeholder values');
     return false;
   }
-  
+
   try {
     new URL(supabaseUrl);
     console.log('✅ Supabase: Configuration appears valid');
@@ -141,27 +141,35 @@ export const env = {
 export function logEnvStatus(): void {
   if (env.IS_DEVELOPMENT) {
     console.log('🔧 Environment Variables Status:');
-    
+
     // Supabase 상태
     const supabaseValid = validateSupabaseConnection();
-    console.log(`${supabaseValid ? '✅' : '❌'} Supabase Connection:`, 
-      supabaseValid ? 'Ready' : 'Not configured properly');
-    
+    console.log(
+      `${supabaseValid ? '✅' : '❌'} Supabase Connection:`,
+      supabaseValid ? 'Ready' : 'Not configured properly'
+    );
+
     // Google Maps 상태
     const mapsValid = !isPlaceholderValue(env.GOOGLE_MAPS_API_KEY);
-    console.log(`${mapsValid ? '✅' : '❌'} Google Maps:`, 
-      mapsValid ? 'Ready' : 'Not configured properly');
-    
-    // Google Places 상태  
+    console.log(
+      `${mapsValid ? '✅' : '❌'} Google Maps:`,
+      mapsValid ? 'Ready' : 'Not configured properly'
+    );
+
+    // Google Places 상태
     const placesValid = !isPlaceholderValue(env.GOOGLE_PLACES_API_KEY);
-    console.log(`${placesValid ? '✅' : '❌'} Google Places:`, 
-      placesValid ? 'Ready' : 'Not configured properly');
-    
+    console.log(
+      `${placesValid ? '✅' : '❌'} Google Places:`,
+      placesValid ? 'Ready' : 'Not configured properly'
+    );
+
     // OAuth 상태
     const oauthConfigured = !!env.GOOGLE_CLIENT_ID;
-    console.log(`${oauthConfigured ? '✅' : '🔒'} Google OAuth:`, 
-      oauthConfigured ? 'Configured' : 'Not configured');
-      
+    console.log(
+      `${oauthConfigured ? '✅' : '🔒'} Google OAuth:`,
+      oauthConfigured ? 'Configured' : 'Not configured'
+    );
+
     console.log('🌍 Environment:', env.NODE_ENV);
     console.log('🔗 Site URL:', env.SITE_URL);
   }
