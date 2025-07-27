@@ -30,10 +30,10 @@ const nextConfig = {
     const cspDirectives = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com`,
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",  // ✅ CDN 추가
-      "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net",  // ✅ 폰트 CDN 추가
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net", // ✅ CDN 추가
+      "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net", // ✅ 폰트 CDN 추가
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",  // ✅ WebSocket 추가
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co", // ✅ WebSocket 추가
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
