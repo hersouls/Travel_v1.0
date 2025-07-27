@@ -187,7 +187,10 @@ export default function HomePage() {
 
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button asChild size="lg">
-              <Link href={user ? '/travels/new' : '/signin'} className="flex items-center gap-2">
+              <Link
+                href={user ? '/travels/new' : '/signin'}
+                className="flex items-center gap-2"
+              >
                 <Plus className="h-5 w-5" />
                 <span>{user ? '새 여행 만들기' : '지금 시작하기'}</span>
               </Link>
