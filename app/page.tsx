@@ -6,7 +6,6 @@ import { useSupabase } from '@/components/providers/SupabaseProvider';
 import { Button } from '@/components/ui/Button';
 import { MapPin, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   const router = useRouter();
