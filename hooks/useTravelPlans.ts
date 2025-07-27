@@ -96,7 +96,9 @@ export const useTravelPlans = (): UseTravelPlansReturn => {
       logError(err, 'database', 'fetchTravelPlans');
       console.error('여행 계획 가져오기 실패:', err);
       setError(
-        err instanceof Error ? err : new Error(getKoreanErrorMessage(err, 'fetch'))
+        err instanceof Error
+          ? err
+          : new Error(getKoreanErrorMessage(err, 'fetch'))
       );
     } finally {
       setLoading(false);
