@@ -16,7 +16,9 @@
     "format:check": "prettier --check .",
     "performance": "npm run build && npm run start",
     "clean": "rm -rf .next out",
-    "vercel-build": "npm run type-check && npm run lint && npm run build"
+    "vercel-build": "npm run type-check && npm run lint && npm run build",
+    "oauth:check": "node -e \"console.log('🔐 OAuth Configuration Check:'); const { validateOAuthConfig } = require('./lib/oauth'); const config = validateOAuthConfig(); console.log(config);\"",
+    "oauth:status": "npm run dev -- --inspect"
   },
   "dependencies": {
     "@google/maps": "^1.1.3",

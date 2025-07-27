@@ -55,6 +55,7 @@ export async function middleware(request: NextRequest) {
       !user &&
       !request.nextUrl.pathname.startsWith('/signin') &&
       !request.nextUrl.pathname.startsWith('/shared') &&
+      !request.nextUrl.pathname.startsWith('/auth/callback') &&
       request.nextUrl.pathname !== '/'
     ) {
       // no user, potentially respond by redirecting the user to the signin page
