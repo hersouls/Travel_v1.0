@@ -12,7 +12,7 @@ export default function HomePage() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const { user, loading } = useSupabase();
-  
+
   // 클라이언트 사이드 렌더링 확인
   useEffect(() => {
     setIsClient(true);
@@ -28,17 +28,18 @@ export default function HomePage() {
   // 서버 사이드 렌더링 중에는 기본 UI만 표시
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 relative">
+      <div className="relative min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
             <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
               <MapPin className="h-10 w-10 text-white" />
             </div>
-            <h1 className="mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl tracking-korean-tight break-keep-ko">
+            <h1 className="mb-6 font-pretendard text-5xl font-bold text-white tracking-korean-tight break-keep-ko sm:text-6xl">
               Moonwave Travel
             </h1>
-            <p className="mb-8 font-pretendard text-xl text-white/90 leading-relaxed tracking-korean-normal break-keep-ko">
-              스마트한 여행 계획 시스템으로<br />
+            <p className="mb-8 font-pretendard text-xl leading-relaxed text-white/90 tracking-korean-normal break-keep-ko">
+              스마트한 여행 계획 시스템으로
+              <br />
               특별한 여행을 설계하세요
             </p>
           </div>
@@ -61,7 +62,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 relative">
+    <div className="relative min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="mb-16 text-center">
@@ -71,12 +72,12 @@ export default function HomePage() {
           </div>
 
           {/* 제목 */}
-          <h1 className="mb-6 font-pretendard text-5xl font-bold text-white sm:text-6xl tracking-korean-tight break-keep-ko">
+          <h1 className="mb-6 font-pretendard text-5xl font-bold text-white tracking-korean-tight break-keep-ko sm:text-6xl">
             Moonwave Travel
           </h1>
 
           {/* 부제목 */}
-          <p className="mb-8 font-pretendard text-xl text-white/90 leading-relaxed tracking-korean-normal break-keep-ko">
+          <p className="mb-8 font-pretendard text-xl leading-relaxed text-white/90 tracking-korean-normal break-keep-ko">
             스마트한 여행 계획 시스템으로
             <br />
             특별한 여행을 설계하세요
@@ -112,11 +113,11 @@ export default function HomePage() {
         {/* 특징 섹션 */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* 특징 1 */}
-          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+          <div className="rounded-lg border border-white/20 bg-white/10 p-6 text-center backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/40 hover:shadow-lg">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
               <Calendar className="h-6 w-6 text-blue-500" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+            <h3 className="mb-2 text-lg font-semibold text-white tracking-korean-tight">
               스마트 일정 관리
             </h3>
             <p className="text-white/90 tracking-korean-normal break-keep-ko">
@@ -125,11 +126,11 @@ export default function HomePage() {
           </div>
 
           {/* 특징 2 */}
-          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+          <div className="rounded-lg border border-white/20 bg-white/10 p-6 text-center backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/40 hover:shadow-lg">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10">
               <MapPin className="h-6 w-6 text-purple-500" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+            <h3 className="mb-2 text-lg font-semibold text-white tracking-korean-tight">
               실시간 지도 연동
             </h3>
             <p className="text-white/90 tracking-korean-normal break-keep-ko">
@@ -138,11 +139,11 @@ export default function HomePage() {
           </div>
 
           {/* 특징 3 */}
-          <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-6 text-center transition-all duration-200 hover:bg-white/40 hover:shadow-lg hover:scale-105">
+          <div className="rounded-lg border border-white/20 bg-white/10 p-6 text-center backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/40 hover:shadow-lg">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
               <Users className="h-6 w-6 text-blue-500" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold tracking-korean-tight text-white">
+            <h3 className="mb-2 text-lg font-semibold text-white tracking-korean-tight">
               협업 기능
             </h3>
             <p className="text-white/90 tracking-korean-normal break-keep-ko">
